@@ -4,7 +4,7 @@ layout: null
 {% assign marcador_dados = '// data.js — GestMed' %}
 {% assign marcador_app = '// app.js — GestMed' %}
 {% capture nucleo_atual %}{% include_relative app-core-stable.html %}{% endcapture %}
-{% capture fonte_603 %}{% include_relative backups/gestamed-base-603-1503-fonte.html %}{% endcapture %}
+{% capture fonte_603 %}{% include_relative gestamed-base-603-1503-fonte.html %}{% endcapture %}
 {% assign integracao_valida = false %}
 {% if nucleo_atual contains marcador_dados and nucleo_atual contains marcador_app and fonte_603 contains marcador_dados and fonte_603 contains marcador_app and fonte_603 contains '"total_registros":1514' and fonte_603 contains '"registros_base_clinica":614' and fonte_603 contains '"registros_adicionais_indexacao":900' and fonte_603 contains 'GESTMED_GASTRIC_PACKAGE_126_START' %}
   {% assign integracao_valida = true %}
