@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-home-screen-2026-07-24-127';
+  var PATCH_ID = 'gestamed-home-screen-2026-07-24-128';
   if (document.documentElement.getAttribute('data-gm-home-screen') === PATCH_ID) return;
   document.documentElement.setAttribute('data-gm-home-screen', PATCH_ID);
 
@@ -65,20 +65,52 @@
     return true;
   }
 
+  function showDevelopmentMessage(label) {
+    var old = document.getElementById('gm-home-dev-message');
+    if (old) old.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'gm-home-dev-message';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Módulo em desenvolvimento');
+    overlay.innerHTML = '<div class="gm-home-dev-card"><div class="gm-home-dev-icon">🛠️</div><strong>' + label + '</strong><p>Módulo em desenvolvimento.</p><button type="button">Entendi</button></div>';
+
+    function close() { overlay.remove(); }
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay || event.target.tagName === 'BUTTON') close();
+    });
+    document.addEventListener('keydown', function escape(event) {
+      if (event.key === 'Escape') {
+        close();
+        document.removeEventListener('keydown', escape);
+      }
+    });
+
+    document.body.appendChild(overlay);
+    var button = overlay.querySelector('button');
+    if (button) button.focus();
+  }
+
   function makeHotspot(parent, definition) {
     var button = document.createElement('button');
     button.type = 'button';
-    button.className = 'gm-home-hotspot';
+    button.className = 'gm-home-hotspot' + (definition.disabled ? ' gm-home-hotspot-disabled' : '');
     button.style.left = definition.x + '%';
     button.style.top = definition.y + '%';
     button.style.width = definition.w + '%';
     button.style.height = definition.h + '%';
     button.setAttribute('aria-label', definition.aria || definition.labels[0]);
-    button.setAttribute('title', definition.aria || definition.labels[0]);
+    button.setAttribute('title', definition.disabled ? (definition.labels[0] + ' — módulo em desenvolvimento') : (definition.aria || definition.labels[0]));
+    if (definition.disabled) button.setAttribute('aria-disabled', 'true');
     button.addEventListener('click', function (event) {
       event.preventDefault();
       event.stopPropagation();
-      activate(definition.labels);
+      if (definition.disabled) {
+        showDevelopmentMessage(definition.labels[0]);
+        return;
+      }
+      if (!activate(definition.labels)) showDevelopmentMessage(definition.labels[0]);
     });
     parent.appendChild(button);
   }
@@ -94,8 +126,16 @@
       '#gm-home-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-drag:none;}',
       '.gm-home-hotspot{position:absolute;z-index:3;border:0;background:transparent;cursor:pointer;border-radius:18px;-webkit-tap-highlight-color:rgba(236,72,153,.12);}',
       '.gm-home-hotspot:focus-visible{outline:3px solid rgba(236,72,153,.45);outline-offset:-2px;background:rgba(255,255,255,.08);}',
+      '.gm-home-hotspot-disabled{cursor:not-allowed;background:rgba(255,255,255,.025);}',
+      '.gm-home-hotspot-disabled:focus-visible{outline-color:rgba(148,163,184,.55);}',
       '#gm-home-search{position:absolute;z-index:4;left:8.5%;top:24.65%;width:80%;height:4.35%;border:0;background:transparent;color:#3b2333;font:500 clamp(12px,3vw,20px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 2%;outline:none;}',
       '#gm-home-search::placeholder{color:transparent;}',
+      '#gm-home-dev-message{position:fixed;inset:0;z-index:2147483647;background:rgba(45,24,38,.42);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:24px;}',
+      '.gm-home-dev-card{width:min(88vw,360px);background:#fff;border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 24px 70px rgba(82,33,61,.28);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#3b2333;}',
+      '.gm-home-dev-card strong{display:block;font-size:20px;margin:4px 0 8px;}',
+      '.gm-home-dev-card p{margin:0 0 20px;color:#76576a;font-size:15px;}',
+      '.gm-home-dev-icon{font-size:34px;line-height:1;margin-bottom:8px;}',
+      '.gm-home-dev-card button{border:0;border-radius:999px;background:#ec4899;color:#fff;font-weight:800;font-size:15px;padding:12px 26px;min-width:130px;cursor:pointer;}',
       '@media(min-width:833px){#gm-home-screen{padding:18px 0;}#gm-home-canvas{border-radius:32px;}}'
     ].join('');
     document.head.appendChild(style);
@@ -149,11 +189,11 @@
       { x:51.7, y:30.55, w:21.4, h:4.45, labels:['Alergia'] },
       { x:75.0, y:30.55, w:21.0, h:4.45, labels:['Náusea','Náuseas'] },
 
-      { x:4.0, y:39.55, w:17.7, h:8.0, labels:['Agenda','Calendário'] },
-      { x:22.8, y:39.55, w:17.7, h:8.0, labels:['Checklists','Checklist'] },
-      { x:41.6, y:39.55, w:17.7, h:8.0, labels:['Calculadoras','Calculadora'] },
-      { x:60.4, y:39.55, w:17.7, h:8.0, labels:['Favoritos','Favorito'] },
-      { x:79.2, y:39.55, w:17.0, h:8.0, labels:['Lembretes','Lembrete'] },
+      { x:4.0, y:39.55, w:17.7, h:8.0, labels:['Agenda','Calendário'], disabled:true },
+      { x:22.8, y:39.55, w:17.7, h:8.0, labels:['Checklists','Checklist'], disabled:true },
+      { x:41.6, y:39.55, w:17.7, h:8.0, labels:['Calculadoras','Calculadora'], disabled:true },
+      { x:60.4, y:39.55, w:17.7, h:8.0, labels:['Favoritos','Favorito'], disabled:true },
+      { x:79.2, y:39.55, w:17.0, h:8.0, labels:['Lembretes','Lembrete'], disabled:true },
 
       { x:4.0, y:49.45, w:46.5, h:7.15, labels:['Idade gestacional'] },
       { x:52.0, y:49.45, w:44.0, h:7.15, labels:['Cálculo de insulina','Calculo de insulina','Insulina','DMG'] },
@@ -165,8 +205,8 @@
       { x:0.0, y:93.55, w:20.0, h:6.45, labels:['Início','Inicio'], aria:'Início' },
       { x:20.0, y:93.55, w:20.0, h:6.45, labels:['Obstetrícia','Obstetricia'], aria:'Obstetrícia' },
       { x:40.0, y:93.15, w:20.0, h:6.85, labels:['Pré-natal','Pre natal'], aria:'Pré-natal' },
-      { x:60.0, y:93.55, w:20.0, h:6.45, labels:['Protocolos','Protocolo'], aria:'Protocolos' },
-      { x:80.0, y:93.55, w:20.0, h:6.45, labels:['Perfil'], aria:'Perfil' }
+      { x:60.0, y:93.55, w:20.0, h:6.45, labels:['Protocolos','Protocolo'], aria:'Protocolos', disabled:true },
+      { x:80.0, y:93.55, w:20.0, h:6.45, labels:['Perfil'], aria:'Perfil', disabled:true }
     ].forEach(function (definition) { makeHotspot(canvas, definition); });
 
     home.appendChild(canvas);
