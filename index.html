@@ -18,7 +18,17 @@ layout: null
 {% else %}
   {% assign nucleo_integrado = nucleo_atual %}
 {% endif %}
-{% assign nucleo_integrado = nucleo_integrado | replace: '2026.07.23.91', '2026.07.24.130' | replace: '2026.07.23.97', '2026.07.24.130' | replace: '2026.07.24.126', '2026.07.24.130' | replace: '2026.07.24.127', '2026.07.24.130' %}
+{% assign nucleo_integrado = nucleo_integrado | replace: '2026.07.23.91', '2026.07.24.131' | replace: '2026.07.23.97', '2026.07.24.131' | replace: '2026.07.24.126', '2026.07.24.131' | replace: '2026.07.24.127', '2026.07.24.131' | replace: '2026.07.24.130', '2026.07.24.131' %}
+{% capture head_icons %}
+<link rel="manifest" href="manifest.json?v=20260724-2">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260724-2">
+<link rel="icon" type="image/png" href="apple-touch-icon.png?v=20260724-2">
+<meta name="apple-mobile-web-app-title" content="GestaMed">
+<meta name="application-name" content="GestaMed">
+<meta name="theme-color" content="#ef4f91">
+{% endcapture %}
+{% assign fechamento_head = head_icons | append: '</head>' %}
+{% assign nucleo_integrado = nucleo_integrado | replace: '</head>', fechamento_head %}
 {% capture resumo_js %}{% include_relative summary-panel-patch.js %}{% endcapture %}
 {% capture exames_js %}{% include_relative exam-panel-patch.js %}{% endcapture %}
 {% capture filtros_js %}{% include_relative quick-filter-bar-patch.js %}{% endcapture %}
@@ -26,7 +36,7 @@ layout: null
 {% capture home_js %}{% include_relative home-screen-patch.js %}{% endcapture %}
 {% capture welcome_image_js %}{% include_relative welcome-image-patch.js %}{% endcapture %}
 {% capture scripts_integracao %}
-<script>document.documentElement.setAttribute('data-gestamed-build','2026.07.24.130');document.documentElement.setAttribute('data-base-integrada','{% if integracao_valida %}614-1514{% else %}fallback{% endif %}');</script>
+<script>document.documentElement.setAttribute('data-gestamed-build','2026.07.24.131');document.documentElement.setAttribute('data-base-integrada','{% if integracao_valida %}614-1514{% else %}fallback{% endif %}');</script>
 <script>{{ resumo_js }}</script>
 <script>{{ exames_js }}</script>
 <script>{{ filtros_js }}</script>
