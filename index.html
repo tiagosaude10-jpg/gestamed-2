@@ -18,16 +18,25 @@ layout: null
 {% else %}
   {% assign nucleo_integrado = nucleo_atual %}
 {% endif %}
-{% assign nucleo_integrado = nucleo_integrado | replace: '2026.07.23.91', '2026.07.24.132' | replace: '2026.07.23.97', '2026.07.24.132' | replace: '2026.07.24.126', '2026.07.24.132' | replace: '2026.07.24.127', '2026.07.24.132' | replace: '2026.07.24.130', '2026.07.24.132' | replace: '2026.07.24.131', '2026.07.24.132' %}
-{% assign nucleo_integrado = nucleo_integrado | replace: 'icon-192.png', 'gestamed-icon-rosa-20260724.png' | replace: 'icon-512.png', 'gestamed-icon-rosa-20260724.png' | replace: 'apple-touch-icon.png', 'gestamed-icon-rosa-20260724.png' %}
+{% assign nucleo_integrado = nucleo_integrado | replace: '2026.07.23.91', '2026.07.24.133' | replace: '2026.07.23.97', '2026.07.24.133' | replace: '2026.07.24.126', '2026.07.24.133' | replace: '2026.07.24.127', '2026.07.24.133' | replace: '2026.07.24.130', '2026.07.24.133' | replace: '2026.07.24.131', '2026.07.24.133' | replace: '2026.07.24.132', '2026.07.24.133' %}
+{% assign nucleo_integrado = nucleo_integrado | replace: 'icon-192.png', 'gestamed-icon-rosa-20260724.png?v=133' | replace: 'icon-512.png', 'gestamed-icon-rosa-20260724.png?v=133' | replace: 'apple-touch-icon.png', 'gestamed-icon-rosa-20260724.png?v=133' %}
 {% capture head_icons %}
-<link rel="manifest" href="manifest.json?v=20260724-132">
-<link rel="apple-touch-icon" sizes="180x180" href="gestamed-icon-rosa-20260724.png">
-<link rel="apple-touch-icon-precomposed" sizes="180x180" href="gestamed-icon-rosa-20260724.png">
-<link rel="icon" type="image/png" href="gestamed-icon-rosa-20260724.png">
+<link rel="manifest" href="manifest.json?v=20260724-133">
+<link rel="apple-touch-icon" sizes="180x180" href="gestamed-icon-rosa-20260724.png?v=133">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="gestamed-icon-rosa-20260724.png?v=133">
+<link rel="icon" type="image/png" sizes="180x180" href="gestamed-icon-rosa-20260724.png?v=133">
 <meta name="apple-mobile-web-app-title" content="GestaMed">
 <meta name="application-name" content="GestaMed">
 <meta name="theme-color" content="#ef4f91">
+<script>
+(function(){
+  var seletores='link[rel="manifest"],link[rel="icon"],link[rel="apple-touch-icon"],link[rel="apple-touch-icon-precomposed"]';
+  document.querySelectorAll(seletores).forEach(function(el){
+    var href=el.getAttribute('href')||'';
+    if(href.indexOf('data:')===0){el.remove();}
+  });
+})();
+</script>
 {% endcapture %}
 {% assign fechamento_head = head_icons | append: '</head>' %}
 {% assign nucleo_integrado = nucleo_integrado | replace: '</head>', fechamento_head %}
@@ -38,7 +47,7 @@ layout: null
 {% capture home_js %}{% include_relative home-screen-patch.js %}{% endcapture %}
 {% capture welcome_image_js %}{% include_relative welcome-image-patch.js %}{% endcapture %}
 {% capture scripts_integracao %}
-<script>document.documentElement.setAttribute('data-gestamed-build','2026.07.24.132');document.documentElement.setAttribute('data-base-integrada','{% if integracao_valida %}614-1514{% else %}fallback{% endif %}');</script>
+<script>document.documentElement.setAttribute('data-gestamed-build','2026.07.24.133');document.documentElement.setAttribute('data-base-integrada','{% if integracao_valida %}614-1514{% else %}fallback{% endif %}');</script>
 <script>{{ resumo_js }}</script>
 <script>{{ exames_js }}</script>
 <script>{{ filtros_js }}</script>
