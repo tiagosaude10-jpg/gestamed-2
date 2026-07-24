@@ -1,0 +1,1 @@
+(function(){'use strict';function apply(){var image=document.getElementById('gm-welcome-image');if(image){image.src='IMG_1359.jpeg';return true;}return false;}var attempts=0;function start(){attempts+=1;if(apply())return;if(attempts<100)setTimeout(start,100);}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',start,{once:true});}else{start();}})();
