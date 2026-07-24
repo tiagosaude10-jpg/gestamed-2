@@ -4,17 +4,17 @@
   if(document.documentElement.getAttribute('data-gm-home-search-submit')===PATCH_ID)return;
   document.documentElement.setAttribute('data-gm-home-search-submit',PATCH_ID);
 
-  var submitting=false;
-  var lastSubmitted='';
-
+  var timer=null;
   function submitSearch(value){
     var term=String(value||'').trim();
-    if(!term || submitting)return false;
-    if(typeof window.GestaMedOpenMedication!=='function')return false;
-    submitting=true;
-    lastSubmitted=term;
-    try{window.GestaMedOpenMedication(term);}catch(e){submitting=false;return false;}
-    window.setTimeout(function(){submitting=false;},700);
+    if(term.length<3)return false;
+    if(typeof window.GestaMedOpenMedication==='function'){
+      window.GestaMedOpenMedication(term);
+      return true;
+    }
+    setTimeout(function(){
+      if(typeof window.GestaMedOpenMedication==='function')window.GestaMedOpenMedication(term);
+    },250);
     return true;
   }
 
@@ -23,6 +23,7 @@
     if(!field)return false;
     if(field.getAttribute('data-gm-search-installed')==='138')return true;
     field.setAttribute('data-gm-search-installed','138');
+    field.setAttribute('enterkeyhint','search');
     field.style.background='rgba(255,255,255,.96)';
     field.style.borderRadius='999px';
     field.style.paddingLeft='5%';
@@ -30,24 +31,22 @@
     field.style.boxSizing='border-box';
     field.style.color='#3b2333';
     field.style.fontWeight='500';
-    field.setAttribute('enterkeyhint','search');
 
-    function run(e){
-      if(e){e.preventDefault();e.stopImmediatePropagation();}
-      submitSearch(field.value);
-    }
-
+    field.addEventListener('input',function(){
+      clearTimeout(timer);
+      var value=field.value;
+      if(String(value||'').trim().length<3)return;
+      timer=setTimeout(function(){submitSearch(value);},650);
+    },true);
     field.addEventListener('keydown',function(e){
-      if(e.key==='Enter' || e.keyCode===13)run(e);
+      if(e.key==='Enter'){
+        e.preventDefault();e.stopImmediatePropagation();
+        clearTimeout(timer);submitSearch(field.value);
+      }
     },true);
-    field.addEventListener('keypress',function(e){
-      if(e.key==='Enter' || e.keyCode===13)run(e);
-    },true);
-    field.addEventListener('search',run,true);
-    field.addEventListener('change',function(){
-      var term=String(field.value||'').trim();
-      if(term && term!==lastSubmitted)submitSearch(term);
-    },true);
+    field.addEventListener('change',function(){clearTimeout(timer);submitSearch(field.value);},true);
+    field.addEventListener('search',function(e){e.preventDefault();clearTimeout(timer);submitSearch(field.value);},true);
+    field.addEventListener('blur',function(){if(field.value.trim().length>=3){clearTimeout(timer);submitSearch(field.value);}},true);
 
     var canvas=document.getElementById('gm-home-canvas');
     if(canvas){
@@ -56,8 +55,9 @@
       var btn=document.createElement('button');
       btn.type='button';btn.id='gm-home-search-button';
       btn.setAttribute('aria-label','Pesquisar medicamento');
-      btn.style.cssText='position:absolute;z-index:7;right:2.2%;top:24.25%;width:11%;height:5.1%;border:0;background:transparent;border-radius:999px;-webkit-tap-highlight-color:rgba(236,72,153,.15);';
-      btn.addEventListener('click',run,true);
+      btn.style.cssText='position:absolute;z-index:20;right:2.5%;top:24.1%;width:13%;height:5.4%;border:0;background:transparent;border-radius:999px;cursor:pointer;';
+      btn.addEventListener('touchend',function(e){e.preventDefault();e.stopImmediatePropagation();clearTimeout(timer);submitSearch(field.value);},true);
+      btn.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();clearTimeout(timer);submitSearch(field.value);},true);
       canvas.appendChild(btn);
     }
     return true;
