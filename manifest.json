@@ -1,24 +1,19 @@
 {
-  "name": "GestMed — Medicamentos na Gestação",
-  "short_name": "GestMed",
-  "description": "Ferramenta educacional e de apoio à decisão clínica sobre medicamentos na gestação.",
-  "start_url": "./index.html",
+  "name": "GestaMed — Saúde da Gestante",
+  "short_name": "GestaMed",
+  "description": "Ferramenta educacional para profissionais e estudantes da área da saúde.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#155e75",
+  "background_color": "#fff7fb",
+  "theme_color": "#ef4f91",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
-      "sizes": "192x192",
+      "src": "apple-touch-icon.png?v=20260724-2",
+      "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
