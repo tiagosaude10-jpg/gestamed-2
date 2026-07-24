@@ -1,0 +1,34 @@
+---
+layout: null
+---
+{% assign marcador_dados = '// data.js — GestMed' %}
+{% assign marcador_app = '// app.js — GestMed' %}
+{% capture nucleo_atual %}{% include_relative app-core-stable.html %}{% endcapture %}
+{% capture fonte_603 %}{% include_relative backups/gestamed-base-603-1503-fonte.html %}{% endcapture %}
+{% assign integracao_valida = false %}
+{% if nucleo_atual contains marcador_dados and nucleo_atual contains marcador_app and fonte_603 contains marcador_dados and fonte_603 contains marcador_app and fonte_603 contains '"total_registros":1514' and fonte_603 contains '"registros_base_clinica":614' and fonte_603 contains '"registros_adicionais_indexacao":900' and fonte_603 contains 'GESTMED_GASTRIC_PACKAGE_126_START' %}
+  {% assign integracao_valida = true %}
+{% endif %}
+{% if integracao_valida %}
+  {% assign antes_dados = nucleo_atual | split: marcador_dados | first %}
+  {% assign depois_app = nucleo_atual | split: marcador_app | last %}
+  {% assign fonte_apos_dados = fonte_603 | split: marcador_dados | last %}
+  {% assign dados_603 = fonte_apos_dados | split: marcador_app | first %}
+  {% assign nucleo_integrado = antes_dados | append: marcador_dados | append: dados_603 | append: marcador_app | append: depois_app %}
+{% else %}
+  {% assign nucleo_integrado = nucleo_atual %}
+{% endif %}
+{% assign nucleo_integrado = nucleo_integrado | replace: '2026.07.23.91', '2026.07.24.126' | replace: '2026.07.23.97', '2026.07.24.126' %}
+{% capture resumo_js %}{% include_relative summary-panel-patch.js %}{% endcapture %}
+{% capture exames_js %}{% include_relative exam-panel-patch.js %}{% endcapture %}
+{% capture filtros_js %}{% include_relative quick-filter-bar-patch.js %}{% endcapture %}
+{% capture limpar_js %}{% include_relative search-clear-and-size-patch.js %}{% endcapture %}
+{% capture scripts_integracao %}
+<script>document.documentElement.setAttribute('data-gestamed-build','2026.07.24.126');document.documentElement.setAttribute('data-base-integrada','{% if integracao_valida %}614-1514{% else %}fallback{% endif %}');</script>
+<script>{{ resumo_js }}</script>
+<script>{{ exames_js }}</script>
+<script>{{ filtros_js }}</script>
+<script>{{ limpar_js }}</script>
+{% endcapture %}
+{% assign fechamento_integrado = scripts_integracao | append: '</body>' %}
+{{ nucleo_integrado | replace: '</body>', fechamento_integrado }}
