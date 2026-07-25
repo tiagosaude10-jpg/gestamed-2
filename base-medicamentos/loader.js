@@ -1,22 +1,26 @@
 (function(global){
   'use strict';
-  var BASE_URL='base-medicamentos/medicamentos-core.js?v=20260724-139';
+  var BASE_URL='medicamentos-core.txt?v=20260725-140';
   var loading=null;
+
+  function execute(code){
+    (0,eval)(String(code||''));
+    if(!global.GestaMedMedications){
+      throw new Error('A base foi lida, mas a API de medicamentos não foi criada.');
+    }
+    return global.GestaMedMedications;
+  }
 
   function load(){
     if(global.GestaMedMedications)return Promise.resolve(global.GestaMedMedications);
     if(loading)return loading;
-    loading=new Promise(function(resolve,reject){
-      var script=document.createElement('script');
-      script.src=BASE_URL;
-      script.async=true;
-      script.onload=function(){
-        if(global.GestaMedMedications)resolve(global.GestaMedMedications);
-        else reject(new Error('A base de medicamentos foi carregada, mas a API não foi encontrada.'));
-      };
-      script.onerror=function(){reject(new Error('Não foi possível carregar a base de medicamentos.'))};
-      document.head.appendChild(script);
-    });
+    loading=fetch(BASE_URL,{cache:'no-store'})
+      .then(function(response){
+        if(!response.ok)throw new Error('Falha ao baixar a base de medicamentos.');
+        return response.text();
+      })
+      .then(execute)
+      .catch(function(error){loading=null;throw error;});
     return loading;
   }
 
