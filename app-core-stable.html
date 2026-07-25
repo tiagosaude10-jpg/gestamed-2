@@ -1579,6 +1579,202 @@
       margin-top: 4px;
     }
     .ga-disclaimer { margin: 14px 0 4px; font-size: 10.5px; color: var(--muted); line-height: 1.5; }
+
+    /* ===================== REDESIGN ROSA — Calculadora de idade gestacional ===================== */
+    /* Tudo aqui é propositalmente restrito a #gaModal para não alterar nenhuma outra tela/calculadora
+       que reaproveita as mesmas classes utilitárias (.ga-input, .ga-label, .clear-btn, .close etc.). */
+    #gaModal .sheet.ga-sheet-rosa { background: #fff7fb; }
+    #gaModal .clear-btn {
+      border-color: #f9c4db;
+      background: #fdeaf1;
+      color: #be185d;
+    }
+    #gaModal .clear-btn:active { background: #fbd7e6; }
+    #gaModal .close { background: #fdeaf1; color: #be185d; }
+    #gaModal .close:active { background: #fbd7e6; }
+    #gaModal .ga-btn-icon { display: inline-block; }
+
+    #gaModal .ga-title-rosa {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #831843;
+      margin: 4px 0 12px;
+    }
+    #gaModal .ga-title-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: #fdeaf1;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    #gaModal .ga-imc-inputs-box {
+      background: #fff5f9;
+      border: 1px solid #fbd7e6;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #gaModal .ga-imc-inputs-title {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: #831843;
+      margin-bottom: 0;
+    }
+    #gaModal .ga-imc-icon { font-size: 15px; line-height: 1.3; flex-shrink: 0; }
+    #gaModal .ga-imc-title-text { font-weight: 800; font-size: 12.5px; line-height: 1.4; }
+    #gaModal .ga-imc-optional { font-weight: 500; opacity: 0.7; }
+    #gaModal .ga-imc-sub { font-weight: 500; opacity: 0.75; font-size: 11.5px; margin-top: 2px; }
+
+    #gaModal .ga-input-icon-wrap { position: relative; }
+    #gaModal .ga-input-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0.75;
+      pointer-events: none;
+    }
+    #gaModal .ga-input.ga-input-com-icone {
+      padding-left: 34px;
+      border-color: #f3c9dc;
+    }
+    #gaModal .ga-input.ga-input-com-icone:focus { outline: 2px solid #f472b6; outline-offset: 1px; }
+
+    #gaModal .ga-tabs.ga-tabs-rosa { background: #fbe1ec; }
+    #gaModal .ga-tab { display: flex; align-items: center; justify-content: center; gap: 5px; }
+    #gaModal .ga-tab.active { color: #be185d; }
+    #gaModal .ga-tab-icon { font-size: 12px; }
+
+    #gaModal .ga-label.ga-label-rosa {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #9d174d;
+      opacity: 0.9;
+    }
+    #gaModal .ga-label-icon { font-size: 11px; }
+
+    #gaModal .ga-date-field {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 12px;
+      border: 1px solid #f3c9dc;
+      border-radius: 12px;
+      background: var(--white);
+    }
+    #gaModal .ga-date-icon-left,
+    #gaModal .ga-date-icon-right { font-size: 15px; opacity: 0.8; flex-shrink: 0; }
+    #gaModal .ga-date-display {
+      flex: 1;
+      font-size: 15px;
+      color: #94a3b8;
+    }
+    #gaModal .ga-date-display.filled { color: var(--text); font-weight: 600; }
+    #gaModal .ga-date-native {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      border: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+    }
+
+    #gaModal .ga-hero-card.ga-hero-card-rosa {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #gaModal .ga-hero-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    #gaModal .ga-hero-texto { flex: 1; min-width: 0; }
+    #gaModal .ga-trimester-pill {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.22);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    #gaModal .ga-dpp-card.ga-dpp-card-rosa {
+      background: #fff0f6;
+      border-color: #fbd7e6;
+      color: #831843;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #gaModal .ga-dpp-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #fce7f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+    #gaModal .ga-dpp-texto { flex: 1; min-width: 0; }
+    #gaModal .ga-dpp-card .ga-color-card-title { color: #831843; margin-bottom: 0; font-size: 12px; opacity: 0.85; }
+    #gaModal .ga-dpp-pill {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #fbcfe8;
+      color: #9d174d;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    #gaModal .ga-dpp-chevron { font-size: 22px; color: #f0abcf; flex-shrink: 0; }
+
+    #gaModal .ga-disclaimer.ga-disclaimer-rosa {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      background: #fff5f9;
+      border: 1px solid #fbd7e6;
+      border-radius: 12px;
+      padding: 10px 11px;
+      color: #831843;
+      opacity: 0.9;
+    }
+    #gaModal .ga-disclaimer-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid #f0abcf;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
     .period-row {
       display: flex;
       justify-content: space-between;
@@ -2004,46 +2200,64 @@ const BUILD='2026.07.23.97';
   </div>
 
   <div class="modal" id="gaModal" onclick="GestMedApp.fecharGaModalAoClicarFora(event)">
-    <div class="sheet">
+    <div class="sheet ga-sheet-rosa">
       <div class="handle"></div>
       <div class="sheet-nav-3">
-        <button class="clear-btn" onclick="GestMedApp.clearGaCalculator()">🗑️ Limpar</button>
+        <button class="clear-btn" onclick="GestMedApp.clearGaCalculator()"><span class="ga-btn-icon">🗑️</span> Limpar</button>
         <button class="close" onclick="GestMedApp.closeGaCalculator()">×</button>
       </div>
-      <h2 style="margin:4px 0 12px;">Calculadora de idade gestacional</h2>
+      <h2 class="ga-title-rosa"><span class="ga-title-icon">📆</span> Calculadora de idade gestacional</h2>
       <p style="margin:0 0 14px; font-size:12px; color:#64748b; line-height:1.5;">
         Escolha a informação que você já tem em mãos — o resultado mostra a <strong>idade gestacional de hoje</strong> e a data provável do parto.
       </p>
 
       <div class="ga-imc-inputs-box">
-        <div class="ga-imc-inputs-title">⚖️ Peso e altura pré-gestacional <span style="font-weight:500; opacity:0.75;">(opcional — mostra o IMC saudável para a semana atual no resultado)</span></div>
-        <div class="ga-row">
-          <div>
-            <input type="number" id="gaImcPeso" class="ga-input" min="30" max="200" step="0.1" placeholder="Peso (kg)" oninput="GestMedApp.onGaImcInputsChange()">
+        <div class="ga-imc-inputs-title">
+          <span class="ga-imc-icon">⚖️</span>
+          <div class="ga-imc-title-text">
+            Peso e altura pré-gestacional <span class="ga-imc-optional">(opcional)</span>
+            <div class="ga-imc-sub">Mostra o IMC saudável para a semana atual no resultado.</div>
           </div>
-          <div>
-            <input type="number" id="gaImcAltura" class="ga-input" min="120" max="210" step="0.1" placeholder="Altura (cm)" oninput="GestMedApp.onGaImcInputsChange()">
+        </div>
+        <div class="ga-row">
+          <div class="ga-input-icon-wrap">
+            <span class="ga-input-icon">⚖️</span>
+            <input type="number" id="gaImcPeso" class="ga-input ga-input-com-icone" min="30" max="200" step="0.1" placeholder="Peso (kg)" oninput="GestMedApp.onGaImcInputsChange()">
+          </div>
+          <div class="ga-input-icon-wrap">
+            <span class="ga-input-icon">🧍</span>
+            <input type="number" id="gaImcAltura" class="ga-input ga-input-com-icone" min="120" max="210" step="0.1" placeholder="Altura (cm)" oninput="GestMedApp.onGaImcInputsChange()">
           </div>
         </div>
       </div>
 
-      <div class="ga-tabs">
-        <button class="ga-tab active" id="gaTabDum" onclick="GestMedApp.switchGaTab('dum')">Por DUM</button>
-        <button class="ga-tab" id="gaTabUs" onclick="GestMedApp.switchGaTab('us')">Por Ultrassom</button>
+      <div class="ga-tabs ga-tabs-rosa">
+        <button class="ga-tab active" id="gaTabDum" onclick="GestMedApp.switchGaTab('dum')"><span class="ga-tab-icon">📅</span> Por DUM</button>
+        <button class="ga-tab" id="gaTabUs" onclick="GestMedApp.switchGaTab('us')"><span class="ga-tab-icon">🔬</span> Por Ultrassom</button>
       </div>
 
       <div class="ga-method-note" id="gaMethodNote"></div>
 
       <div id="gaPanelDum" class="ga-panel">
-        <label class="ga-label">Data da última menstruação (DUM)</label>
-        <input type="date" id="gaDumDate" class="ga-input" onchange="GestMedApp.calcGaDum()">
+        <label class="ga-label ga-label-rosa"><span class="ga-label-icon">📅</span> Data da última menstruação (DUM)</label>
+        <div class="ga-date-field" id="gaDumDateField">
+          <span class="ga-date-icon-left">📅</span>
+          <span class="ga-date-display" id="gaDumDateDisplay">Selecionar data</span>
+          <span class="ga-date-icon-right">📅</span>
+          <input type="date" id="gaDumDate" class="ga-date-native" onchange="GestMedApp.calcGaDum()">
+        </div>
         <p class="ga-hint">Use quando você sabe o primeiro dia da última menstruação da paciente. Método clássico (regra de Naegele) — menos preciso se o ciclo menstrual for irregular.</p>
       </div>
 
       <div id="gaPanelUs" class="ga-panel" style="display:none;">
-        <label class="ga-label">Data do Ultrassom obstétrico</label>
-        <input type="date" id="gaUsExamDate" class="ga-input" onchange="GestMedApp.calcGaUs()">
-        <label class="ga-label">Idade gestacional apontada no laudo, nessa data</label>
+        <label class="ga-label ga-label-rosa"><span class="ga-label-icon">🔬</span> Data do Ultrassom obstétrico</label>
+        <div class="ga-date-field" id="gaUsExamDateField">
+          <span class="ga-date-icon-left">📅</span>
+          <span class="ga-date-display" id="gaUsExamDateDisplay">Selecionar data</span>
+          <span class="ga-date-icon-right">📅</span>
+          <input type="date" id="gaUsExamDate" class="ga-date-native" onchange="GestMedApp.calcGaUs()">
+        </div>
+        <label class="ga-label ga-label-rosa">Idade gestacional apontada no laudo, nessa data</label>
         <div class="ga-row">
           <div>
             <input type="number" id="gaUsWeeks" class="ga-input" min="0" max="42" placeholder="Semanas" oninput="GestMedApp.calcGaUs()">
@@ -2058,10 +2272,11 @@ const BUILD='2026.07.23.97';
 
       <div id="gaResult" class="ga-result" style="display:none;"></div>
 
-      <p class="ga-disclaimer">
-        Cálculo estimado. Não substitui avaliação obstétrica — a idade gestacional oficial do
-        pré-natal deve ser confirmada e registrada pelo profissional responsável.
-      </p>
+      <div class="ga-disclaimer ga-disclaimer-rosa">
+        <span class="ga-disclaimer-icon">ⓘ</span>
+        <span>Cálculo estimado. Não substitui avaliação obstétrica — a idade gestacional oficial do
+        pré-natal deve ser confirmada e registrada pelo profissional responsável.</span>
+      </div>
     </div>
   </div>
 
@@ -4418,6 +4633,8 @@ function gestmedGetPosologiaAdulto(med) {
     document.getElementById("gaUsDays").value = "";
     document.getElementById("gaImcPeso").value = "";
     document.getElementById("gaImcAltura").value = "";
+    updateGaDateDisplay("gaDumDateDisplay", null);
+    updateGaDateDisplay("gaUsExamDateDisplay", null);
 
     lastGaWeeksToday = null;
     lastGaDaysToday = null;
@@ -4488,6 +4705,29 @@ function gestmedGetPosologiaAdulto(med) {
     const mm = String(date.getMonth() + 1).padStart(2, "0");
     const yyyy = date.getFullYear();
     return dd + "/" + mm + "/" + yyyy;
+  }
+
+  const MESES_ABREV_PT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+  function formatDateLongBr(date) {
+    // Formato "25 de jul. de 2026", usado nos cartões redesenhados da
+    // calculadora de idade gestacional.
+    const dd = date.getDate();
+    const mes = MESES_ABREV_PT[date.getMonth()];
+    const yyyy = date.getFullYear();
+    return dd + " de " + mes + ". de " + yyyy;
+  }
+
+  function updateGaDateDisplay(displayElId, date) {
+    const el = document.getElementById(displayElId);
+    if (!el) return;
+    if (!date) {
+      el.textContent = "Selecionar data";
+      el.classList.remove("filled");
+      return;
+    }
+    el.textContent = formatDateLongBr(date);
+    el.classList.add("filled");
   }
 
   function trimesterFromWeeks(weeks) {
@@ -4620,17 +4860,33 @@ function gestmedGetPosologiaAdulto(med) {
       alertaTermo = '<div class="ga-alerta-termo">Gestação a termo.</div>';
     }
 
+    const diasParaParto = daysBetween(new Date(), dppDate);
+    const diasParaPartoLabel =
+      diasParaParto < 0
+        ? "Já passou"
+        : diasParaParto === 0
+        ? "É hoje"
+        : "Em " + diasParaParto + " dia" + (diasParaParto === 1 ? "" : "s");
+
     elGaResult.style.display = "block";
     elGaResult.innerHTML = `
-      <div class="ga-hero-card">
-        <div class="ga-label-result">Idade gestacional hoje</div>
-        <div class="ga-weeks">${weeks} semanas e ${days} dia${days === 1 ? "" : "s"}</div>
-        <div class="ga-trimester">${trimesterFromWeeks(weeks)} · hoje (${formatDateBr(new Date())})</div>
-        ${alertaTermo}
+      <div class="ga-hero-card ga-hero-card-rosa">
+        <div class="ga-hero-avatar">🤰</div>
+        <div class="ga-hero-texto">
+          <div class="ga-label-result">Idade gestacional hoje</div>
+          <div class="ga-weeks">${weeks} semanas e ${days} dia${days === 1 ? "" : "s"}</div>
+          <div class="ga-trimester-pill">${trimesterFromWeeks(weeks)} · hoje (${formatDateBr(new Date())})</div>
+          ${alertaTermo}
+        </div>
       </div>
-      <div class="ga-dpp-card">
-        <div class="ga-color-card-title">📅 Data provável do parto (DPP)</div>
-        <div class="ga-dpp-valor">${formatDateBr(dppDate)}</div>
+      <div class="ga-dpp-card ga-dpp-card-rosa">
+        <div class="ga-dpp-avatar">📅</div>
+        <div class="ga-dpp-texto">
+          <div class="ga-color-card-title">Data provável do parto (DPP)</div>
+          <div class="ga-dpp-valor">${formatDateLongBr(dppDate)}</div>
+          <div class="ga-dpp-pill">${diasParaPartoLabel}</div>
+        </div>
+        <div class="ga-dpp-chevron">›</div>
       </div>
       ${fetalWeightCardHtml(weeks)}
       ${imcGaugeCardHtml(weeks)}
@@ -4665,6 +4921,7 @@ function gestmedGetPosologiaAdulto(med) {
   function calcGaDum() {
     const dumInput = document.getElementById("gaDumDate").value;
     const dum = parseLocalDate(dumInput);
+    updateGaDateDisplay("gaDumDateDisplay", dum);
     if (!dum) {
       elGaResult.style.display = "none";
       return;
@@ -4687,6 +4944,7 @@ function gestmedGetPosologiaAdulto(med) {
     const examDate = parseLocalDate(examDateInput);
     const weeksAtExam = weeksInput === "" ? null : Number(weeksInput);
     const daysAtExam = daysInput === "" ? 0 : Number(daysInput);
+    updateGaDateDisplay("gaUsExamDateDisplay", examDate);
 
     if (!examDate && weeksAtExam === null) {
       elGaResult.style.display = "none";
