@@ -124,7 +124,8 @@
     event.preventDefault();
     event.stopPropagation();
     if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-    var name=String(card.textContent||'').trim();
+    var name=String(card.getAttribute('data-medication-name')||'').trim();
+    if(!name){var title=card.querySelector('strong');name=String(title?title.textContent:'').trim();}
     if(name)openDirect(name);
   },true);
 })();
