@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var PATCH_ID='gestamed-medication-detail-pink-background-2026-07-25-167';
+  var PATCH_ID='gestamed-medication-detail-pink-background-2026-07-25-168';
   document.documentElement.setAttribute('data-gm-detail-pink-bg',PATCH_ID);
 
   function normalize(value){
@@ -13,24 +13,12 @@
     var style=document.createElement('style');
     style.id='gm-detail-pink-background-style';
     style.textContent=[
-      '#gm-detail-pink-backdrop{display:none;position:fixed!important;inset:0!important;z-index:2147482500!important;background:linear-gradient(180deg,#fff4f8 0%,#ffeef5 52%,#fff9fb 100%)!important;pointer-events:none!important;}',
-      'html.gm-medication-detail-open #gm-detail-pink-backdrop{display:block!important;}',
-      'html.gm-medication-detail-open body,html.gm-medication-detail-open #app,html.gm-medication-detail-open main{background:#fff4f8!important;}',
-      'html.gm-medication-detail-open .gm-detected-medication-dialog{position:relative;z-index:2147483000!important;}',
-      'html.gm-medication-detail-open [role="dialog"],html.gm-medication-detail-open .modal,html.gm-medication-detail-open .drug-modal,html.gm-medication-detail-open .medication-modal,html.gm-medication-detail-open .details-modal{z-index:2147483000!important;}',
-      'html.gm-medication-detail-open body>header,html.gm-medication-detail-open .hero,html.gm-medication-detail-open .app-header,html.gm-medication-detail-open .top-hero,html.gm-medication-detail-open [class*="hero"],html.gm-medication-detail-open [class*="banner"]{visibility:hidden!important;opacity:0!important;}'
+      'html.gm-medication-detail-open,html.gm-medication-detail-open body{background:linear-gradient(180deg,#fff4f8 0%,#ffeef5 55%,#fff9fb 100%)!important;}',
+      'html.gm-medication-detail-open body>header,html.gm-medication-detail-open .hero,html.gm-medication-detail-open .app-header,html.gm-medication-detail-open .top-hero,html.gm-medication-detail-open [class*="hero"],html.gm-medication-detail-open [class*="banner"]{background:linear-gradient(180deg,#fff0f6,#ffe5ef)!important;}',
+      'html.gm-medication-detail-open [role="dialog"],html.gm-medication-detail-open dialog,html.gm-medication-detail-open .modal,html.gm-medication-detail-open .drug-modal,html.gm-medication-detail-open .medication-modal,html.gm-medication-detail-open .details-modal,html.gm-medication-detail-open .gm-detected-medication-dialog{visibility:visible!important;opacity:1!important;display:block;position:relative;z-index:2147483000!important;}',
+      '#gm-detail-pink-backdrop{display:none!important;}'
     ].join('');
     document.head.appendChild(style);
-  }
-
-  function ensureBackdrop(){
-    var backdrop=document.getElementById('gm-detail-pink-backdrop');
-    if(!backdrop){
-      backdrop=document.createElement('div');
-      backdrop.id='gm-detail-pink-backdrop';
-      document.body.appendChild(backdrop);
-    }
-    return backdrop;
   }
 
   function visible(node){
@@ -48,23 +36,9 @@
   }
 
   function findMedicationDialog(){
-    var preferred=Array.prototype.slice.call(document.querySelectorAll('[role="dialog"],dialog,.modal,.drug-modal,.medication-modal,.details-modal,[class*="sheet"],[class*="drawer"]'));
-    var found=preferred.find(function(node){return visible(node)&&hasDetailText(node);});
-    if(found)return found;
-
-    var textNodes=Array.prototype.slice.call(document.querySelectorAll('section,article,div'))
-      .filter(function(node){return visible(node)&&hasDetailText(node);})
-      .sort(function(a,b){return a.getBoundingClientRect().height-b.getBoundingClientRect().height;});
-    found=textNodes[0]||null;
-    if(!found)return null;
-
-    var current=found;
-    while(current&&current!==document.body){
-      var cs=getComputedStyle(current);
-      if(cs.position==='fixed'||cs.position==='absolute')return current;
-      current=current.parentElement;
-    }
-    return found;
+    var nodes=Array.prototype.slice.call(document.querySelectorAll('[role="dialog"],dialog,.modal,.drug-modal,.medication-modal,.details-modal,[class*="sheet"],[class*="drawer"],section,article'));
+    return nodes.filter(function(node){return visible(node)&&hasDetailText(node);})
+      .sort(function(a,b){return a.getBoundingClientRect().height-b.getBoundingClientRect().height;})[0]||null;
   }
 
   function updateState(){
@@ -76,8 +50,9 @@
 
   function install(){
     if(!document.body)return false;
+    var backdrop=document.getElementById('gm-detail-pink-backdrop');
+    if(backdrop)backdrop.remove();
     ensureStyle();
-    ensureBackdrop();
     updateState();
     var scheduled=false;
     var observer=new MutationObserver(function(){
@@ -86,7 +61,7 @@
       requestAnimationFrame(function(){scheduled=false;updateState();});
     });
     observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','open','aria-hidden']});
-    document.addEventListener('click',function(){setTimeout(updateState,20);setTimeout(updateState,120);setTimeout(updateState,350);},true);
+    document.addEventListener('click',function(){setTimeout(updateState,20);setTimeout(updateState,150);setTimeout(updateState,400);},true);
     return true;
   }
 
