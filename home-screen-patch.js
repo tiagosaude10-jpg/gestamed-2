@@ -261,6 +261,27 @@
       }
     }, true);
 
+    // Corrige o retorno à tela rosa: sem isso, ao fechar qualquer modal
+    // (calculadoras, fichas, etc.) o usuário ficava vendo a tela antiga por
+    // baixo, porque nada disparava showHome() de volta depois do hideHome()
+    // feito em activate(). Observa toda vez que um modal perde/ganha a
+    // classe "open" e só restaura a tela rosa quando nenhum modal segue aberto.
+    function anyModalOpen() {
+      return !!document.querySelector('.modal.open');
+    }
+    function maybeRestoreHome() {
+      if (!anyModalOpen()) showHome();
+    }
+    var modalObserver = new MutationObserver(function (mutations) {
+      var relevant = mutations.some(function (mutation) {
+        return mutation.target && mutation.target.classList && mutation.target.classList.contains('modal');
+      });
+      if (relevant) window.setTimeout(maybeRestoreHome, 60);
+    });
+    document.querySelectorAll('.modal').forEach(function (modal) {
+      modalObserver.observe(modal, { attributes: true, attributeFilter: ['class'] });
+    });
+
     return true;
   }
 
