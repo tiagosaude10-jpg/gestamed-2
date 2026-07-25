@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-home-filter-carousel-2026-07-25-156';
+  var PATCH_ID = 'gestamed-home-filter-carousel-2026-07-25-157';
   if (document.documentElement.getAttribute('data-gm-home-filter-carousel') === PATCH_ID) return;
   document.documentElement.setAttribute('data-gm-home-filter-carousel', PATCH_ID);
 
@@ -45,6 +45,19 @@
     return document.querySelector('#searchInput, input[type="search"]:not(#gm-home-search), input[placeholder*="medicamento" i], input[placeholder*="princípio" i], input[placeholder*="principio" i]');
   }
 
+  function forceHomeVisible() {
+    var home = document.getElementById('gm-home-screen');
+    var welcome = document.getElementById('gm-welcome-screen');
+    if (welcome) welcome.classList.add('gm-welcome-hidden');
+    if (home) {
+      home.classList.remove('gm-home-hidden');
+      home.style.setProperty('display','flex','important');
+      home.style.setProperty('visibility','visible','important');
+      home.style.setProperty('opacity','1','important');
+    }
+    document.documentElement.classList.add('gm-home-active','gm-home-filter-mode');
+  }
+
   function ensureResultsPanel() {
     var canvas = document.getElementById('gm-home-canvas');
     if (!canvas) return null;
@@ -53,7 +66,10 @@
     panel = document.createElement('section');
     panel.id = 'gm-home-filter-results';
     panel.innerHTML = '<div class="gm-home-results-head"><strong>Medicamentos encontrados</strong><button type="button" aria-label="Fechar resultados">×</button></div><div class="gm-home-results-list"></div>';
-    panel.querySelector('button').addEventListener('click', function(){ panel.classList.remove('gm-home-results-open'); });
+    panel.querySelector('button').addEventListener('click', function(){
+      panel.classList.remove('gm-home-results-open');
+      document.documentElement.classList.remove('gm-home-filter-mode');
+    });
     canvas.appendChild(panel);
     return panel;
   }
@@ -75,6 +91,7 @@
   }
 
   function renderResults(definition) {
+    forceHomeVisible();
     var panel = ensureResultsPanel();
     if (!panel) return;
     var list = panel.querySelector('.gm-home-results-list');
@@ -91,8 +108,13 @@
         card.textContent = text;
         card.addEventListener('click', function(){
           var home = document.getElementById('gm-home-screen');
-          if (home) home.classList.add('gm-home-hidden');
-          document.documentElement.classList.remove('gm-home-active');
+          if (home) {
+            home.style.removeProperty('display');
+            home.style.removeProperty('visibility');
+            home.style.removeProperty('opacity');
+            home.classList.add('gm-home-hidden');
+          }
+          document.documentElement.classList.remove('gm-home-active','gm-home-filter-mode');
           window.setTimeout(function(){ try { original.click(); } catch(error){} }, 30);
         });
         list.appendChild(card);
@@ -100,19 +122,23 @@
     }
     panel.querySelector('strong').textContent = definition.label;
     panel.classList.add('gm-home-results-open');
+    forceHomeVisible();
   }
 
   function runFilter(definition, button) {
     var original = findSearchInput();
     var homeSearch = document.getElementById('gm-home-search');
     if (!original) return;
+    forceHomeVisible();
     document.querySelectorAll('.gm-home-filter-chip').forEach(function(item){ item.classList.remove('gm-home-filter-active'); });
     button.classList.add('gm-home-filter-active');
     if (homeSearch) homeSearch.value = definition.term;
     original.value = definition.term;
     ['input','change','keyup'].forEach(function(type){ original.dispatchEvent(new Event(type,{bubbles:true})); });
     try { if (typeof applyFilters === 'function') applyFilters(); } catch(error){}
-    window.setTimeout(function(){ renderResults(definition); }, 120);
+    forceHomeVisible();
+    window.setTimeout(function(){ forceHomeVisible(); renderResults(definition); }, 120);
+    window.setTimeout(forceHomeVisible, 300);
   }
 
   function ensureStyle() {
@@ -120,6 +146,8 @@
     var style = document.createElement('style');
     style.id = 'gm-home-filter-carousel-style';
     style.textContent = [
+      'html.gm-home-filter-mode #gm-home-screen{display:flex!important;visibility:visible!important;opacity:1!important;z-index:2147483000!important;}',
+      'html.gm-home-filter-mode body>*:not(#gm-home-screen):not(#gm-welcome-screen){pointer-events:none!important;}',
       '#gm-home-filter-carousel{position:absolute;z-index:12;left:0;top:29.95%;width:100%;height:5.65%;display:flex;align-items:center;gap:12px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:0 3.6%;box-sizing:border-box;background:linear-gradient(180deg,#fff7f9 0%,#fff4f7 100%);-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;box-shadow:0 8px 18px -18px rgba(107,45,75,.55);}',
       '#gm-home-filter-carousel::-webkit-scrollbar{display:none;}',
       '.gm-home-filter-chip{flex:0 0 auto;scroll-snap-align:center;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:66%;min-height:34px;padding:0 17px;border:1.6px solid #cdebf4;border-radius:999px;background:#f7fcff;color:#245b78;font:700 clamp(11px,2.45vw,17px)/1 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;box-shadow:0 3px 9px rgba(68,86,110,.10);}',
@@ -174,7 +202,6 @@
 
   var attempts=0;
   function start(){ attempts+=1; if(buildCarousel()||attempts>=100)return; window.setTimeout(start,120); }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
-  var observer=new MutationObserver(function(){ if(!document.getElementById('gm-home-filter-carousel'))buildCarousel(); });
-  observer.observe(document.documentElement,{childList:true,subtree:true});
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+  new MutationObserver(function(){ if(!document.getElementById('gm-home-filter-carousel')) buildCarousel(); }).observe(document.documentElement,{childList:true,subtree:true});
 })();
