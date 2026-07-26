@@ -1,8 +1,8 @@
 (function(){
 'use strict';
-var PATCH_ID='gestamed-home-layout-2026-07-26-174';
+var PATCH_ID='gestamed-home-layout-2026-07-26-175';
 document.documentElement.setAttribute('data-gm-home-layout',PATCH_ID);
-var IMAGE='82C97BF6-BD23-42D5-96F0-3A8D3158D51A.png?v=174';
+var IMAGE='82C97BF6-BD23-42D5-96F0-3A8D3158D51A.png?v=175';
 var CID_URL='https://laboratoriocid.com.br/logins/login';
 
 function pct(el,top,height,left,width){
@@ -13,10 +13,24 @@ function pct(el,top,height,left,width){
  if(width!==null)el.style.setProperty('width',width+'%','important');
 }
 function byLabel(label){return document.querySelector('.gm-home-hotspot[aria-label="'+label+'"]');}
+function ensureFixStyle(){
+ var old=document.getElementById('gm-home-layout-v175-style');
+ if(old)old.remove();
+ var style=document.createElement('style');
+ style.id='gm-home-layout-v175-style';
+ style.textContent=[
+  '#gm-home-filter-carousel{z-index:40!important;box-sizing:border-box!important;background:linear-gradient(180deg,#fff8fa 0%,#fff4f7 100%)!important;border:0!important;box-shadow:none!important;overflow-x:auto!important;overflow-y:hidden!important;}',
+  '#gm-home-filter-carousel .gm-home-filter-chip{height:70%!important;min-height:34px!important;margin:0!important;}',
+  '#gm-home-filter-carousel::before,#gm-home-filter-carousel::after{display:none!important;}',
+  '#gm-home-screen .gm-filter-strip{visibility:hidden!important;pointer-events:none!important;}'
+ ].join('');
+ document.head.appendChild(style);
+}
 function apply(){
  var canvas=document.getElementById('gm-home-canvas');
  var image=document.getElementById('gm-home-image');
  if(!canvas||!image)return false;
+ ensureFixStyle();
  image.src=IMAGE;
  canvas.style.setProperty('aspect-ratio','832/1792','important');
  image.style.setProperty('object-fit','fill','important');
@@ -24,9 +38,9 @@ function apply(){
  pct(search,25.0,3.9,8.8,79.5);
  var carousel=document.getElementById('gm-home-filter-carousel');
  if(carousel){
-  pct(carousel,30.65,4.75,0,100);
-  carousel.style.setProperty('background','transparent','important');
+  pct(carousel,30.7,4.35,0,100);
   carousel.style.setProperty('padding','0 3.3%','important');
+  carousel.style.setProperty('gap','10px','important');
  }
  var map={
   'Agenda':[38.25,7.8,3.2,17.7],
@@ -49,8 +63,8 @@ function apply(){
  };
  Object.keys(map).forEach(function(label){var v=map[label];pct(byLabel(label),v[0],v[1],v[2],v[3]);});
  var cid=byLabel('Consulta de Exames — CID');
- if(cid&&!cid.getAttribute('data-v174-cid')){
-  cid.setAttribute('data-v174-cid','1');
+ if(cid&&!cid.getAttribute('data-v175-cid')){
+  cid.setAttribute('data-v175-cid','1');
   cid.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var w=window.open(CID_URL,'_blank','noopener,noreferrer');if(!w)window.location.href=CID_URL;},true);
  }
  return true;
