@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-179';
+  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-180';
   var MODULE_ID = 'gm-dmg-module';
   var TARGET_LABELS = ['cálculo de insulina', 'calculo de insulina', 'diabetes mellitus gestacional', 'dmg'];
 
@@ -9,18 +9,12 @@
   document.documentElement.setAttribute('data-gm-dmg-module', PATCH_ID);
 
   function normalize(value) {
-    return String(value || '')
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase().replace(/[^a-z0-9]+/g, ' ')
-      .replace(/\s+/g, ' ').trim();
+    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
   function showHome() {
     var home = document.getElementById('gm-home-screen');
-    if (home) {
-      home.classList.remove('gm-home-hidden');
-      home.scrollTop = 0;
-    }
+    if (home) { home.classList.remove('gm-home-hidden'); home.scrollTop = 0; }
     document.documentElement.classList.add('gm-home-active');
   }
 
@@ -40,27 +34,20 @@
 
   function clearModule() {
     var weight = document.getElementById('gm-dmg-weight');
-    if (weight) {
-      weight.value = '';
-      weight.focus();
-    }
+    if (weight) { weight.value = ''; weight.focus(); }
     try { localStorage.removeItem('gm-dmg-weight'); } catch (error) {}
   }
 
   function calculateDose() {
     var weight = document.getElementById('gm-dmg-weight');
     var value = Number(String(weight && weight.value || '').replace(',', '.'));
+    var warning = document.getElementById('gm-dmg-weight-warning');
     if (!Number.isFinite(value) || value <= 0 || value > 300) {
-      if (weight) {
-        weight.setAttribute('aria-invalid', 'true');
-        weight.focus();
-      }
-      var warning = document.getElementById('gm-dmg-weight-warning');
+      if (weight) { weight.setAttribute('aria-invalid', 'true'); weight.focus(); }
       if (warning) warning.hidden = false;
       return;
     }
     weight.removeAttribute('aria-invalid');
-    var warning = document.getElementById('gm-dmg-weight-warning');
     if (warning) warning.hidden = true;
     try { localStorage.setItem('gm-dmg-weight', String(value)); } catch (error) {}
     var future = document.getElementById('gm-dmg-next-block');
@@ -68,47 +55,39 @@
   }
 
   function ensureStyle() {
-    if (document.getElementById('gm-dmg-module-style')) return;
+    var old = document.getElementById('gm-dmg-module-style');
+    if (old) old.remove();
     var style = document.createElement('style');
     style.id = 'gm-dmg-module-style';
     style.textContent = [
-      '#' + MODULE_ID + '{position:fixed;inset:0;z-index:2147483550;background:#fff7fa;display:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#111831;}',
+      '#' + MODULE_ID + '{position:fixed;inset:0;z-index:2147483550;background:#fff7fa;display:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#12182d;}',
       '#' + MODULE_ID + '.gm-dmg-open{display:block;}',
-      '.gm-dmg-shell{width:min(100%,760px);min-height:100%;margin:0 auto;background:linear-gradient(180deg,#fffafd 0%,#fff 45%,#fff6fa 100%);box-shadow:0 0 44px rgba(124,34,77,.10);}',
-      '.gm-dmg-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:max(16px,env(safe-area-inset-top)) 28px 12px;background:rgba(255,250,253,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(238,78,146,.08);}',
-      '.gm-dmg-top button{min-height:46px;border:1.5px solid #f6c5d9;background:rgba(255,255,255,.92);color:#ec2678;border-radius:999px;font-size:17px;font-weight:800;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 5px 16px rgba(230,67,132,.05);}',
-      '.gm-dmg-top .gm-dmg-close{justify-self:end;width:48px;padding:0;font-size:30px;font-weight:400;}',
-      '.gm-dmg-section{padding:28px 30px 34px;}',
-      '.gm-dmg-hero{display:grid;grid-template-columns:122px minmax(0,1fr) 150px;align-items:center;gap:20px;margin-bottom:26px;}',
-      '.gm-dmg-drop{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#fff 0,#fff1f6 55%,#fde3ed 100%);box-shadow:inset 0 0 0 1px rgba(238,51,126,.06);}',
-      '.gm-dmg-drop span{font-size:67px;filter:saturate(1.1);}',
-      '.gm-dmg-title h1{margin:0;font-size:clamp(31px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;color:#10162e;}',
-      '.gm-dmg-title h1 em{display:block;color:#ee3b83;font-style:normal;}',
-      '.gm-dmg-title p{margin:17px 0 0;color:#ef3f86;font-size:clamp(16px,2.8vw,22px);font-weight:800;letter-spacing:.015em;}',
-      '.gm-dmg-mother{width:150px;height:230px;position:relative;align-self:end;}',
-      '.gm-dmg-mother:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 58% 26%,transparent 0 20px,#ef4f91 21px 23px,transparent 24px),radial-gradient(ellipse at 50% 59%,transparent 0 48px,#ef4f91 49px 51px,transparent 52px),radial-gradient(circle at 48% 64%,#ef4f91 0 13px,transparent 14px);opacity:.88;}',
-      '.gm-dmg-mother:after{content:"";position:absolute;left:14px;right:0;bottom:0;height:76px;background:radial-gradient(ellipse at center,#e8f0d7 0 4px,transparent 5px) 0 0/28px 28px;opacity:.55;}',
-      '.gm-dmg-card{border-radius:23px;padding:26px 28px;margin:0 0 24px;border:1.5px solid;box-shadow:0 10px 28px rgba(76,45,70,.045);font-size:clamp(17px,2.8vw,22px);line-height:1.48;}',
-      '.gm-dmg-card-inner{display:grid;grid-template-columns:58px 1fr;gap:20px;align-items:start;}',
-      '.gm-dmg-card-icon{font-size:43px;line-height:1;text-align:center;padding-top:2px;}',
-      '.gm-dmg-info{background:linear-gradient(135deg,#f6f9ff,#eef4ff);border-color:#cbdcff;color:#26334a;}',
+      '.gm-dmg-shell{width:min(100%,430px);min-height:100%;margin:0 auto;background:linear-gradient(180deg,#fffafd 0%,#fff 52%,#fff7fa 100%);box-shadow:0 0 28px rgba(124,34,77,.08);}',
+      '.gm-dmg-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) 14px 9px;background:rgba(255,250,253,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(238,78,146,.07);}',
+      '.gm-dmg-top button{min-height:38px;border:1px solid #f6c7da;background:#fff;color:#ec2678;border-radius:999px;font-size:14px;font-weight:800;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(230,67,132,.04);}',
+      '.gm-dmg-top .gm-dmg-close{justify-self:end;width:40px;padding:0;font-size:26px;font-weight:400;}',
+      '.gm-dmg-section{padding:12px 14px 24px;}',
+      '.gm-dmg-hero-banner{width:100%;height:auto;display:block;border-radius:18px;margin:2px 0 14px;box-shadow:0 7px 20px rgba(105,38,73,.06);}',
+      '.gm-dmg-card{border-radius:17px;padding:16px 16px;margin:0 0 13px;border:1px solid;box-shadow:0 6px 18px rgba(76,45,70,.035);font-size:14px;line-height:1.46;}',
+      '.gm-dmg-card-inner{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;}',
+      '.gm-dmg-card-icon{font-size:27px;line-height:1;text-align:center;padding-top:1px;}',
+      '.gm-dmg-info{background:linear-gradient(135deg,#f7faff,#eef4ff);border-color:#cfddf8;color:#29364d;}',
       '.gm-dmg-info strong,.gm-dmg-info a{color:#1260d6;}',
-      '.gm-dmg-info a{display:inline-block;margin-top:25px;font-weight:700;text-underline-offset:5px;}',
-      '.gm-dmg-warning{background:linear-gradient(135deg,#fffaf0,#fff5e8);border-color:#f5d8a5;color:#312b2a;}',
-      '.gm-dmg-form{background:linear-gradient(135deg,#fffafd,#fff4f8);border-color:#f4c7d9;padding:25px 24px;}',
-      '.gm-dmg-label{display:flex;align-items:center;gap:11px;color:#d92a6b;font-weight:900;font-size:clamp(16px,2.6vw,20px);text-transform:uppercase;margin-bottom:15px;}',
+      '.gm-dmg-info a{display:inline-block;margin-top:13px;font-weight:750;text-underline-offset:4px;}',
+      '.gm-dmg-warning{background:linear-gradient(135deg,#fffaf2,#fff6ea);border-color:#f1dab0;color:#302a28;}',
+      '.gm-dmg-form{background:linear-gradient(135deg,#fffafd,#fff4f8);border-color:#f2c8d9;padding:15px;}',
+      '.gm-dmg-label{display:flex;align-items:center;gap:8px;color:#d92a6b;font-weight:900;font-size:14px;text-transform:uppercase;margin-bottom:10px;}',
       '.gm-dmg-input-wrap{position:relative;}',
-      '.gm-dmg-input-wrap input{width:100%;height:76px;border:1.8px solid #efbfd2;border-radius:18px;background:#fff;font-size:clamp(21px,4vw,29px);color:#252d43;padding:0 70px 0 22px;outline:none;box-sizing:border-box;}',
-      '.gm-dmg-input-wrap input:focus{border-color:#ec3d83;box-shadow:0 0 0 4px rgba(236,61,131,.10);}',
-      '.gm-dmg-unit{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:#e63e7f;background:#fff2f7;border:1px solid #f5cede;border-radius:9px;padding:5px 7px;font-weight:900;}',
-      '#gm-dmg-weight-warning{color:#b42318;font-size:14px;font-weight:700;margin:9px 0 0;}',
-      '.gm-dmg-calc{width:100%;height:86px;border:0;border-radius:20px;background:linear-gradient(90deg,#f22c7d,#ec2d75 55%,#ef4389);color:white;font-size:clamp(20px,3.8vw,28px);font-weight:900;display:flex;align-items:center;justify-content:center;gap:15px;box-shadow:0 16px 30px rgba(232,42,117,.20);margin:2px 0 27px;}',
-      '.gm-dmg-calc span{font-size:32px;}',
-      '.gm-dmg-footer-card{display:grid;grid-template-columns:52px 1fr 60px;align-items:center;gap:15px;background:linear-gradient(135deg,#fff3f7,#fcebf2);border:1px solid #f4d4e0;border-radius:23px;padding:24px 26px;color:#617089;font-size:clamp(15px,2.5vw,19px);line-height:1.45;}',
-      '.gm-dmg-footer-card .shield,.gm-dmg-footer-card .book{font-size:38px;color:#ef4f91;text-align:center;}',
-      '#gm-dmg-next-block{min-height:24px;scroll-margin-top:92px;}',
-      '@media(max-width:560px){.gm-dmg-top{padding-left:18px;padding-right:18px}.gm-dmg-top button{min-height:42px;padding:0 14px;font-size:15px}.gm-dmg-section{padding:23px 18px 30px}.gm-dmg-hero{grid-template-columns:83px 1fr 92px;gap:12px}.gm-dmg-drop{width:80px;height:80px}.gm-dmg-drop span{font-size:48px}.gm-dmg-mother{width:92px;height:154px}.gm-dmg-card{padding:20px 18px;border-radius:20px}.gm-dmg-card-inner{grid-template-columns:42px 1fr;gap:13px}.gm-dmg-card-icon{font-size:33px}.gm-dmg-input-wrap input{height:66px}.gm-dmg-calc{height:72px;border-radius:18px}.gm-dmg-footer-card{grid-template-columns:40px 1fr 43px;padding:19px 17px}.gm-dmg-footer-card .shield,.gm-dmg-footer-card .book{font-size:30px}}',
-      '@media(max-width:365px){.gm-dmg-top{grid-template-columns:1fr 1fr auto}.gm-dmg-top button{font-size:14px;padding:0 11px}.gm-dmg-hero{grid-template-columns:68px 1fr}.gm-dmg-mother{display:none}.gm-dmg-drop{width:66px;height:66px}.gm-dmg-drop span{font-size:39px}}'
+      '.gm-dmg-input-wrap input{width:100%;height:54px;border:1.4px solid #efbfd2;border-radius:14px;background:#fff;font-size:18px;color:#252d43;padding:0 55px 0 16px;outline:none;box-sizing:border-box;}',
+      '.gm-dmg-input-wrap input:focus{border-color:#ec3d83;box-shadow:0 0 0 3px rgba(236,61,131,.09);}',
+      '.gm-dmg-unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#e63e7f;background:#fff2f7;border:1px solid #f5cede;border-radius:8px;padding:3px 6px;font-size:13px;font-weight:900;}',
+      '#gm-dmg-weight-warning{color:#b42318;font-size:12px;font-weight:700;margin:7px 0 0;}',
+      '.gm-dmg-calc{width:100%;height:58px;border:0;border-radius:15px;background:linear-gradient(90deg,#f22c7d,#ec2d75 55%,#ef4389);color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 22px rgba(232,42,117,.16);margin:1px 0 14px;}',
+      '.gm-dmg-calc span{font-size:23px;}',
+      '.gm-dmg-footer-card{display:grid;grid-template-columns:32px 1fr 34px;align-items:center;gap:9px;background:linear-gradient(135deg,#fff3f7,#fcebf2);border:1px solid #f4d4e0;border-radius:17px;padding:14px 15px;color:#617089;font-size:13px;line-height:1.42;}',
+      '.gm-dmg-footer-card .shield,.gm-dmg-footer-card .book{font-size:25px;color:#ef4f91;text-align:center;}',
+      '#gm-dmg-next-block{min-height:18px;scroll-margin-top:74px;}',
+      '@media(max-width:360px){.gm-dmg-top{padding-left:10px;padding-right:10px}.gm-dmg-top button{font-size:13px;padding:0 10px}.gm-dmg-section{padding-left:10px;padding-right:10px}.gm-dmg-card{font-size:13px;padding:14px}.gm-dmg-card-inner{grid-template-columns:30px 1fr;gap:9px}.gm-dmg-card-icon{font-size:24px}.gm-dmg-calc{font-size:16px}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -129,11 +108,7 @@
           '<button type="button" class="gm-dmg-close" data-gm-dmg-close aria-label="Fechar">×</button>',
         '</header>',
         '<main class="gm-dmg-section">',
-          '<section class="gm-dmg-hero" aria-labelledby="gm-dmg-title">',
-            '<div class="gm-dmg-drop" aria-hidden="true"><span>🩸</span></div>',
-            '<div class="gm-dmg-title"><h1 id="gm-dmg-title">Diabetes Mellitus <em>Gestacional (DMG)</em></h1><p>ASSISTENTE CLÍNICO COMPLETO</p></div>',
-            '<div class="gm-dmg-mother" aria-hidden="true"></div>',
-          '</section>',
+          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=180" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
           '<section class="gm-dmg-card gm-dmg-info">',
             '<div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">ⓘ</div><div>Conteúdo baseado na <strong>Diretriz da Sociedade Brasileira de Diabetes (SBD) — Edição 2025</strong>, <strong>FEBRASGO</strong> e <strong>Ministério da Saúde</strong>.<br><br>Cada recomendação abaixo traz a classe e o nível de evidência originais.<br><a href="https://doi.org/10.29327/557753.2022-13" target="_blank" rel="noopener noreferrer">Ver diretriz completa ↗</a></div></div>',
           '</section>',
