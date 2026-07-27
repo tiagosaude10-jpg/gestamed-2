@@ -1,9 +1,12 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-180';
+  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-181';
   var MODULE_ID = 'gm-dmg-module';
   var TARGET_LABELS = ['cálculo de insulina', 'calculo de insulina', 'diabetes mellitus gestacional', 'dmg'];
+  var bypassIntercept = false;
+  var legacyActive = false;
+  var legacyObserver = null;
 
   if (document.documentElement.getAttribute('data-gm-dmg-module') === PATCH_ID) return;
   document.documentElement.setAttribute('data-gm-dmg-module', PATCH_ID);
@@ -24,6 +27,17 @@
     document.documentElement.classList.remove('gm-home-active');
   }
 
+  function showNewModuleAtSavedPosition() {
+    var module = document.getElementById(MODULE_ID);
+    if (!module) return;
+    hideHome();
+    module.classList.add('gm-dmg-open');
+    module.style.display = '';
+    document.documentElement.classList.add('gm-dmg-active');
+    document.body.style.overflow = 'hidden';
+    legacyActive = false;
+  }
+
   function closeModule() {
     var module = document.getElementById(MODULE_ID);
     if (module) module.classList.remove('gm-dmg-open');
@@ -38,6 +52,90 @@
     try { localStorage.removeItem('gm-dmg-weight'); } catch (error) {}
   }
 
+  function findLegacyTrigger() {
+    var candidates = Array.prototype.slice.call(document.querySelectorAll('button,a,[role="button"],[onclick]'));
+    return candidates.find(function (element) {
+      if (element.closest && element.closest('#' + MODULE_ID + ',#gm-home-screen,#gm-welcome-screen')) return false;
+      var text = normalize((element.getAttribute('aria-label') || '') + ' ' + (element.getAttribute('title') || '') + ' ' + (element.textContent || ''));
+      return TARGET_LABELS.some(function (label) { return text.indexOf(normalize(label)) !== -1; });
+    }) || null;
+  }
+
+  function visible(element) {
+    if (!element) return false;
+    var style = window.getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+  }
+
+  function fillLegacyWeight(value) {
+    var inputs = Array.prototype.slice.call(document.querySelectorAll('input')).filter(visible);
+    var weightInput = inputs.find(function (input) {
+      var context = normalize((input.placeholder || '') + ' ' + (input.getAttribute('aria-label') || '') + ' ' + (input.name || '') + ' ' + (input.id || '') + ' ' + ((input.parentElement && input.parentElement.textContent) || ''));
+      return context.indexOf('peso') !== -1 || context.indexOf('68 5') !== -1;
+    });
+    if (!weightInput) return false;
+    weightInput.value = String(value).replace('.', ',');
+    ['input','change','keyup'].forEach(function (type) { weightInput.dispatchEvent(new Event(type, { bubbles: true })); });
+    return true;
+  }
+
+  function clickLegacyCalculate() {
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('button,a,[role="button"]')).filter(visible);
+    var calculate = buttons.find(function (button) {
+      if (button.closest && button.closest('#' + MODULE_ID)) return false;
+      var text = normalize((button.textContent || '') + ' ' + (button.getAttribute('aria-label') || ''));
+      return text.indexOf('calcular') !== -1 && (text.indexOf('insulina') !== -1 || text.indexOf('dose') !== -1);
+    });
+    if (!calculate) return false;
+    bypassIntercept = true;
+    try { calculate.click(); } finally { window.setTimeout(function () { bypassIntercept = false; }, 80); }
+    return true;
+  }
+
+  function legacyModalIsOpen() {
+    return Array.prototype.slice.call(document.querySelectorAll('.modal,.sheet,[role="dialog"]')).some(function (element) {
+      return element.id !== MODULE_ID && visible(element);
+    });
+  }
+
+  function watchLegacyClose() {
+    if (legacyObserver) legacyObserver.disconnect();
+    legacyObserver = new MutationObserver(function () {
+      if (!legacyActive) return;
+      window.setTimeout(function () {
+        if (legacyActive && !legacyModalIsOpen()) showNewModuleAtSavedPosition();
+      }, 80);
+    });
+    legacyObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class','style','hidden'] });
+  }
+
+  function openLegacyCalculator(value) {
+    var trigger = findLegacyTrigger();
+    if (!trigger) return false;
+    var module = document.getElementById(MODULE_ID);
+    if (module) module.style.display = 'none';
+    document.documentElement.classList.remove('gm-dmg-active');
+    document.body.style.overflow = '';
+    legacyActive = true;
+    watchLegacyClose();
+    bypassIntercept = true;
+    try { trigger.click(); } finally { window.setTimeout(function () { bypassIntercept = false; }, 100); }
+
+    var attempts = 0;
+    function prepareLegacy() {
+      attempts += 1;
+      var filled = fillLegacyWeight(value);
+      if (filled) {
+        window.setTimeout(clickLegacyCalculate, 100);
+        return;
+      }
+      if (attempts < 40) window.setTimeout(prepareLegacy, 100);
+      else showNewModuleAtSavedPosition();
+    }
+    window.setTimeout(prepareLegacy, 120);
+    return true;
+  }
+
   function calculateDose() {
     var weight = document.getElementById('gm-dmg-weight');
     var value = Number(String(weight && weight.value || '').replace(',', '.'));
@@ -50,8 +148,9 @@
     weight.removeAttribute('aria-invalid');
     if (warning) warning.hidden = true;
     try { localStorage.setItem('gm-dmg-weight', String(value)); } catch (error) {}
-    var future = document.getElementById('gm-dmg-next-block');
-    if (future) future.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!openLegacyCalculator(value)) {
+      if (warning) { warning.textContent = 'A calculadora anterior não foi localizada. Feche e abra o aplicativo novamente.'; warning.hidden = false; }
+    }
   }
 
   function ensureStyle() {
@@ -68,7 +167,7 @@
       '.gm-dmg-top .gm-dmg-close{justify-self:end;width:40px;padding:0;font-size:26px;font-weight:400;}',
       '.gm-dmg-section{padding:12px 14px 24px;}',
       '.gm-dmg-hero-banner{width:100%;height:auto;display:block;border-radius:18px;margin:2px 0 14px;box-shadow:0 7px 20px rgba(105,38,73,.06);}',
-      '.gm-dmg-card{border-radius:17px;padding:16px 16px;margin:0 0 13px;border:1px solid;box-shadow:0 6px 18px rgba(76,45,70,.035);font-size:14px;line-height:1.46;}',
+      '.gm-dmg-card{border-radius:17px;padding:16px;margin:0 0 13px;border:1px solid;box-shadow:0 6px 18px rgba(76,45,70,.035);font-size:14px;line-height:1.46;}',
       '.gm-dmg-card-inner{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;}',
       '.gm-dmg-card-icon{font-size:27px;line-height:1;text-align:center;padding-top:1px;}',
       '.gm-dmg-info{background:linear-gradient(135deg,#f7faff,#eef4ff);border-color:#cfddf8;color:#29364d;}',
@@ -108,18 +207,10 @@
           '<button type="button" class="gm-dmg-close" data-gm-dmg-close aria-label="Fechar">×</button>',
         '</header>',
         '<main class="gm-dmg-section">',
-          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=180" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
-          '<section class="gm-dmg-card gm-dmg-info">',
-            '<div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">ⓘ</div><div>Conteúdo baseado na <strong>Diretriz da Sociedade Brasileira de Diabetes (SBD) — Edição 2025</strong>, <strong>FEBRASGO</strong> e <strong>Ministério da Saúde</strong>.<br><br>Cada recomendação abaixo traz a classe e o nível de evidência originais.<br><a href="https://doi.org/10.29327/557753.2022-13" target="_blank" rel="noopener noreferrer">Ver diretriz completa ↗</a></div></div>',
-          '</section>',
-          '<section class="gm-dmg-card gm-dmg-warning">',
-            '<div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">⚠️</div><div>Este módulo é <strong>apoio de referência</strong>, não uma prescrição automática. Toda dose de insulina ou metformina deve ser validada, ajustada e monitorada por médico/enfermeiro obstetra ou endocrinologista responsável pelo caso. <strong>Nunca inicie ou altere tratamento de diabetes gestacional com base apenas neste app.</strong></div></div>',
-          '</section>',
-          '<section class="gm-dmg-card gm-dmg-form">',
-            '<label class="gm-dmg-label" for="gm-dmg-weight"><span aria-hidden="true">⚖️</span> Peso atual da gestante (kg)</label>',
-            '<div class="gm-dmg-input-wrap"><input id="gm-dmg-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 68,5" aria-describedby="gm-dmg-weight-warning"><span class="gm-dmg-unit">kg</span></div>',
-            '<p id="gm-dmg-weight-warning" hidden>Informe um peso válido entre 1 e 300 kg.</p>',
-          '</section>',
+          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=181" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
+          '<section class="gm-dmg-card gm-dmg-info"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">ⓘ</div><div>Conteúdo baseado na <strong>Diretriz da Sociedade Brasileira de Diabetes (SBD) — Edição 2025</strong>, <strong>FEBRASGO</strong> e <strong>Ministério da Saúde</strong>.<br><br>Cada recomendação abaixo traz a classe e o nível de evidência originais.<br><a href="https://doi.org/10.29327/557753.2022-13" target="_blank" rel="noopener noreferrer">Ver diretriz completa ↗</a></div></div></section>',
+          '<section class="gm-dmg-card gm-dmg-warning"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">⚠️</div><div>Este módulo é <strong>apoio de referência</strong>, não uma prescrição automática. Toda dose de insulina ou metformina deve ser validada, ajustada e monitorada por médico/enfermeiro obstetra ou endocrinologista responsável pelo caso. <strong>Nunca inicie ou altere tratamento de diabetes gestacional com base apenas neste app.</strong></div></div></section>',
+          '<section class="gm-dmg-card gm-dmg-form"><label class="gm-dmg-label" for="gm-dmg-weight"><span aria-hidden="true">⚖️</span> Peso atual da gestante (kg)</label><div class="gm-dmg-input-wrap"><input id="gm-dmg-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 68,5" aria-describedby="gm-dmg-weight-warning"><span class="gm-dmg-unit">kg</span></div><p id="gm-dmg-weight-warning" hidden>Informe um peso válido entre 1 e 300 kg.</p></section>',
           '<button type="button" class="gm-dmg-calc" id="gm-dmg-calculate"><span aria-hidden="true">▦</span>Calcular dose de insulina <b aria-hidden="true">→</b></button>',
           '<section class="gm-dmg-footer-card"><div class="shield" aria-hidden="true">♢</div><div>Ferramenta educacional para apoiar sua decisão clínica e otimizar o cuidado da gestante com DMG.</div><div class="book" aria-hidden="true">▤</div></section>',
           '<div id="gm-dmg-next-block" aria-label="Espaço reservado para a próxima etapa do módulo"></div>',
@@ -133,7 +224,7 @@
     module.querySelector('#gm-dmg-weight').addEventListener('input', function () {
       this.removeAttribute('aria-invalid');
       var warning = document.getElementById('gm-dmg-weight-warning');
-      if (warning) warning.hidden = true;
+      if (warning) { warning.textContent = 'Informe um peso válido entre 1 e 300 kg.'; warning.hidden = true; }
     });
   }
 
@@ -142,6 +233,7 @@
     hideHome();
     var module = document.getElementById(MODULE_ID);
     module.classList.add('gm-dmg-open');
+    module.style.display = '';
     module.scrollTop = 0;
     document.documentElement.classList.add('gm-dmg-active');
     document.body.style.overflow = 'hidden';
@@ -158,6 +250,7 @@
   }
 
   document.addEventListener('click', function (event) {
+    if (bypassIntercept) return;
     var target = event.target && event.target.closest ? event.target.closest('button,a,[role="button"],[onclick]') : null;
     if (!target || target.closest('#' + MODULE_ID)) return;
     if (!isDmgTrigger(target)) return;
@@ -165,6 +258,16 @@
     event.stopPropagation();
     if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     openModule();
+  }, true);
+
+  document.addEventListener('click', function (event) {
+    if (!legacyActive) return;
+    var button = event.target && event.target.closest ? event.target.closest('button,a,[role="button"]') : null;
+    if (!button || button.closest('#' + MODULE_ID)) return;
+    var text = normalize((button.textContent || '') + ' ' + (button.getAttribute('aria-label') || '') + ' ' + (button.getAttribute('title') || ''));
+    if (text === 'x' || text.indexOf('fechar') !== -1 || text.indexOf('voltar') !== -1 || text.indexOf('cancelar') !== -1) {
+      window.setTimeout(function () { if (legacyActive && !legacyModalIsOpen()) showNewModuleAtSavedPosition(); }, 180);
+    }
   }, true);
 
   function start() {
