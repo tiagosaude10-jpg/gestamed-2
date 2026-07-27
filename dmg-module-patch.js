@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-181';
+  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-182';
   var MODULE_ID = 'gm-dmg-module';
   var TARGET_LABELS = ['cálculo de insulina', 'calculo de insulina', 'diabetes mellitus gestacional', 'dmg'];
   var bypassIntercept = false;
@@ -166,7 +166,9 @@
       '.gm-dmg-top button{min-height:38px;border:1px solid #f6c7da;background:#fff;color:#ec2678;border-radius:999px;font-size:14px;font-weight:800;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(230,67,132,.04);}',
       '.gm-dmg-top .gm-dmg-close{justify-self:end;width:40px;padding:0;font-size:26px;font-weight:400;}',
       '.gm-dmg-section{padding:12px 14px 24px;}',
-      '.gm-dmg-hero-banner{width:100%;height:auto;display:block;border-radius:18px;margin:2px 0 14px;box-shadow:0 7px 20px rgba(105,38,73,.06);}',
+      '.gm-dmg-hero-banner,.gm-dmg-footer-banner{width:100%;height:auto;display:block;border-radius:18px;box-shadow:0 7px 20px rgba(105,38,73,.06);}',
+      '.gm-dmg-hero-banner{margin:2px 0 14px;}',
+      '.gm-dmg-footer-banner{margin:0 0 4px;}',
       '.gm-dmg-card{border-radius:17px;padding:16px;margin:0 0 13px;border:1px solid;box-shadow:0 6px 18px rgba(76,45,70,.035);font-size:14px;line-height:1.46;}',
       '.gm-dmg-card-inner{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;}',
       '.gm-dmg-card-icon{font-size:27px;line-height:1;text-align:center;padding-top:1px;}',
@@ -183,8 +185,6 @@
       '#gm-dmg-weight-warning{color:#b42318;font-size:12px;font-weight:700;margin:7px 0 0;}',
       '.gm-dmg-calc{width:100%;height:58px;border:0;border-radius:15px;background:linear-gradient(90deg,#f22c7d,#ec2d75 55%,#ef4389);color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 22px rgba(232,42,117,.16);margin:1px 0 14px;}',
       '.gm-dmg-calc span{font-size:23px;}',
-      '.gm-dmg-footer-card{display:grid;grid-template-columns:32px 1fr 34px;align-items:center;gap:9px;background:linear-gradient(135deg,#fff3f7,#fcebf2);border:1px solid #f4d4e0;border-radius:17px;padding:14px 15px;color:#617089;font-size:13px;line-height:1.42;}',
-      '.gm-dmg-footer-card .shield,.gm-dmg-footer-card .book{font-size:25px;color:#ef4f91;text-align:center;}',
       '#gm-dmg-next-block{min-height:18px;scroll-margin-top:74px;}',
       '@media(max-width:360px){.gm-dmg-top{padding-left:10px;padding-right:10px}.gm-dmg-top button{font-size:13px;padding:0 10px}.gm-dmg-section{padding-left:10px;padding-right:10px}.gm-dmg-card{font-size:13px;padding:14px}.gm-dmg-card-inner{grid-template-columns:30px 1fr;gap:9px}.gm-dmg-card-icon{font-size:24px}.gm-dmg-calc{font-size:16px}}'
     ].join('');
@@ -207,12 +207,12 @@
           '<button type="button" class="gm-dmg-close" data-gm-dmg-close aria-label="Fechar">×</button>',
         '</header>',
         '<main class="gm-dmg-section">',
-          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=181" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
+          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=182" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
           '<section class="gm-dmg-card gm-dmg-info"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">ⓘ</div><div>Conteúdo baseado na <strong>Diretriz da Sociedade Brasileira de Diabetes (SBD) — Edição 2025</strong>, <strong>FEBRASGO</strong> e <strong>Ministério da Saúde</strong>.<br><br>Cada recomendação abaixo traz a classe e o nível de evidência originais.<br><a href="https://doi.org/10.29327/557753.2022-13" target="_blank" rel="noopener noreferrer">Ver diretriz completa ↗</a></div></div></section>',
           '<section class="gm-dmg-card gm-dmg-warning"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">⚠️</div><div>Este módulo é <strong>apoio de referência</strong>, não uma prescrição automática. Toda dose de insulina ou metformina deve ser validada, ajustada e monitorada por médico/enfermeiro obstetra ou endocrinologista responsável pelo caso. <strong>Nunca inicie ou altere tratamento de diabetes gestacional com base apenas neste app.</strong></div></div></section>',
           '<section class="gm-dmg-card gm-dmg-form"><label class="gm-dmg-label" for="gm-dmg-weight"><span aria-hidden="true">⚖️</span> Peso atual da gestante (kg)</label><div class="gm-dmg-input-wrap"><input id="gm-dmg-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 68,5" aria-describedby="gm-dmg-weight-warning"><span class="gm-dmg-unit">kg</span></div><p id="gm-dmg-weight-warning" hidden>Informe um peso válido entre 1 e 300 kg.</p></section>',
           '<button type="button" class="gm-dmg-calc" id="gm-dmg-calculate"><span aria-hidden="true">▦</span>Calcular dose de insulina <b aria-hidden="true">→</b></button>',
-          '<section class="gm-dmg-footer-card"><div class="shield" aria-hidden="true">♢</div><div>Ferramenta educacional para apoiar sua decisão clínica e otimizar o cuidado da gestante com DMG.</div><div class="book" aria-hidden="true">▤</div></section>',
+          '<img class="gm-dmg-footer-banner" src="IMG_1617.png?v=182" alt="Ferramenta educacional para apoiar sua decisão clínica e otimizar o cuidado da gestante com DMG">',
           '<div id="gm-dmg-next-block" aria-label="Espaço reservado para a próxima etapa do módulo"></div>',
         '</main>',
       '</div>'
