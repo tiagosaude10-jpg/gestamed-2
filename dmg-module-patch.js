@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-183';
+  var PATCH_ID = 'gestamed-dmg-module-2026-07-27-184';
   var MODULE_ID = 'gm-dmg-module';
   var TARGET_LABELS = ['cálculo de insulina', 'calculo de insulina', 'diabetes mellitus gestacional', 'dmg'];
   var bypassIntercept = false;
@@ -52,6 +52,12 @@
     try { localStorage.removeItem('gm-dmg-weight'); } catch (error) {}
   }
 
+  function visible(element) {
+    if (!element) return false;
+    var style = window.getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
+  }
+
   function findLegacyTrigger() {
     var candidates = Array.prototype.slice.call(document.querySelectorAll('button,a,[role="button"],[onclick]'));
     return candidates.find(function (element) {
@@ -59,12 +65,6 @@
       var text = normalize((element.getAttribute('aria-label') || '') + ' ' + (element.getAttribute('title') || '') + ' ' + (element.textContent || ''));
       return TARGET_LABELS.some(function (label) { return text.indexOf(normalize(label)) !== -1; });
     }) || null;
-  }
-
-  function visible(element) {
-    if (!element) return false;
-    var style = window.getComputedStyle(element);
-    return style.display !== 'none' && style.visibility !== 'hidden' && element.getClientRects().length > 0;
   }
 
   function fillLegacyWeight(value) {
@@ -75,7 +75,9 @@
     });
     if (!weightInput) return false;
     weightInput.value = String(value).replace('.', ',');
-    ['input','change','keyup'].forEach(function (type) { weightInput.dispatchEvent(new Event(type, { bubbles: true })); });
+    ['input', 'change', 'keyup'].forEach(function (type) {
+      weightInput.dispatchEvent(new Event(type, { bubbles: true }));
+    });
     return true;
   }
 
@@ -88,7 +90,9 @@
     });
     if (!calculate) return false;
     bypassIntercept = true;
-    try { calculate.click(); } finally { window.setTimeout(function () { bypassIntercept = false; }, 80); }
+    try { calculate.click(); } finally {
+      window.setTimeout(function () { bypassIntercept = false; }, 80);
+    }
     return true;
   }
 
@@ -106,7 +110,7 @@
         if (legacyActive && !legacyModalIsOpen()) showNewModuleAtSavedPosition();
       }, 80);
     });
-    legacyObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class','style','hidden'] });
+    legacyObserver.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
   }
 
   function openLegacyCalculator(value) {
@@ -119,13 +123,14 @@
     legacyActive = true;
     watchLegacyClose();
     bypassIntercept = true;
-    try { trigger.click(); } finally { window.setTimeout(function () { bypassIntercept = false; }, 100); }
+    try { trigger.click(); } finally {
+      window.setTimeout(function () { bypassIntercept = false; }, 100);
+    }
 
     var attempts = 0;
     function prepareLegacy() {
       attempts += 1;
-      var filled = fillLegacyWeight(value);
-      if (filled) {
+      if (fillLegacyWeight(value)) {
         window.setTimeout(clickLegacyCalculate, 100);
         return;
       }
@@ -148,8 +153,9 @@
     weight.removeAttribute('aria-invalid');
     if (warning) warning.hidden = true;
     try { localStorage.setItem('gm-dmg-weight', String(value)); } catch (error) {}
-    if (!openLegacyCalculator(value)) {
-      if (warning) { warning.textContent = 'A calculadora anterior não foi localizada. Feche e abra o aplicativo novamente.'; warning.hidden = false; }
+    if (!openLegacyCalculator(value) && warning) {
+      warning.textContent = 'A calculadora anterior não foi localizada. Feche e abra o aplicativo novamente.';
+      warning.hidden = false;
     }
   }
 
@@ -162,31 +168,31 @@
       '#' + MODULE_ID + '{position:fixed;inset:0;z-index:2147483550;background:#fff7fa;display:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#12182d;}',
       '#' + MODULE_ID + '.gm-dmg-open{display:block;}',
       '.gm-dmg-shell{width:min(100%,430px);min-height:100%;margin:0 auto;background:linear-gradient(180deg,#fffafd 0%,#fff 52%,#fff7fa 100%);box-shadow:0 0 28px rgba(124,34,77,.08);}',
-      '.gm-dmg-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) 14px 9px;background:rgba(255,250,253,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(238,78,146,.07);}',
-      '.gm-dmg-top button{min-height:38px;border:1px solid #f6c7da;background:#fff;color:#ec2678;border-radius:999px;font-size:14px;font-weight:800;padding:0 13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(230,67,132,.04);}',
-      '.gm-dmg-top .gm-dmg-close{justify-self:end;width:40px;padding:0;font-size:26px;font-weight:400;}',
-      '.gm-dmg-section{padding:12px 14px 24px;}',
-      '.gm-dmg-hero-banner,.gm-dmg-footer-banner{width:100%;height:auto;display:block;border-radius:18px;box-shadow:0 7px 20px rgba(105,38,73,.06);}',
-      '.gm-dmg-hero-banner{margin:2px 0 14px;}',
-      '.gm-dmg-footer-banner{margin:0 0 4px;}',
-      '.gm-dmg-card{border-radius:17px;padding:16px;margin:0 0 13px;border:1px solid;box-shadow:0 6px 18px rgba(76,45,70,.035);font-size:14px;line-height:1.46;}',
-      '.gm-dmg-card-inner{display:grid;grid-template-columns:34px 1fr;gap:11px;align-items:start;}',
-      '.gm-dmg-card-icon{font-size:27px;line-height:1;text-align:center;padding-top:1px;}',
+      '.gm-dmg-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;padding:max(8px,env(safe-area-inset-top)) 12px 7px;background:rgba(255,250,253,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(238,78,146,.07);}',
+      '.gm-dmg-top button{min-height:34px;border:1px solid #f6c7da;background:#fff;color:#ec2678;border-radius:999px;font-size:13px;font-weight:800;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 3px 10px rgba(230,67,132,.04);}',
+      '.gm-dmg-top .gm-dmg-close{justify-self:end;width:36px;padding:0;font-size:23px;font-weight:400;}',
+      '.gm-dmg-section{padding:9px 12px 18px;}',
+      '.gm-dmg-hero-banner,.gm-dmg-footer-banner{width:100%;height:auto;display:block;border-radius:15px;box-shadow:0 5px 15px rgba(105,38,73,.045);}',
+      '.gm-dmg-hero-banner{margin:1px 0 10px;}',
+      '.gm-dmg-footer-banner{margin:0 0 2px;}',
+      '.gm-dmg-card{border-radius:14px;padding:12px 13px;margin:0 0 9px;border:1px solid;box-shadow:0 4px 12px rgba(76,45,70,.025);font-size:12.8px;line-height:1.42;}',
+      '.gm-dmg-card-inner{display:grid;grid-template-columns:28px 1fr;gap:9px;align-items:start;}',
+      '.gm-dmg-card-icon{font-size:22px;line-height:1;text-align:center;padding-top:1px;}',
       '.gm-dmg-info{background:linear-gradient(135deg,#f7faff,#eef4ff);border-color:#cfddf8;color:#29364d;}',
       '.gm-dmg-info strong,.gm-dmg-info a{color:#1260d6;}',
-      '.gm-dmg-info a{display:inline-block;margin-top:13px;font-weight:750;text-underline-offset:4px;}',
+      '.gm-dmg-info a{display:inline-block;margin-top:9px;font-weight:750;text-underline-offset:3px;}',
       '.gm-dmg-warning{background:linear-gradient(135deg,#fffaf2,#fff6ea);border-color:#f1dab0;color:#302a28;}',
-      '.gm-dmg-form{background:linear-gradient(135deg,#fffafd,#fff4f8);border-color:#f2c8d9;padding:15px;}',
-      '.gm-dmg-label{display:flex;align-items:center;gap:8px;color:#d92a6b;font-weight:900;font-size:14px;text-transform:uppercase;margin-bottom:10px;}',
+      '.gm-dmg-form{background:linear-gradient(135deg,#fffafd,#fff4f8);border-color:#f2c8d9;padding:12px 13px;}',
+      '.gm-dmg-label{display:flex;align-items:center;gap:7px;color:#d92a6b;font-weight:900;font-size:12.5px;text-transform:uppercase;margin-bottom:8px;}',
       '.gm-dmg-input-wrap{position:relative;}',
-      '.gm-dmg-input-wrap input{width:100%;height:54px;border:1.4px solid #efbfd2;border-radius:14px;background:#fff;font-size:18px;color:#252d43;padding:0 55px 0 16px;outline:none;box-sizing:border-box;}',
-      '.gm-dmg-input-wrap input:focus{border-color:#ec3d83;box-shadow:0 0 0 3px rgba(236,61,131,.09);}',
-      '.gm-dmg-unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#e63e7f;background:#fff2f7;border:1px solid #f5cede;border-radius:8px;padding:3px 6px;font-size:13px;font-weight:900;}',
-      '#gm-dmg-weight-warning{color:#b42318;font-size:12px;font-weight:700;margin:7px 0 0;}',
-      '.gm-dmg-calc{width:100%;height:58px;border:0;border-radius:15px;background:linear-gradient(90deg,#f22c7d,#ec2d75 55%,#ef4389);color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 22px rgba(232,42,117,.16);margin:1px 0 14px;}',
-      '.gm-dmg-calc span{font-size:23px;}',
-      '#gm-dmg-next-block{min-height:18px;scroll-margin-top:74px;}',
-      '@media(max-width:360px){.gm-dmg-top{padding-left:10px;padding-right:10px}.gm-dmg-top button{font-size:13px;padding:0 10px}.gm-dmg-section{padding-left:10px;padding-right:10px}.gm-dmg-card{font-size:13px;padding:14px}.gm-dmg-card-inner{grid-template-columns:30px 1fr;gap:9px}.gm-dmg-card-icon{font-size:24px}.gm-dmg-calc{font-size:16px}}'
+      '.gm-dmg-input-wrap input{width:100%;height:46px;border:1.3px solid #efbfd2;border-radius:12px;background:#fff;font-size:16px;color:#252d43;padding:0 49px 0 14px;outline:none;box-sizing:border-box;}',
+      '.gm-dmg-input-wrap input:focus{border-color:#ec3d83;box-shadow:0 0 0 3px rgba(236,61,131,.08);}',
+      '.gm-dmg-unit{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#e63e7f;background:#fff2f7;border:1px solid #f5cede;border-radius:7px;padding:2px 5px;font-size:11.5px;font-weight:900;}',
+      '#gm-dmg-weight-warning{color:#b42318;font-size:11px;font-weight:700;margin:6px 0 0;}',
+      '.gm-dmg-calc{width:100%;height:50px;border:0;border-radius:13px;background:linear-gradient(90deg,#f22c7d,#ec2d75 55%,#ef4389);color:#fff;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 18px rgba(232,42,117,.14);margin:0 0 10px;}',
+      '.gm-dmg-calc span{font-size:20px;}',
+      '#gm-dmg-next-block{min-height:14px;scroll-margin-top:64px;}',
+      '@media(max-width:360px){.gm-dmg-top{padding-left:9px;padding-right:9px}.gm-dmg-top button{font-size:12px;padding:0 9px}.gm-dmg-section{padding-left:9px;padding-right:9px}.gm-dmg-card{font-size:12.2px;padding:11px}.gm-dmg-card-inner{grid-template-columns:26px 1fr;gap:8px}.gm-dmg-card-icon{font-size:21px}.gm-dmg-calc{font-size:14px;height:48px}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -207,12 +213,12 @@
           '<button type="button" class="gm-dmg-close" data-gm-dmg-close aria-label="Fechar">×</button>',
         '</header>',
         '<main class="gm-dmg-section">',
-          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=183" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
+          '<img class="gm-dmg-hero-banner" src="IMG_1612.jpeg?v=184" alt="Diabetes Mellitus Gestacional — Assistente clínico completo">',
           '<section class="gm-dmg-card gm-dmg-info"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">ⓘ</div><div>Conteúdo baseado na <strong>Diretriz da Sociedade Brasileira de Diabetes (SBD) — Edição 2025</strong>, <strong>FEBRASGO</strong> e <strong>Ministério da Saúde</strong>.<br><br>Cada recomendação abaixo traz a classe e o nível de evidência originais.<br><a href="https://doi.org/10.29327/557753.2022-13" target="_blank" rel="noopener noreferrer">Ver diretriz completa ↗</a></div></div></section>',
           '<section class="gm-dmg-card gm-dmg-warning"><div class="gm-dmg-card-inner"><div class="gm-dmg-card-icon" aria-hidden="true">⚠️</div><div>Este módulo é <strong>apoio de referência</strong>, não uma prescrição automática. Toda dose de insulina ou metformina deve ser validada, ajustada e monitorada por médico/enfermeiro obstetra ou endocrinologista responsável pelo caso. <strong>Nunca inicie ou altere tratamento de diabetes gestacional com base apenas neste app.</strong></div></div></section>',
           '<section class="gm-dmg-card gm-dmg-form"><label class="gm-dmg-label" for="gm-dmg-weight"><span aria-hidden="true">⚖️</span> Peso atual da gestante (kg)</label><div class="gm-dmg-input-wrap"><input id="gm-dmg-weight" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 68,5" aria-describedby="gm-dmg-weight-warning"><span class="gm-dmg-unit">kg</span></div><p id="gm-dmg-weight-warning" hidden>Informe um peso válido entre 1 e 300 kg.</p></section>',
           '<button type="button" class="gm-dmg-calc" id="gm-dmg-calculate"><span aria-hidden="true">▦</span>Calcular dose de insulina <b aria-hidden="true">→</b></button>',
-          '<img class="gm-dmg-footer-banner" src="IMG_1613.jpeg?v=183" alt="Ferramenta educacional para apoiar sua decisão clínica e otimizar o cuidado da gestante com DMG">',
+          '<img class="gm-dmg-footer-banner" src="IMG_1613.jpeg?v=184" alt="Ferramenta educacional para apoiar sua decisão clínica e otimizar o cuidado da gestante com DMG">',
           '<div id="gm-dmg-next-block" aria-label="Espaço reservado para a próxima etapa do módulo"></div>',
         '</main>',
       '</div>'
@@ -266,7 +272,9 @@
     if (!button || button.closest('#' + MODULE_ID)) return;
     var text = normalize((button.textContent || '') + ' ' + (button.getAttribute('aria-label') || '') + ' ' + (button.getAttribute('title') || ''));
     if (text === 'x' || text.indexOf('fechar') !== -1 || text.indexOf('voltar') !== -1 || text.indexOf('cancelar') !== -1) {
-      window.setTimeout(function () { if (legacyActive && !legacyModalIsOpen()) showNewModuleAtSavedPosition(); }, 180);
+      window.setTimeout(function () {
+        if (legacyActive && !legacyModalIsOpen()) showNewModuleAtSavedPosition();
+      }, 180);
     }
   }, true);
 
@@ -275,6 +283,7 @@
     ensureStyle();
     buildModule();
   }
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
