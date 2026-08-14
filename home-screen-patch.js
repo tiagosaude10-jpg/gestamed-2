@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-184';
+  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-185';
   var CID_URL = 'https://laboratoriocid.com.br/logins/login';
   if (document.documentElement.getAttribute('data-gm-entry-flow') === PATCH_ID) return;
   document.documentElement.setAttribute('data-gm-entry-flow', PATCH_ID);
@@ -118,14 +118,14 @@
       '#gm-app-flow.gm-flow-hidden{display:none!important;}',
       '.gm-flow-screen{position:absolute;inset:0;display:none;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}',
       '.gm-flow-screen.gm-screen-active{display:flex;}',
-      '.gm-screen-shell{position:relative;width:min(100%,520px);min-height:100%;margin:0 auto;background:#fff1f4 url("gestamed-background-clean.jpg?v=184") center/cover no-repeat;overflow:hidden;box-shadow:0 0 40px rgba(98,37,65,.12);}',
+      '.gm-screen-shell{position:relative;width:min(100%,520px);min-height:100%;margin:0 auto;background:#fff1f4 url("gestamed-background-clean.jpg?v=185") center/cover no-repeat;overflow:hidden;box-shadow:0 0 40px rgba(98,37,65,.12);}',
       '.gm-welcome-shell{display:flex;flex-direction:column;align-items:center;padding:max(22px,env(safe-area-inset-top)) 28px max(20px,env(safe-area-inset-bottom));}',
       '.gm-brand{text-align:center;}.gm-brand-symbol{display:block;width:74px;height:82px;margin:0 auto -2px;object-fit:cover;mix-blend-mode:multiply;}',
       '.gm-brand-name{margin:0;color:#ef6682;font-size:clamp(42px,11vw,58px);font-weight:300;letter-spacing:-2.8px;line-height:1;}.gm-brand-name b{color:#c7144f;font-weight:650;}',
       '.gm-brand-subtitle{margin:13px 0 0;color:#6d243b;font-size:13px;font-weight:650;line-height:1.42;letter-spacing:1.9px;text-transform:uppercase;}',
       '.gm-heart-divider{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;color:#ed6485;font-size:14px;}.gm-heart-divider:before,.gm-heart-divider:after{content:"";width:45px;height:1px;background:rgba(160,57,88,.25);}',
       '.gm-hero-art{display:block;width:min(100%,355px);aspect-ratio:487/475;margin:3px auto 0;object-fit:cover;mix-blend-mode:multiply;border-radius:48% 48% 44% 44%;}',
-      '.gm-welcome-message{margin:4px 0 13px;color:#b71d50;text-align:center;font-size:clamp(21px,5.8vw,28px);font-weight:750;line-height:1.18;}',
+      '.gm-welcome-start-slot{width:100%;margin:4px 0 13px;}.gm-welcome-message{margin:0 0 13px;color:#b71d50;text-align:center;font-size:clamp(21px,5.8vw,28px);font-weight:750;line-height:1.18;}',
       '.gm-features{width:100%;display:grid;grid-template-columns:repeat(3,1fr);margin:0 auto 17px;}.gm-feature{min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0 8px;color:#6d2039;text-align:center;font-size:12px;line-height:1.22;}.gm-feature+.gm-feature{border-left:1px solid rgba(177,49,88,.2);}',
       '.gm-feature-icon{width:47px;height:47px;display:grid;place-items:center;border:1.5px solid #cb3f68;border-radius:50%;color:#cb3f68;font-size:24px;font-weight:400;}.gm-welcome-actions{width:100%;margin-top:auto;}',
       '.gm-primary-button{width:100%;min-height:60px;border:0;border-radius:22px;color:#fff;background:linear-gradient(105deg,#d40d4e 0%,#ea3f65 48%,#ff786e 100%);box-shadow:0 10px 24px rgba(194,25,78,.25);cursor:pointer;font-size:21px;font-weight:550;}',
@@ -137,7 +137,7 @@
       '#gm-home-search{position:absolute;z-index:15;left:9%;top:25.1%;width:79%;height:3.8%;border:0;background:transparent;color:#3b2333;font:500 clamp(12px,3vw,20px)/1.2 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:0 2%;outline:none;}#gm-home-search::placeholder{color:transparent;}',
       '#gm-home-dev-message{position:fixed;inset:0;z-index:2147483647;background:rgba(45,24,38,.42);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:24px;}.gm-home-dev-card{width:min(88vw,360px);background:#fff;border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 24px 70px rgba(82,33,61,.28);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#3b2333;}.gm-home-dev-card strong{display:block;font-size:20px;margin:4px 0 8px;}.gm-home-dev-card p{margin:0 0 20px;color:#76576a;font-size:15px;}.gm-home-dev-icon{font-size:34px;}.gm-home-dev-card button{border:0;border-radius:999px;background:#ec4899;color:#fff;font-weight:800;font-size:15px;padding:12px 26px;}',
       '@media(min-width:700px){.gm-screen-shell,.gm-home-shell{min-height:calc(100% - 48px);margin:24px auto;border-radius:36px;}}',
-      '@media(max-height:720px){.gm-welcome-shell{padding-top:12px;padding-bottom:12px;}.gm-brand-symbol{width:55px;height:61px;}.gm-brand-name{font-size:39px;}.gm-brand-subtitle{margin-top:8px;font-size:10px;}.gm-heart-divider{margin-top:4px;}.gm-hero-art{width:255px;}.gm-welcome-message{margin:1px 0 7px;font-size:19px;}.gm-feature-icon{width:39px;height:39px;font-size:20px;}.gm-features{margin-bottom:10px;}.gm-primary-button{min-height:50px;font-size:18px;}.gm-login-link{margin-top:8px;}.gm-author{margin-top:5px;}}'
+      '@media(max-height:720px){.gm-welcome-shell{padding-top:12px;padding-bottom:12px;}.gm-brand-symbol{width:55px;height:61px;}.gm-brand-name{font-size:39px;}.gm-brand-subtitle{margin-top:8px;font-size:10px;}.gm-heart-divider{margin-top:4px;}.gm-hero-art{width:255px;}.gm-welcome-start-slot{margin:1px 0 7px;}.gm-welcome-message{margin:0 0 7px;font-size:19px;}.gm-feature-icon{width:39px;height:39px;font-size:20px;}.gm-features{margin-bottom:10px;}.gm-primary-button{min-height:50px;font-size:18px;}.gm-login-link{margin-top:8px;}.gm-author{margin-top:5px;}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -146,11 +146,11 @@
     var screen = document.createElement('section');
     screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'welcome'); screen.setAttribute('aria-label', 'Apresentação do GestaMed');
     screen.innerHTML = '<div class="gm-screen-shell gm-welcome-shell">' +
-      '<div class="gm-brand"><img class="gm-brand-symbol" src="gestamed-logo-symbol.jpg?v=184" alt="Símbolo GestaMed"><h1 class="gm-brand-name"><b>Gesta</b>Med</h1><p class="gm-brand-subtitle">Apoio clínico para<br>profissionais e estudantes.</p><div class="gm-heart-divider" aria-hidden="true">♥</div></div>' +
-      '<img class="gm-hero-art" src="gestamed-hero.jpg?v=184" alt="Ilustração de uma gestante em tons de rosa">' +
-      '<p class="gm-welcome-message">Seu apoio prático<br>na rotina da obstetrícia.</p>' +
+      '<div class="gm-brand"><img class="gm-brand-symbol" src="gestamed-logo-symbol.jpg?v=185" alt="Símbolo GestaMed"><h1 class="gm-brand-name"><b>Gesta</b>Med</h1><p class="gm-brand-subtitle">Apoio clínico para<br>profissionais e estudantes.</p><div class="gm-heart-divider" aria-hidden="true">♥</div></div>' +
+      '<img class="gm-hero-art" src="gestamed-hero.jpg?v=185" alt="Ilustração de uma gestante em tons de rosa">' +
+      '<div class="gm-welcome-start-slot"><button id="gm-welcome-start" class="gm-primary-button" type="button">Começar agora</button></div>' +
       '<div class="gm-features" aria-label="Recursos do GestaMed"><div class="gm-feature"><span class="gm-feature-icon">▣</span><span>Protocolos<br>e condutas</span></div><div class="gm-feature"><span class="gm-feature-icon">♡</span><span>Conteúdos<br>confiáveis</span></div><div class="gm-feature"><span class="gm-feature-icon">⌂</span><span>Ferramentas<br>para estudo</span></div></div>' +
-      '<div class="gm-welcome-actions"><button id="gm-welcome-start" class="gm-primary-button" type="button">Começar agora</button><button id="gm-welcome-login" class="gm-login-link" type="button">Já tem uma conta? <b>Entrar</b></button></div><p class="gm-author">By Tiago Pereira de Albuquerque</p></div>';
+      '<div class="gm-welcome-actions"><p class="gm-welcome-message">Seu apoio prático<br>na rotina da obstetrícia.</p><button id="gm-welcome-login" class="gm-login-link" type="button">Já tem uma conta? <b>Entrar</b></button></div><p class="gm-author">By Tiago Pereira de Albuquerque</p></div>';
     screen.querySelector('#gm-welcome-start').addEventListener('click', function () { setFlowScreen('login'); });
     screen.querySelector('#gm-welcome-login').addEventListener('click', function () { setFlowScreen('login'); });
     return screen;
@@ -159,7 +159,7 @@
   function buildLogin() {
     var screen = document.createElement('section');
     screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'login'); screen.setAttribute('aria-label', 'Login do GestaMed');
-    screen.innerHTML = '<div class="gm-screen-shell gm-login-shell"><button class="gm-back-button" type="button" aria-label="Voltar para a apresentação">‹</button><div class="gm-login-card"><img class="gm-login-logo" src="gestamed-icon-rosa-20260724.png?v=184" alt="GestaMed"><h1>Bem-vindo ao GestaMed</h1><p>Acesse sua conta para continuar.</p><form novalidate><label for="gm-login-email">E-mail</label><input id="gm-login-email" name="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"><label for="gm-login-password">Senha</label><div class="gm-password-field"><input id="gm-login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha"><button class="gm-password-toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div><button class="gm-forgot" type="button">Esqueci minha senha</button><p class="gm-form-error" role="alert">Preencha seu e-mail e sua senha para continuar.</p><button class="gm-primary-button gm-login-submit" type="submit">Entrar</button></form><p class="gm-register">Ainda não tem uma conta? <button type="button">Criar conta</button></p></div></div>';
+    screen.innerHTML = '<div class="gm-screen-shell gm-login-shell"><button class="gm-back-button" type="button" aria-label="Voltar para a apresentação">‹</button><div class="gm-login-card"><img class="gm-login-logo" src="gestamed-icon-rosa-20260724.png?v=185" alt="GestaMed"><h1>Bem-vindo ao GestaMed</h1><p>Acesse sua conta para continuar.</p><form novalidate><label for="gm-login-email">E-mail</label><input id="gm-login-email" name="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"><label for="gm-login-password">Senha</label><div class="gm-password-field"><input id="gm-login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha"><button class="gm-password-toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div><button class="gm-forgot" type="button">Esqueci minha senha</button><p class="gm-form-error" role="alert">Preencha seu e-mail e sua senha para continuar.</p><button class="gm-primary-button gm-login-submit" type="submit">Entrar</button></form><p class="gm-register">Ainda não tem uma conta? <button type="button">Criar conta</button></p></div></div>';
     screen.querySelector('.gm-back-button').addEventListener('click', function () { setFlowScreen('welcome'); });
     var password = screen.querySelector('#gm-login-password');
     var toggle = screen.querySelector('.gm-password-toggle');
@@ -173,7 +173,7 @@
     screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'home'); screen.setAttribute('aria-label', 'Tela inicial GestaMed');
     var shell = document.createElement('div'); shell.className = 'gm-home-shell';
     var canvas = document.createElement('div'); canvas.className = 'gm-home-canvas';
-    var image = document.createElement('img'); image.className = 'gm-home-image'; image.src = 'F4907271-BC9F-4AC0-AED2-75E16DFBB496.png?v=184'; image.alt = ''; canvas.appendChild(image);
+    var image = document.createElement('img'); image.className = 'gm-home-image'; image.src = 'F4907271-BC9F-4AC0-AED2-75E16DFBB496.png?v=185'; image.alt = ''; canvas.appendChild(image);
     var search = document.createElement('input'); search.id = 'gm-home-search'; search.type = 'search'; search.autocomplete = 'off'; search.spellcheck = false; search.setAttribute('aria-label', 'Pesquisar medicamento ou princípio ativo');
     search.addEventListener('input', function () { var original = findSearchInput(); if (!original) return; original.value = search.value; dispatchInput(original); });
     search.addEventListener('keydown', function (event) { if (event.key !== 'Enter') return; var original = findSearchInput(); if (!original) return; original.value = search.value; dispatchInput(original); hideFlow(); window.setTimeout(function () { original.focus(); }, 30); });
