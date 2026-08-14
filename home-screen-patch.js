@@ -1,11 +1,22 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-199';
+  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-201';
   var CID_URL = 'https://laboratoriocid.com.br/logins/login';
-  var PROFILE_STORAGE_KEY = 'gestamed-display-profiles-v1';
+  var LABOR_ANALISE_URL = '';
   var NOTICES_STORAGE_KEY = 'gestamed-notices-v1';
   var activeDisplayName = 'Profissional';
+  var SUPABASE_URL = 'https://ptymhmvkuedgudhlvcxo.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0eW1obXZrdWVkZ3VkaGx2Y3hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3NDIxNDksImV4cCI6MjEwMjMxODE0OX0.-KH8WIIw4VPyNjEaFqpg47VQyi9E6itnlYJjFE9ZX7o';
+  var supabaseClient = null;
+  var currentProfile = null;
+
+  function ensureSupabase() {
+    if (supabaseClient) return supabaseClient;
+    if (!window.supabase || !window.supabase.createClient) return null;
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return supabaseClient;
+  }
   var commandFilters = [
     { id:'dor', label:'Dor', icon:'🤕', group:'clinical' },
     { id:'febre', label:'Febre', icon:'🌡️', group:'clinical' },
@@ -52,22 +63,121 @@
     return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 24);
   }
 
-  function readDisplayProfiles() {
-    try {
-      var stored = JSON.parse(window.localStorage.getItem(PROFILE_STORAGE_KEY) || '{}');
-      return stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
-    } catch (error) { return {}; }
+  async function fetchProfile(userId) {
+    var client = ensureSupabase();
+    if (!client) return null;
+    var result = await client.from('profiles').select('*').eq('id', userId).single();
+    if (result.error) return null;
+    return result.data;
   }
 
-  function saveDisplayProfile(email, displayName) {
-    var profiles = readDisplayProfiles();
-    profiles[String(email || '').trim().toLowerCase()] = cleanDisplayName(displayName);
-    try { window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profiles)); } catch (error) {}
+  async function fetchMyRequests() {
+    var client = ensureSupabase();
+    if (!client || !currentProfile) return {};
+    var result = await client.from('access_requests').select('resource,status').eq('user_id', currentProfile.id);
+    var map = {};
+    if (!result.error && result.data) { result.data.forEach(function (row) { map[row.resource] = row.status; }); }
+    return map;
   }
 
-  function displayNameForEmail(email) {
-    var profiles = readDisplayProfiles();
-    return cleanDisplayName(profiles[String(email || '').trim().toLowerCase()]) || 'Profissional';
+  async function requestAccess(resource) {
+    var client = ensureSupabase();
+    if (!client || !currentProfile) return false;
+    var result = await client.from('access_requests').upsert(
+      { user_id: currentProfile.id, resource: resource, status: 'pending', requested_at: new Date().toISOString(), decided_at: null, decided_by: null },
+      { onConflict: 'user_id,resource' }
+    );
+    if (result.error) return false;
+    try { await client.functions.invoke('notify-admin-request', { body: { email: currentProfile.email, resource: resource } }); } catch (error) {}
+    return true;
+  }
+
+  function resourceLabel(resource) {
+    return resource === 'cid' ? 'Consulta de Exames — CID' : 'Laboratório Labor Análise';
+  }
+
+  function showToast(message) {
+    var old = document.getElementById('gm-toast');
+    if (old) old.remove();
+    var toast = document.createElement('div');
+    toast.id = 'gm-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    window.setTimeout(function () { toast.classList.add('gm-toast-visible'); }, 10);
+    window.setTimeout(function () { toast.remove(); }, 3200);
+  }
+
+  function applyProfileToNav() {
+    var button = document.querySelector('.gm-command-nav [data-gm-nav="perfil"], .gm-command-nav [data-gm-nav="admin"]');
+    if (!button || !currentProfile) return;
+    if (currentProfile.is_admin) {
+      button.setAttribute('data-gm-nav', 'admin');
+      button.innerHTML = '<span class="gm-command-nav-icon">⚙</span>ADM';
+      button.onclick = function () { renderAdmin(); setFlowScreen('admin'); };
+    } else {
+      button.setAttribute('data-gm-nav', 'perfil');
+      button.innerHTML = '<span class="gm-command-nav-icon">♙</span>Perfil';
+      button.onclick = function () { renderProfile(); setFlowScreen('profile'); };
+    }
+  }
+
+  async function renderProfile() {
+    var emailLine = document.getElementById('gm-profile-email');
+    if (emailLine && currentProfile) emailLine.textContent = currentProfile.email;
+    var body = document.getElementById('gm-profile-body');
+    if (!body) return;
+    body.innerHTML = '<p class="gm-profile-loading">Carregando...</p>';
+    var requests = await fetchMyRequests();
+    function card(resource, url) {
+      var status = requests[resource];
+      var actionHtml;
+      if (currentProfile[resource === 'cid' ? 'cid_access' : 'labor_access']) {
+        actionHtml = '<button type="button" class="gm-primary-button gm-profile-action" data-action="open" data-url="' + url + '">Acessar</button>';
+      } else if (status === 'pending') {
+        actionHtml = '<button type="button" class="gm-profile-action gm-profile-pending" disabled>Aguardando aprovação</button>';
+      } else {
+        actionHtml = '<button type="button" class="gm-profile-action gm-profile-request" data-action="request" data-resource="' + resource + '">Solicitar acesso</button>';
+      }
+      return '<div class="gm-profile-card"><strong>' + resourceLabel(resource) + '</strong>' + actionHtml + '</div>';
+    }
+    body.innerHTML = card('cid', CID_URL) + card('labor_analise', LABOR_ANALISE_URL);
+    body.querySelectorAll('[data-action="request"]').forEach(function (button) {
+      button.addEventListener('click', async function () {
+        button.disabled = true; button.textContent = 'Enviando...';
+        var ok = await requestAccess(button.getAttribute('data-resource'));
+        if (ok) { showToast('Pedido enviado! Você será avisado quando for autorizado.'); renderProfile(); }
+        else { button.disabled = false; button.textContent = 'Solicitar acesso'; showToast('Não foi possível enviar o pedido. Tente novamente.'); }
+      });
+    });
+    body.querySelectorAll('[data-action="open"]').forEach(function (button) {
+      button.addEventListener('click', function () { openExternal(button.getAttribute('data-url')); });
+    });
+  }
+
+  async function renderAdmin() {
+    var body = document.getElementById('gm-admin-body');
+    if (!body) return;
+    body.innerHTML = '<p class="gm-profile-loading">Carregando...</p>';
+    var client = ensureSupabase();
+    if (!client) { body.innerHTML = '<p class="gm-profile-loading">Erro ao carregar.</p>'; return; }
+    var result = await client.from('access_requests').select('id,resource,status,requested_at,profiles(email)').eq('status', 'pending').order('requested_at', { ascending: true });
+    if (result.error || !result.data || !result.data.length) { body.innerHTML = '<p class="gm-profile-loading">Nenhum pedido pendente.</p>'; return; }
+    body.innerHTML = result.data.map(function (row) {
+      var email = row.profiles ? row.profiles.email : '—';
+      return '<div class="gm-admin-row" data-id="' + row.id + '">' +
+        '<div class="gm-admin-row-info"><strong>' + email + '</strong><small>' + resourceLabel(row.resource) + '</small></div>' +
+        '<div class="gm-admin-row-actions"><button type="button" class="gm-admin-approve" data-decision="approved">Aprovar</button><button type="button" class="gm-admin-deny" data-decision="denied">Negar</button></div></div>';
+    }).join('');
+    body.querySelectorAll('.gm-admin-row button').forEach(function (button) {
+      button.addEventListener('click', async function () {
+        var row = button.closest('.gm-admin-row');
+        var id = row.getAttribute('data-id');
+        row.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+        var result = await client.rpc('admin_decide_request', { request_id: id, decision: button.getAttribute('data-decision') });
+        if (result.error) { showToast('Erro ao decidir pedido.'); row.querySelectorAll('button').forEach(function (b) { b.disabled = false; }); return; }
+        renderAdmin();
+      });
+    });
   }
 
   function updateGreeting() {
@@ -144,6 +254,7 @@
   }
 
   function openExternal(url) {
+    if (!url) { showDevelopmentMessage('Link ainda não configurado'); return; }
     var opened = window.open(url, '_blank', 'noopener,noreferrer');
     if (!opened) window.location.href = url;
   }
@@ -197,7 +308,10 @@
     (document.getElementById('gm-app-flow') || document.body).appendChild(overlay); closeButton.focus();
   }
 
-  function logout() {
+  async function logout() {
+    var client = ensureSupabase();
+    if (client) await client.auth.signOut();
+    currentProfile = null;
     activeDisplayName = 'Profissional';
     var email = document.getElementById('gm-login-email');
     var password = document.getElementById('gm-login-password');
@@ -244,6 +358,13 @@
       '.gm-command-nav{position:sticky;z-index:20;bottom:max(0px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;margin:4px -3px 0;padding:7px 3px 6px;border:1px solid rgba(236,133,166,.16);border-radius:21px;background:rgba(255,255,255,.96);box-shadow:0 -7px 22px rgba(102,42,67,.08);backdrop-filter:blur(14px);}.gm-command-nav button{min-width:0;padding:2px;border:0;background:transparent;color:#40475a;cursor:pointer;font-size:10px;}.gm-command-nav-icon{display:block;margin-bottom:3px;color:#c05b81;font-size:22px;line-height:1;}.gm-command-nav .gm-nav-active{color:#ef1760;font-weight:760;}.gm-command-nav .gm-nav-active .gm-command-nav-icon{color:#ef1760;}.gm-command-nav .gm-nav-main{transform:translateY(-8px);}.gm-command-nav .gm-nav-main .gm-command-nav-icon{display:grid;place-items:center;width:48px;height:48px;margin:-10px auto 2px;border-radius:50%;background:linear-gradient(145deg,#f8568b,#ed1f63);box-shadow:0 8px 18px rgba(229,35,99,.28);color:#fff;font-size:28px;}',
       '#gm-home-dev-message{position:fixed;inset:0;z-index:2147483647;background:rgba(45,24,38,.42);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:24px;}.gm-home-dev-card{width:min(88vw,360px);background:#fff;border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 24px 70px rgba(82,33,61,.28);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#3b2333;}.gm-home-dev-card strong{display:block;font-size:20px;margin:4px 0 8px;}.gm-home-dev-card p{margin:0 0 20px;color:#76576a;font-size:15px;}.gm-home-dev-icon{font-size:34px;}.gm-home-dev-card button{border:0;border-radius:999px;background:#ec4899;color:#fff;font-weight:800;font-size:15px;padding:12px 26px;}',
       '#gm-home-notices{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:flex-start;justify-content:center;padding:max(74px,env(safe-area-inset-top)) 20px 24px;background:rgba(45,24,38,.38);backdrop-filter:blur(5px);}.gm-notices-card{box-sizing:border-box;width:min(92vw,420px);max-height:min(72vh,560px);overflow:hidden;border:1px solid rgba(238,105,149,.2);border-radius:24px;background:#fffafb;box-shadow:0 24px 70px rgba(82,33,61,.25);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#262037;}.gm-notices-card header{display:flex;align-items:center;justify-content:space-between;padding:16px 17px 12px;border-bottom:1px solid #f4dce5;}.gm-notices-card h2{margin:0;color:#a91f51;font-size:20px;}.gm-notices-card header button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:#fff0f5;color:#cf2c61;font-size:25px;cursor:pointer;}.gm-notices-list{max-height:calc(min(72vh,560px) - 62px);padding:13px;overflow-y:auto;}.gm-notices-empty{margin:14px 8px 18px;color:#775b69;text-align:center;font-size:14px;}.gm-notice-item{padding:12px 13px;border:1px solid #f2d7e1;border-radius:15px;background:#fff;}.gm-notice-item+.gm-notice-item{margin-top:9px;}.gm-notice-item strong{display:block;color:#9f214e;font-size:14px;}.gm-notice-item p{margin:5px 0 0;color:#4c3a45;font-size:13px;line-height:1.4;}',
+      '#gm-toast{position:fixed;left:50%;bottom:28px;z-index:2147483647;transform:translate(-50%,20px);opacity:0;transition:opacity .2s,transform .2s;max-width:min(88vw,360px);padding:13px 18px;border-radius:14px;background:#1f1522;color:#fff;font-size:13px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,.28);}#gm-toast.gm-toast-visible{opacity:1;transform:translate(-50%,0);}',
+      '.gm-simple-shell{position:relative;padding:max(64px,calc(env(safe-area-inset-top) + 44px)) 24px 32px;min-height:100%;box-sizing:border-box;}.gm-simple-title{margin:0 0 4px;color:#86143d;font-size:24px;}.gm-simple-sub{margin:0 0 20px;color:#815165;font-size:13px;word-break:break-word;}',
+      '.gm-profile-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;margin-bottom:12px;border:1px solid rgba(180,31,79,.14);border-radius:18px;background:rgba(255,255,255,.85);}.gm-profile-card strong{font-size:14px;color:#3b2333;}',
+      '.gm-profile-action{border:0;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:750;cursor:pointer;white-space:nowrap;}.gm-profile-request{background:#ec4899;color:#fff;}.gm-profile-pending{background:#f1e4e8;color:#8a6b76;}.gm-profile-action.gm-primary-button{width:auto;min-height:0;padding:10px 18px;font-size:13px;}',
+      '.gm-profile-loading{color:#815165;font-size:13px;}',
+      '.gm-profile-logout{margin-top:24px;width:100%;border:1px solid rgba(180,31,79,.2);border-radius:14px;padding:13px;background:transparent;color:#8f183d;font-weight:750;cursor:pointer;}',
+      '.gm-admin-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;margin-bottom:10px;border:1px solid rgba(180,31,79,.14);border-radius:16px;background:rgba(255,255,255,.85);}.gm-admin-row-info strong{display:block;font-size:13px;color:#3b2333;word-break:break-word;}.gm-admin-row-info small{color:#815165;font-size:11px;}.gm-admin-row-actions{display:flex;gap:6px;flex-shrink:0;}.gm-admin-approve,.gm-admin-deny{border:0;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:750;cursor:pointer;}.gm-admin-approve{background:#22a35d;color:#fff;}.gm-admin-deny{background:#f1e4e8;color:#8a2b3d;}',
       '@media(min-width:700px){.gm-screen-shell,.gm-home-shell{min-height:calc(100% - 48px);margin:24px auto;border-radius:36px;}}',
       '@media(max-width:430px){.gm-home-shell{padding-left:12px;padding-right:12px;}.gm-command-header{grid-template-columns:minmax(0,61%) minmax(0,39%);min-height:204px;margin-left:-12px;margin-right:-12px;padding:10px 12px 9px;}.gm-command-logo{width:43px;height:51px;}.gm-command-name{font-size:clamp(28px,8vw,34px);}.gm-command-clinician img{right:-7px;bottom:-12px;width:127%;height:calc(100% + 9px);}.gm-command-greeting{padding-top:6px;}.gm-command-greeting h2{font-size:clamp(18px,5vw,21px);}.gm-command-greeting p{font-size:clamp(11px,3.15vw,13px);}.gm-command-quick-grid{gap:5px;}.gm-command-quick-label{font-size:9px;}.gm-command-module-grid{gap:8px;}.gm-command-module{grid-template-columns:40px minmax(0,1fr) 23px;gap:5px;min-height:84px;padding:7px;}.gm-command-module-icon{width:38px;height:38px;font-size:22px;}.gm-command-arrow{width:23px;height:23px;font-size:19px;}.gm-command-module-copy strong{font-size:11px;}.gm-command-module-copy small{font-size:8px;}.gm-command-stat{grid-template-columns:31px 1fr;padding:3px 5px;}.gm-command-stat-icon{width:30px;height:30px;font-size:17px;}.gm-command-stat strong{font-size:14px;}.gm-command-stat small{font-size:8px;}}',
       '@media(max-width:350px){.gm-command-header{grid-template-columns:minmax(0,64%) minmax(0,36%);}.gm-command-name{font-size:27px;}.gm-command-greeting h2{font-size:17px;}.gm-command-module-grid{grid-template-columns:1fr;}.gm-command-stat-grid{grid-template-columns:1fr;}.gm-command-stat+.gm-command-stat{border-left:0;border-top:1px solid rgba(232,105,145,.18);}}',
@@ -274,8 +395,39 @@
     screen.querySelector('.gm-back-button').addEventListener('click', function () { setFlowScreen('welcome'); });
     var password = screen.querySelector('#gm-login-password');
     var toggle = screen.querySelector('.gm-password-toggle');
+    var error = screen.querySelector('.gm-form-error');
     toggle.addEventListener('click', function () { var show = password.type === 'password'; password.type = show ? 'text' : 'password'; toggle.textContent = show ? 'Ocultar' : 'Mostrar'; toggle.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); });
-    screen.querySelector('form').addEventListener('submit', function (event) { event.preventDefault(); var email = screen.querySelector('#gm-login-email').value.trim(); var value = password.value; var error = screen.querySelector('.gm-form-error'); if (!email || !value) { error.classList.add('gm-error-visible'); return; } error.classList.remove('gm-error-visible'); activeDisplayName = displayNameForEmail(email); showHome(); });
+    screen.querySelector('.gm-forgot').addEventListener('click', async function () {
+      var email = screen.querySelector('#gm-login-email').value.trim();
+      if (!email) { error.textContent = 'Digite seu e-mail para receber o link de redefinição.'; error.classList.add('gm-error-visible'); return; }
+      var client = ensureSupabase();
+      if (!client) { error.textContent = 'Não foi possível conectar. Tente novamente em instantes.'; error.classList.add('gm-error-visible'); return; }
+      var result = await client.auth.resetPasswordForEmail(email);
+      error.textContent = result.error ? 'Não foi possível enviar o link: ' + result.error.message : 'Enviamos um link de redefinição para o seu e-mail.';
+      error.classList.add('gm-error-visible');
+    });
+    screen.querySelector('form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      var email = screen.querySelector('#gm-login-email').value.trim();
+      var value = password.value;
+      if (!email || !value) { error.textContent = 'Preencha seu e-mail e sua senha para continuar.'; error.classList.add('gm-error-visible'); return; }
+      var client = ensureSupabase();
+      if (!client) { error.textContent = 'Não foi possível conectar. Tente novamente em instantes.'; error.classList.add('gm-error-visible'); return; }
+      var submitBtn = screen.querySelector('.gm-login-submit');
+      submitBtn.disabled = true;
+      error.classList.remove('gm-error-visible');
+      try {
+        var result = await client.auth.signInWithPassword({ email: email, password: value });
+        if (result.error) { error.textContent = 'E-mail ou senha inválidos.'; error.classList.add('gm-error-visible'); return; }
+        currentProfile = await fetchProfile(result.data.session.user.id);
+        if (!currentProfile) { error.textContent = 'Login feito, mas não foi possível carregar seu perfil.'; error.classList.add('gm-error-visible'); return; }
+        activeDisplayName = currentProfile.display_name || 'Profissional';
+        applyProfileToNav();
+        showHome();
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
     screen.querySelector('.gm-register button').addEventListener('click', function () { setFlowScreen('register'); });
     return screen;
   }
@@ -288,7 +440,32 @@
     var password = screen.querySelector('#gm-register-password');
     var toggle = screen.querySelector('.gm-password-toggle');
     toggle.addEventListener('click', function () { var show = password.type === 'password'; password.type = show ? 'text' : 'password'; toggle.textContent = show ? 'Ocultar' : 'Mostrar'; toggle.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); });
-    screen.querySelector('form').addEventListener('submit', function (event) { event.preventDefault(); var displayName = cleanDisplayName(screen.querySelector('#gm-register-name').value); var email = screen.querySelector('#gm-register-email').value.trim(); var value = password.value; var error = screen.querySelector('.gm-form-error'); if (!displayName || !email || !value) { error.classList.add('gm-error-visible'); return; } error.classList.remove('gm-error-visible'); saveDisplayProfile(email, displayName); activeDisplayName = displayName; showHome(); });
+    screen.querySelector('form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      var displayName = cleanDisplayName(screen.querySelector('#gm-register-name').value);
+      var email = screen.querySelector('#gm-register-email').value.trim();
+      var value = password.value;
+      var error = screen.querySelector('.gm-form-error');
+      var defaultErrorText = error.textContent;
+      if (!displayName || !email || !value) { error.textContent = defaultErrorText; error.classList.add('gm-error-visible'); return; }
+      var client = ensureSupabase();
+      if (!client) { error.textContent = 'Não foi possível conectar. Tente novamente em instantes.'; error.classList.add('gm-error-visible'); return; }
+      var submitBtn = screen.querySelector('.gm-login-submit');
+      submitBtn.disabled = true;
+      error.classList.remove('gm-error-visible');
+      try {
+        var result = await client.auth.signUp({ email: email, password: value, options: { data: { display_name: displayName } } });
+        if (result.error) { error.textContent = result.error.message; error.classList.add('gm-error-visible'); return; }
+        if (!result.data.session) { error.textContent = 'Conta criada! Verifique seu e-mail para confirmar o acesso.'; error.classList.add('gm-error-visible'); return; }
+        currentProfile = await fetchProfile(result.data.session.user.id);
+        if (!currentProfile) { error.textContent = 'Conta criada, mas não foi possível carregar seu perfil.'; error.classList.add('gm-error-visible'); return; }
+        activeDisplayName = currentProfile.display_name || displayName;
+        applyProfileToNav();
+        showHome();
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
     screen.querySelector('.gm-register button').addEventListener('click', function () { setFlowScreen('login'); });
     return screen;
   }
@@ -304,7 +481,6 @@
       '<div class="gm-command-filter-row" aria-label="Filtros por sintomas e classes farmacêuticas">' + commandFilterMarkup() + '</div>' +
       '<h2 class="gm-command-section-title">Acesso rápido</h2><div class="gm-command-quick-grid"><button class="gm-command-quick gm-quick-agenda" type="button" data-gm-dev="Agenda"><span class="gm-command-quick-icon">▦</span><span class="gm-command-quick-label">Agenda</span></button><button class="gm-command-quick gm-quick-checklists" type="button" data-gm-dev="Checklists"><span class="gm-command-quick-icon">✓</span><span class="gm-command-quick-label">Checklists</span></button><button class="gm-command-quick gm-quick-calculadoras" type="button" data-gm-dev="Calculadoras"><span class="gm-command-quick-icon">∑</span><span class="gm-command-quick-label">Calculadoras</span></button><button class="gm-command-quick gm-quick-favoritos" type="button" data-gm-dev="Favoritos"><span class="gm-command-quick-icon">♥</span><span class="gm-command-quick-label">Favoritos</span></button><button class="gm-command-quick gm-quick-lembretes" type="button" data-gm-dev="Lembretes"><span class="gm-command-quick-icon">!</span><span class="gm-command-quick-label">Lembretes</span></button></div>' +
       '<section class="gm-command-module-grid" aria-label="Módulos do GestaMed"><button class="gm-command-module gm-card-blue" type="button" data-gm-module="idade"><span class="gm-command-module-icon">📅</span><span class="gm-command-module-copy"><strong>Idade gestacional</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-pink" type="button" data-gm-module="insulina"><span class="gm-command-module-icon">🩸</span><span class="gm-command-module-copy"><strong>Cálculo de insulina (DMG)</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-green" type="button" data-gm-module="exames"><span class="gm-command-module-icon">📋</span><span class="gm-command-module-copy"><strong>Painel de Exames</strong><small>Pré-natal habitual, baixo risco</small></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-purple" type="button" data-gm-module="peso"><span class="gm-command-module-icon">📈</span><span class="gm-command-module-copy"><strong>Ganho de peso gestacional</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-orange" type="button" data-gm-module="prescricoes"><span class="gm-command-module-icon">💊</span><span class="gm-command-module-copy"><strong>Prescrições por Trimestre</strong><small>Dose e posologia</small></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-pink" type="button" data-gm-module="condutas"><span class="gm-command-module-icon">🩺</span><span class="gm-command-module-copy"><strong>Condutas Obstétricas</strong><small>Emergências e prescrição-modelo</small></span><span class="gm-command-arrow">›</span></button></section>' +
-      '<button class="gm-command-cid" type="button"><span class="gm-command-cid-icon">🧪</span><span><strong>Consulta de Exames — CID</strong><small>Acessar resultados laboratoriais da gestante</small></span><span class="gm-command-arrow">›</span></button>' +
       '<section class="gm-command-stats" aria-label="Base de medicamentos"><h3>Base de medicamentos</h3><div class="gm-command-stat-grid"><div class="gm-command-stat"><span class="gm-command-stat-icon">▤</span><span><strong>1.514</strong><small>registros pesquisáveis</small></span></div><div class="gm-command-stat"><span class="gm-command-stat-icon">🧬</span><span><strong>614</strong><small>princípios ativos</small></span></div><div class="gm-command-stat gm-command-stat-review"><span class="gm-command-stat-icon">⏱</span><span><strong>900</strong><small>pendentes de revisão</small></span></div></div></section>' +
       '<section class="gm-command-evidence"><span class="gm-command-evidence-icon">♢</span><span><strong>Conteúdo baseado em evidências</strong><small>Informações atualizadas conforme diretrizes do Ministério da Saúde e FEBRASGO.</small></span><span class="gm-command-evidence-check">✓</span></section>' +
       '<nav class="gm-command-nav" aria-label="Navegação principal"><button class="gm-nav-active" type="button" data-gm-nav="inicio"><span class="gm-command-nav-icon">⌂</span>Início</button><button type="button" data-gm-nav="obstetricia"><span class="gm-command-nav-icon">♧</span>Obstetrícia</button><button class="gm-nav-main" type="button" data-gm-nav="prenatal"><span class="gm-command-nav-icon">♡</span>Pré-natal</button><button type="button" data-gm-nav="protocolos"><span class="gm-command-nav-icon">▤</span>Protocolos</button><button type="button" data-gm-nav="perfil"><span class="gm-command-nav-icon">♙</span>Perfil</button></nav>';
@@ -324,20 +500,57 @@
     shell.querySelectorAll('[data-gm-dev]').forEach(function (button) { button.addEventListener('click', function () { showDevelopmentMessage(button.getAttribute('data-gm-dev')); }); });
     var moduleActions = {idade:['Idade gestacional'],insulina:['Cálculo de insulina','Calculo de insulina','Insulina','DMG'],exames:['Painel de Exames','Painel de exames'],peso:['Ganho de peso gestacional','Ganho de peso'],prescricoes:['Prescrições por Trimestre','Prescricoes por Trimestre','Prescrições'],condutas:['Condutas Obstétricas','Condutas Obstetricas','Condutas']};
     shell.querySelectorAll('[data-gm-module]').forEach(function (button) { button.addEventListener('click', function () { var labels = moduleActions[button.getAttribute('data-gm-module')]; if (!activate(labels)) showDevelopmentMessage(labels[0]); }); });
-    shell.querySelector('.gm-command-cid').addEventListener('click', function () { openExternal(CID_URL); });
     shell.querySelector('[data-gm-nav="inicio"]').addEventListener('click', showHome);
     shell.querySelector('[data-gm-nav="obstetricia"]').addEventListener('click', function () { if (!activate(['Obstetrícia','Obstetricia','Condutas Obstétricas','Condutas Obstetricas','Condutas'])) showDevelopmentMessage('Obstetrícia'); });
     shell.querySelector('[data-gm-nav="prenatal"]').addEventListener('click', function () { if (!activate(['Pré-natal','Pre natal'])) showDevelopmentMessage('Pré-natal'); });
     shell.querySelector('[data-gm-nav="protocolos"]').addEventListener('click', function () { showDevelopmentMessage('Protocolos'); });
-    shell.querySelector('[data-gm-nav="perfil"]').addEventListener('click', function () { showDevelopmentMessage('Perfil'); });
+    shell.querySelector('[data-gm-nav="perfil"]').addEventListener('click', function () { renderProfile(); setFlowScreen('profile'); });
     screen.appendChild(shell); return screen;
   }
 
-  function buildFlow() {
+  function buildProfile() {
+    var screen = document.createElement('section');
+    screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'profile'); screen.setAttribute('aria-label', 'Perfil');
+    screen.innerHTML = '<div class="gm-screen-shell"><button class="gm-back-button" type="button" aria-label="Voltar">‹</button><div class="gm-simple-shell"><h1 class="gm-simple-title">Perfil</h1><p class="gm-simple-sub" id="gm-profile-email"></p><div id="gm-profile-body"></div><button type="button" class="gm-profile-logout">Sair</button></div></div>';
+    screen.querySelector('.gm-back-button').addEventListener('click', showHome);
+    screen.querySelector('.gm-profile-logout').addEventListener('click', logout);
+    return screen;
+  }
+
+  function buildAdmin() {
+    var screen = document.createElement('section');
+    screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'admin'); screen.setAttribute('aria-label', 'Administração');
+    screen.innerHTML = '<div class="gm-screen-shell"><button class="gm-back-button" type="button" aria-label="Voltar">‹</button><div class="gm-simple-shell"><h1 class="gm-simple-title">Administração</h1><p class="gm-simple-sub">Pedidos de acesso pendentes</p><div id="gm-admin-body"></div><button type="button" class="gm-profile-logout">Sair</button></div></div>';
+    screen.querySelector('.gm-back-button').addEventListener('click', showHome);
+    screen.querySelector('.gm-profile-logout').addEventListener('click', logout);
+    return screen;
+  }
+
+  async function buildFlow() {
     removeLegacyEntryLayers(); ensureStyle();
     var flow = document.createElement('div'); flow.id = 'gm-app-flow';
-    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildHome());
-    document.body.appendChild(flow); setFlowScreen('welcome');
+    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildHome()); flow.appendChild(buildProfile()); flow.appendChild(buildAdmin());
+    document.body.appendChild(flow);
+
+    var client = ensureSupabase();
+    var restored = false;
+    if (client) {
+      try {
+        var sessionResult = await client.auth.getSession();
+        var session = sessionResult.data && sessionResult.data.session;
+        if (session) {
+          currentProfile = await fetchProfile(session.user.id);
+          if (currentProfile) {
+            activeDisplayName = currentProfile.display_name || 'Profissional';
+            applyProfileToNav();
+            showHome();
+            restored = true;
+          }
+        }
+      } catch (error) { /* segue para a tela de apresentação normalmente */ }
+    }
+    if (!restored) setFlowScreen('welcome');
+
     var antiFlash = document.getElementById('gm-anti-flash');
     if (antiFlash) antiFlash.remove();
     document.addEventListener('click', function (event) { var element = event.target && event.target.closest ? event.target.closest('button,a,[role="button"]') : null; if (!element || element.closest('#gm-app-flow')) return; var text = normalize(element.textContent || element.getAttribute('aria-label') || ''); if (text === 'inicio' || text.indexOf(' inicio') !== -1) window.setTimeout(showHome, 80); }, true);
