@@ -1,11 +1,14 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-199';
+  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-201';
   var CID_URL = 'https://laboratoriocid.com.br/logins/login';
+  var SUPABASE_URL = 'https://ptymhmvkuedgudhlvcxo.supabase.co';
+  var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SbzuQSBhwR3PXlaRrUsPnw_2plttVAf';
   var PROFILE_STORAGE_KEY = 'gestamed-display-profiles-v1';
   var NOTICES_STORAGE_KEY = 'gestamed-notices-v1';
   var activeDisplayName = 'Profissional';
+  var recoveryAccessToken = '';
   var commandFilters = [
     { id:'dor', label:'Dor', icon:'🤕', group:'clinical' },
     { id:'febre', label:'Febre', icon:'🌡️', group:'clinical' },
@@ -148,6 +151,46 @@
     if (!opened) window.location.href = url;
   }
 
+  function recoveryRedirectUrl() {
+    return window.location.origin + window.location.pathname + '?password-recovery=1';
+  }
+
+  function supabaseAuthRequest(path, options) {
+    options = options || {};
+    var headers = Object.assign({
+      'apikey': SUPABASE_PUBLISHABLE_KEY,
+      'Content-Type': 'application/json'
+    }, options.headers || {});
+    return window.fetch(SUPABASE_URL + '/auth/v1/' + path, {
+      method: options.method || 'POST',
+      headers: headers,
+      body: options.body ? JSON.stringify(options.body) : undefined
+    }).then(function (response) {
+      return response.text().then(function (raw) {
+        var data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch (error) {}
+        if (!response.ok) {
+          var failure = new Error(data.msg || data.message || data.error_description || 'Falha na solicitação.');
+          failure.status = response.status;
+          throw failure;
+        }
+        return data;
+      });
+    });
+  }
+
+  function readRecoveryCallback() {
+    var params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    if (params.get('type') !== 'recovery' || !params.get('access_token')) return false;
+    recoveryAccessToken = params.get('access_token');
+    return true;
+  }
+
+  function clearRecoveryCallback() {
+    recoveryAccessToken = '';
+    try { window.history.replaceState({}, document.title, window.location.pathname); } catch (error) {}
+  }
+
   function commandFilterMarkup() {
     return commandFilters.map(function (filter, index) {
       var divider = index === 7 ? '<span class="gm-command-filter-divider" aria-hidden="true"></span>' : '';
@@ -230,7 +273,7 @@
       '.gm-login-link{display:block;margin:16px auto 0;padding:4px 8px;border:0;color:#651b35;background:transparent;cursor:pointer;font-size:15px;}.gm-login-link b{color:#d82f62;}.gm-author{margin:10px 0 0;color:#ce5780;font-size:12px;}',
       '.gm-login-shell{display:grid;place-items:center;padding:70px 28px 32px;}.gm-back-button{position:absolute;z-index:2;top:max(20px,env(safe-area-inset-top));left:22px;width:43px;height:43px;border:1px solid rgba(180,31,79,.16);border-radius:50%;color:#b8184d;background:rgba(255,255,255,.72);box-shadow:0 6px 18px rgba(115,32,59,.08);cursor:pointer;font-size:34px;line-height:1;}',
       '.gm-login-card{width:100%;padding:28px 24px 24px;border:1px solid rgba(255,255,255,.8);border-radius:32px;background:rgba(255,250,251,.78);box-shadow:0 22px 55px rgba(117,34,59,.13);backdrop-filter:blur(12px);text-align:center;}.gm-login-logo{width:104px;height:103px;border-radius:27px;box-shadow:0 8px 22px rgba(184,33,78,.15);}.gm-login-card h1{margin:17px 0 6px;color:#86143d;font-size:26px;letter-spacing:-.6px;}.gm-login-card>p{margin:0;color:#815165;font-size:14px;}.gm-login-card form{margin-top:25px;text-align:left;}.gm-login-card label{display:block;margin:15px 0 7px;color:#6d2039;font-size:13px;font-weight:750;}',
-      '.gm-login-card input{box-sizing:border-box;width:100%;height:52px;padding:0 15px;border:1px solid rgba(162,64,96,.2);border-radius:15px;outline:none;color:#5b2035;background:rgba(255,255,255,.88);}.gm-login-card input:focus{border-color:#e4517a;box-shadow:0 0 0 4px rgba(228,81,122,.12);}.gm-password-field{position:relative;}.gm-password-field input{padding-right:78px;}.gm-password-toggle{position:absolute;top:0;right:7px;height:52px;border:0;color:#c92a5d;background:transparent;cursor:pointer;font-size:12px;font-weight:750;}.gm-forgot{display:block;margin:12px 0 0 auto;border:0;color:#bd2857;background:transparent;cursor:pointer;font-size:12px;}.gm-login-submit{min-height:53px;margin-top:19px;border-radius:16px;font-size:17px;}.gm-form-error{display:none;margin:12px 0 0;padding:9px 11px;border-radius:10px;color:#8f183d;background:#ffe1e8;font-size:12px;text-align:left;}.gm-form-error.gm-error-visible{display:block;}.gm-register{margin-top:19px!important;}.gm-register button{border:0;color:#c92458;background:transparent;cursor:pointer;font-weight:750;}',
+      '.gm-login-card input{box-sizing:border-box;width:100%;height:52px;padding:0 15px;border:1px solid rgba(162,64,96,.2);border-radius:15px;outline:none;color:#5b2035;background:rgba(255,255,255,.88);}.gm-login-card input:focus{border-color:#e4517a;box-shadow:0 0 0 4px rgba(228,81,122,.12);}.gm-password-field{position:relative;}.gm-password-field input{padding-right:78px;}.gm-password-toggle{position:absolute;top:0;right:7px;height:52px;border:0;color:#c92a5d;background:transparent;cursor:pointer;font-size:12px;font-weight:750;}.gm-forgot{display:block;margin:12px 0 0 auto;border:0;color:#bd2857;background:transparent;cursor:pointer;font-size:12px;}.gm-forgot:disabled{opacity:.6;cursor:wait;}.gm-login-submit{min-height:53px;margin-top:19px;border-radius:16px;font-size:17px;}.gm-form-error,.gm-recovery-status{display:none;margin:12px 0 0;padding:9px 11px;border-radius:10px;color:#8f183d;background:#ffe1e8;font-size:12px;text-align:left;line-height:1.4;}.gm-form-error.gm-error-visible,.gm-recovery-status.gm-status-visible{display:block;}.gm-recovery-status.gm-status-success{color:#17603b;background:#def7e9;}.gm-register{margin-top:19px!important;}.gm-register button{border:0;color:#c92458;background:transparent;cursor:pointer;font-weight:750;}.gm-reset-card form{margin-top:20px;}.gm-reset-card .gm-primary-button:disabled{opacity:.65;cursor:wait;}',
       '.gm-home-shell{box-sizing:border-box;position:relative;width:min(100%,600px);min-height:100%;margin:0 auto;padding:0 14px max(18px,env(safe-area-inset-bottom));background:#fff4f7 url("gestamed-background-clean.jpg?v=199") center top/cover no-repeat;box-shadow:0 0 40px rgba(98,37,65,.12);color:#17233c;}',
       '.gm-command-header{box-sizing:border-box;position:relative;display:grid;grid-template-columns:minmax(0,60%) minmax(0,40%);grid-template-rows:auto 1fr;grid-template-areas:"brand clinician" "greeting clinician";min-height:216px;margin:0 -14px 12px;padding:13px 14px 10px;overflow:hidden;border-radius:0 0 26px 26px;background:linear-gradient(135deg,rgba(255,251,252,.78),rgba(255,224,235,.76));box-shadow:0 8px 22px rgba(174,53,94,.08);}.gm-command-header:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 84% 24%,rgba(255,255,255,.42),transparent 34%),radial-gradient(circle at 7% 4%,rgba(242,119,154,.12),transparent 25%);pointer-events:none;}.gm-command-brand-area{grid-area:brand;position:relative;z-index:3;min-width:0;text-align:center;}.gm-command-brand-row{display:flex;align-items:center;justify-content:center;gap:5px;}.gm-command-logo{width:48px;height:56px;object-fit:contain;}.gm-command-name{margin:0;color:#ef6d90;font-size:clamp(29px,8vw,45px);font-weight:300;letter-spacing:-1.8px;line-height:1;white-space:nowrap;}.gm-command-name b{color:#d40b50;font-weight:720;}.gm-command-tagline{margin:2px 0 0;color:#92506a;font-size:clamp(8px,2.1vw,12px);font-weight:750;line-height:1.35;letter-spacing:.3px;text-transform:uppercase;}.gm-command-heart{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:3px;color:#ef4c82;font-size:11px;}.gm-command-heart:before,.gm-command-heart:after{content:"";width:28px;height:1px;background:#ecabc0;}.gm-command-clinician{grid-area:clinician;position:relative;z-index:1;align-self:stretch;min-width:0;pointer-events:none;}.gm-command-clinician img{position:absolute;right:-4px;bottom:-13px;width:118%;height:calc(100% + 8px);object-fit:contain;object-position:right bottom;user-select:none;-webkit-user-drag:none;}.gm-command-greeting{grid-area:greeting;position:relative;z-index:2;align-self:end;min-width:0;padding:8px 3px 0;}.gm-command-greeting h2{margin:0;color:#121b31;font-size:clamp(18px,5vw,27px);line-height:1.08;white-space:normal;}.gm-command-greeting h2 span{color:#f04c80;}.gm-command-greeting h2 [data-gm-display-name]{overflow-wrap:anywhere;}.gm-command-greeting p{max-width:245px;margin:5px 0 0;color:#26324a;font-size:clamp(11px,3.15vw,15px);line-height:1.35;}',
       '.gm-command-actions{position:absolute;left:3px;bottom:-37px;display:flex;align-items:center;gap:7px;}.gm-command-action{position:relative;display:grid;place-items:center;width:30px;height:30px;padding:0;border:1px solid rgba(218,49,101,.18);border-radius:11px;background:rgba(255,255,255,.86);box-shadow:0 4px 10px rgba(128,42,72,.08);color:#c92b60;cursor:pointer;font-size:15px;line-height:1;}.gm-command-action:active{transform:scale(.95);}.gm-command-action-badge{position:absolute;top:-3px;right:-3px;display:grid;place-items:center;min-width:14px;height:14px;padding:0 3px;border:2px solid #fff;border-radius:999px;background:#e92764;color:#fff;font-size:8px;font-weight:800;}',
@@ -270,13 +313,67 @@
   function buildLogin() {
     var screen = document.createElement('section');
     screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'login'); screen.setAttribute('aria-label', 'Login do GestaMed');
-    screen.innerHTML = '<div class="gm-screen-shell gm-login-shell"><button class="gm-back-button" type="button" aria-label="Voltar para a apresentação">‹</button><div class="gm-login-card"><img class="gm-login-logo" src="gestamed-icon-rosa-20260724.png?v=199" alt="GestaMed"><h1>Bem-vindo ao GestaMed</h1><p>Acesse sua conta para continuar.</p><form novalidate><label for="gm-login-email">E-mail</label><input id="gm-login-email" name="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"><label for="gm-login-password">Senha</label><div class="gm-password-field"><input id="gm-login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha"><button class="gm-password-toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div><button class="gm-forgot" type="button">Esqueci minha senha</button><p class="gm-form-error" role="alert">Preencha seu e-mail e sua senha para continuar.</p><button class="gm-primary-button gm-login-submit" type="submit">Entrar</button></form><p class="gm-register">Ainda não tem uma conta? <button type="button">Criar conta</button></p></div></div>';
+    screen.innerHTML = '<div class="gm-screen-shell gm-login-shell"><button class="gm-back-button" type="button" aria-label="Voltar para a apresentação">‹</button><div class="gm-login-card"><img class="gm-login-logo" src="gestamed-icon-rosa-20260724.png?v=201" alt="GestaMed"><h1>Bem-vindo ao GestaMed</h1><p>Acesse sua conta para continuar.</p><form novalidate><label for="gm-login-email">E-mail</label><input id="gm-login-email" name="email" type="email" autocomplete="email" placeholder="seuemail@exemplo.com"><label for="gm-login-password">Senha</label><div class="gm-password-field"><input id="gm-login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha"><button class="gm-password-toggle" type="button" aria-label="Mostrar senha">Mostrar</button></div><button class="gm-forgot" type="button">Esqueci minha senha</button><p class="gm-recovery-status" role="status" aria-live="polite"></p><p class="gm-form-error" role="alert">Preencha seu e-mail e sua senha para continuar.</p><button class="gm-primary-button gm-login-submit" type="submit">Entrar</button></form><p class="gm-register">Ainda não tem uma conta? <button type="button">Criar conta</button></p></div></div>';
     screen.querySelector('.gm-back-button').addEventListener('click', function () { setFlowScreen('welcome'); });
     var password = screen.querySelector('#gm-login-password');
     var toggle = screen.querySelector('.gm-password-toggle');
     toggle.addEventListener('click', function () { var show = password.type === 'password'; password.type = show ? 'text' : 'password'; toggle.textContent = show ? 'Ocultar' : 'Mostrar'; toggle.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); });
+    var forgot = screen.querySelector('.gm-forgot');
+    var recoveryStatus = screen.querySelector('.gm-recovery-status');
+    forgot.addEventListener('click', function () {
+      var emailInput = screen.querySelector('#gm-login-email');
+      var email = emailInput.value.trim();
+      recoveryStatus.className = 'gm-recovery-status gm-status-visible';
+      if (!email || !emailInput.checkValidity()) {
+        recoveryStatus.textContent = 'Digite um e-mail válido para receber o link de recuperação.';
+        emailInput.focus();
+        return;
+      }
+      forgot.disabled = true;
+      forgot.textContent = 'Enviando…';
+      recoveryStatus.className = 'gm-recovery-status';
+      supabaseAuthRequest('recover?redirect_to=' + encodeURIComponent(recoveryRedirectUrl()), { body: { email: email } }).then(function () {
+        recoveryStatus.textContent = 'Se existir uma conta com este e-mail, você receberá um link para criar uma nova senha.';
+        recoveryStatus.className = 'gm-recovery-status gm-status-visible gm-status-success';
+      }).catch(function (error) {
+        recoveryStatus.textContent = error.status === 429 ? 'Muitas tentativas. Aguarde alguns minutos e tente novamente.' : 'Não foi possível enviar o e-mail agora. Verifique sua conexão e tente novamente.';
+        recoveryStatus.className = 'gm-recovery-status gm-status-visible';
+      }).then(function () {
+        forgot.disabled = false;
+        forgot.textContent = 'Esqueci minha senha';
+      });
+    });
     screen.querySelector('form').addEventListener('submit', function (event) { event.preventDefault(); var email = screen.querySelector('#gm-login-email').value.trim(); var value = password.value; var error = screen.querySelector('.gm-form-error'); if (!email || !value) { error.classList.add('gm-error-visible'); return; } error.classList.remove('gm-error-visible'); activeDisplayName = displayNameForEmail(email); showHome(); });
     screen.querySelector('.gm-register button').addEventListener('click', function () { setFlowScreen('register'); });
+    return screen;
+  }
+
+  function buildResetPassword() {
+    var screen = document.createElement('section');
+    screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'reset-password'); screen.setAttribute('aria-label', 'Criar nova senha do GestaMed');
+    screen.innerHTML = '<div class="gm-screen-shell gm-login-shell"><div class="gm-login-card gm-reset-card"><img class="gm-login-logo" src="gestamed-icon-rosa-20260724.png?v=201" alt="GestaMed"><h1>Criar nova senha</h1><p>Escolha uma senha segura para acessar sua conta.</p><form novalidate><label for="gm-reset-password">Nova senha</label><input id="gm-reset-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="Mínimo de 8 caracteres" required><label for="gm-reset-confirm">Confirmar nova senha</label><input id="gm-reset-confirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Digite novamente" required><p class="gm-form-error" role="alert"></p><button class="gm-primary-button gm-login-submit" type="submit">Salvar nova senha</button></form></div></div>';
+    var form = screen.querySelector('form');
+    var submit = screen.querySelector('button[type="submit"]');
+    var error = screen.querySelector('.gm-form-error');
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var password = screen.querySelector('#gm-reset-password').value;
+      var confirmation = screen.querySelector('#gm-reset-confirm').value;
+      error.classList.remove('gm-error-visible');
+      if (password.length < 8) { error.textContent = 'A nova senha precisa ter pelo menos 8 caracteres.'; error.classList.add('gm-error-visible'); return; }
+      if (password !== confirmation) { error.textContent = 'As duas senhas precisam ser iguais.'; error.classList.add('gm-error-visible'); return; }
+      if (!recoveryAccessToken) { error.textContent = 'Este link expirou ou já foi usado. Solicite um novo e-mail de recuperação.'; error.classList.add('gm-error-visible'); return; }
+      submit.disabled = true; submit.textContent = 'Salvando…';
+      supabaseAuthRequest('user', { method: 'PUT', headers: { 'Authorization': 'Bearer ' + recoveryAccessToken }, body: { password: password } }).then(function () {
+        clearRecoveryCallback();
+        setFlowScreen('login');
+        var status = document.querySelector('#gm-app-flow .gm-recovery-status');
+        if (status) { status.textContent = 'Senha alterada com sucesso. Agora você já pode entrar.'; status.className = 'gm-recovery-status gm-status-visible gm-status-success'; }
+      }).catch(function () {
+        error.textContent = 'Não foi possível alterar a senha. O link pode ter expirado; solicite um novo e-mail.';
+        error.classList.add('gm-error-visible');
+      }).then(function () { submit.disabled = false; submit.textContent = 'Salvar nova senha'; });
+    });
     return screen;
   }
 
@@ -336,8 +433,8 @@
   function buildFlow() {
     removeLegacyEntryLayers(); ensureStyle();
     var flow = document.createElement('div'); flow.id = 'gm-app-flow';
-    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildHome());
-    document.body.appendChild(flow); setFlowScreen('welcome');
+    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildResetPassword()); flow.appendChild(buildHome());
+    document.body.appendChild(flow); setFlowScreen(readRecoveryCallback() ? 'reset-password' : 'welcome');
     var antiFlash = document.getElementById('gm-anti-flash');
     if (antiFlash) antiFlash.remove();
     document.addEventListener('click', function (event) { var element = event.target && event.target.closest ? event.target.closest('button,a,[role="button"]') : null; if (!element || element.closest('#gm-app-flow')) return; var text = normalize(element.textContent || element.getAttribute('aria-label') || ''); if (text === 'inicio' || text.indexOf(' inicio') !== -1) window.setTimeout(showHome, 80); }, true);
