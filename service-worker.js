@@ -2,7 +2,7 @@
  * Purpose: prevent installed/PWA copies from remaining stuck on stale browser caches.
  * This worker intentionally does not maintain an application cache.
  */
-const GESTAMED_BUILD = '2026.08.14.193';
+const GESTAMED_BUILD = '2026.08.14.194';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
