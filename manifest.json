@@ -3,7 +3,7 @@
   "name": "GestaMed — Saúde da Gestante",
   "short_name": "GestaMed",
   "description": "Ferramenta educacional para profissionais e estudantes da área da saúde.",
-  "start_url": "./?v=20260814-187",
+  "start_url": "./?v=20260814-188",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fff7fb",
@@ -11,7 +11,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "gestamed-icon-rosa-20260724.png?v=187",
+      "src": "gestamed-icon-rosa-20260724.png?v=188",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any maskable"
