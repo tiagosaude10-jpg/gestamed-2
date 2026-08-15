@@ -22,7 +22,8 @@ jobs:
     timeout-minutes: 10
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_REF: ptyhmvkuedgudhlvcxo
+      EXPECTED_PROJECT_REF: ptyhmvkuedgudhlvcxo
+      PROJECT_NAME: gestamed
       SITE_URL: https://tiagosaude10-jpg.github.io/gestamed-2/
       REDIRECT_URL: https://tiagosaude10-jpg.github.io/gestamed-2/**
 
@@ -35,6 +36,40 @@ jobs:
             echo "O segredo SUPABASE_ACCESS_TOKEN nao foi encontrado."
             exit 1
           fi
+
+      - name: Localizar o projeto GestaMed
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          projects_file=$(mktemp)
+          http_status=$(curl --silent --show-error \
+            --output "$projects_file" \
+            --write-out "%{http_code}" \
+            --url "https://api.supabase.com/v1/projects" \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}")
+
+          if [[ ! "$http_status" =~ ^2 ]]; then
+            echo "Não foi possível consultar os projetos do Supabase (HTTP ${http_status})."
+            jq -r 'if type == "object" then (.message // .error // .) else . end' "$projects_file"
+            exit 1
+          fi
+
+          project_ref=$(jq -r \
+            --arg expected "$EXPECTED_PROJECT_REF" \
+            --arg name "$PROJECT_NAME" \
+            '[.[] | select(.ref == $expected or ((.name // "") | ascii_downcase) == ($name | ascii_downcase))] | if length == 1 then .[0].ref else empty end' \
+            "$projects_file")
+
+          if [ -z "$project_ref" ]; then
+            echo "O token não possui acesso a um único projeto chamado GestaMed. Projetos visíveis para ele:"
+            jq -r '.[] | "- \(.name) [\(.ref)]"' "$projects_file"
+            exit 1
+          fi
+
+          echo "Projeto GestaMed localizado: ${project_ref}"
+          echo "PROJECT_REF=${project_ref}" >> "$GITHUB_ENV"
+          rm -f "$projects_file"
 
       - name: Atualizar URLs e modelos de e-mail
         shell: bash
