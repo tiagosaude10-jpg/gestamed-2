@@ -79,13 +79,23 @@ jobs:
               mailer_templates_recovery_content: $recovery_content
             }')
 
-          curl --fail-with-body --silent --show-error \
+          response_file=$(mktemp)
+          http_status=$(curl --silent --show-error \
+            --output "$response_file" \
+            --write-out "%{http_code}" \
             --request PATCH \
             --url "https://api.supabase.com/v1/projects/${PROJECT_REF}/config/auth" \
             --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
             --header "Content-Type: application/json" \
-            --data "$payload" \
-            >/dev/null
+            --data "$payload")
+
+          if [[ ! "$http_status" =~ ^2 ]]; then
+            echo "O Supabase recusou a atualização (HTTP ${http_status})."
+            jq -r 'if type == "object" then (.message // .error // .) else . end' "$response_file"
+            exit 1
+          fi
+
+          rm -f "$response_file"
 
       - name: Verificar configuracao aplicada
         shell: bash
