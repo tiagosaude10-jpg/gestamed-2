@@ -184,11 +184,29 @@
         if (!response.ok) {
           var failure = new Error(data.msg || data.message || data.error_description || 'Falha na solicitação.');
           failure.status = response.status;
+          failure.code = data.error_code || data.code || '';
           throw failure;
         }
         return data;
       });
     });
+  }
+
+  var AUTH_ERROR_MESSAGES = {
+    weak_password: 'Essa senha é fraca ou muito comum (ou já vazou em outros sites). Escolha uma senha mais forte, com pelo menos 8 caracteres, misturando letras e números.',
+    user_already_exists: 'Já existe uma conta cadastrada com este e-mail.',
+    email_exists: 'Já existe uma conta cadastrada com este e-mail.',
+    email_address_invalid: 'Este endereço de e-mail não é válido.',
+    signup_disabled: 'Os cadastros estão temporariamente desativados. Tente novamente mais tarde.',
+    invalid_credentials: 'E-mail ou senha incorretos, ou e-mail ainda não confirmado.',
+    over_email_send_rate_limit: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+    over_request_rate_limit: 'Muitas tentativas. Aguarde alguns minutos e tente novamente.'
+  };
+
+  function translateAuthError(failure, fallback) {
+    if (failure && failure.code && AUTH_ERROR_MESSAGES[failure.code]) return AUTH_ERROR_MESSAGES[failure.code];
+    if (failure && failure.status === 429) return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+    return fallback;
   }
 
   function readSession() {
@@ -541,8 +559,8 @@
         setFlowScreen('login');
         var status = document.querySelector('#gm-app-flow .gm-recovery-status');
         if (status) { status.textContent = 'Senha alterada com sucesso. Agora você já pode entrar.'; status.className = 'gm-recovery-status gm-status-visible gm-status-success'; }
-      }).catch(function () {
-        error.textContent = 'Não foi possível alterar a senha. O link pode ter expirado; solicite um novo e-mail.';
+      }).catch(function (failure) {
+        error.textContent = translateAuthError(failure, 'Não foi possível alterar a senha. O link pode ter expirado; solicite um novo e-mail.');
         error.classList.add('gm-error-visible');
       }).then(function () { submit.disabled = false; submit.textContent = 'Salvar nova senha'; });
     });
@@ -578,7 +596,7 @@
         renderAccountStatus('Confirme seu e-mail', 'Enviamos uma mensagem para ' + email + '. Depois de confirmar o e-mail, volte ao GestaMed. Seu cadastro ficará aguardando a liberação da administração.');
         setFlowScreen('account-status');
       }).catch(function (failure) {
-        error.textContent = failure.status === 429 ? 'Muitas tentativas. Aguarde alguns minutos.' : (failure.message || 'Não foi possível criar a conta agora.');
+        error.textContent = translateAuthError(failure, 'Não foi possível criar a conta agora. Tente novamente em instantes.');
         error.classList.add('gm-error-visible');
       }).then(function () { submit.disabled = false; submit.textContent = 'Solicitar acesso'; });
     });
