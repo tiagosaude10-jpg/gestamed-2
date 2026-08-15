@@ -1,8 +1,9 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-entry-flow-2026-08-14-202';
+  var PATCH_ID = 'gestamed-entry-flow-2026-08-15-203';
   var CID_URL = 'https://laboratoriocid.com.br/logins/login';
+  var LABOR_ANALISE_URL = '';
   var SUPABASE_URL = 'https://ptymhmvkuedgudhlvcxo.supabase.co';
   var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SbzuQSBhwR3PXlaRrUsPnw_2plttVAf';
   var PROFILE_STORAGE_KEY = 'gestamed-display-profiles-v1';
@@ -428,14 +429,19 @@
       '.gm-command-filter-row{display:flex;align-items:center;gap:8px;margin:0 -1px 14px;padding:2px 1px 7px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:rgba(221,48,101,.5) rgba(221,48,101,.1);-webkit-overflow-scrolling:touch;}.gm-command-filter-row::-webkit-scrollbar{height:4px;}.gm-command-filter-row::-webkit-scrollbar-track{border-radius:999px;background:rgba(221,48,101,.1);}.gm-command-filter-row::-webkit-scrollbar-thumb{border-radius:999px;background:rgba(221,48,101,.5);}.gm-command-filter-chip{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:88px;height:40px;padding:0 12px;border:1px solid rgba(116,151,174,.24);border-radius:21px;background:rgba(255,255,255,.9);box-shadow:0 4px 12px rgba(92,49,70,.06);color:#1b2336;font-size:13px;font-weight:720;cursor:pointer;white-space:nowrap;scroll-snap-align:start;}.gm-command-filter-class{border-color:rgba(220,38,99,.22);background:rgba(255,242,247,.94);color:#7d2444;}.gm-command-filter-divider{flex:0 0 2px;width:2px;height:30px;margin:0 3px;border-radius:999px;background:linear-gradient(180deg,rgba(219,52,103,.12),rgba(219,52,103,.55),rgba(219,52,103,.12));}',
       '.gm-command-section-title{margin:11px 2px 9px;color:#182139;font-size:19px;line-height:1.1;}.gm-command-quick-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:14px;}.gm-command-quick{--gm-quick-bg:#f7f9fc;--gm-quick-border:#e2e8f0;--gm-quick-accent:#526176;--gm-quick-icon-bg:#edf1f6;box-sizing:border-box;min-width:0;min-height:68px;padding:7px 2px 6px;border:1px solid var(--gm-quick-border);border-radius:15px;background:linear-gradient(155deg,rgba(255,255,255,.96),var(--gm-quick-bg));box-shadow:0 4px 11px rgba(78,45,62,.07);color:#172138;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease;}.gm-command-quick:active{transform:scale(.97);box-shadow:0 2px 7px rgba(78,45,62,.06);}.gm-command-quick-icon{display:grid;place-items:center;width:32px;height:32px;margin:0 auto 4px;border-radius:11px;background:var(--gm-quick-icon-bg);color:var(--gm-quick-accent);font-size:20px;font-weight:800;line-height:1;}.gm-command-quick-label{display:block;overflow:hidden;text-overflow:ellipsis;color:#263047;font-size:9.5px;font-weight:750;line-height:1.1;white-space:nowrap;}.gm-quick-agenda{--gm-quick-bg:#edf6ff;--gm-quick-border:#cfe4fb;--gm-quick-accent:#2878c8;--gm-quick-icon-bg:#dceeff;}.gm-quick-checklists{--gm-quick-bg:#eefaf3;--gm-quick-border:#ccebd8;--gm-quick-accent:#258a52;--gm-quick-icon-bg:#daf2e4;}.gm-quick-calculadoras{--gm-quick-bg:#fff6e9;--gm-quick-border:#f6dfb7;--gm-quick-accent:#d67a12;--gm-quick-icon-bg:#ffebc9;}.gm-quick-favoritos{--gm-quick-bg:#fff0f5;--gm-quick-border:#f8cedc;--gm-quick-accent:#df3f73;--gm-quick-icon-bg:#ffe0ea;}.gm-quick-lembretes{--gm-quick-bg:#f6f1ff;--gm-quick-border:#dfd2f5;--gm-quick-accent:#8055bf;--gm-quick-icon-bg:#eadffd;}',
       '.gm-command-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px;}.gm-command-module{box-sizing:border-box;display:grid;grid-template-columns:46px minmax(0,1fr) 26px;align-items:center;gap:7px;min-height:88px;padding:9px;border:1px solid var(--gm-card-border,rgba(68,122,184,.13));border-radius:18px;background:var(--gm-card-bg,#fff);box-shadow:0 5px 14px rgba(88,41,65,.04);color:#172138;text-align:left;cursor:pointer;overflow:hidden;}.gm-command-module-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--gm-icon-bg,#e4f2ff);font-size:25px;}.gm-command-module-copy{min-width:0;}.gm-command-module-copy strong{display:block;font-size:13px;line-height:1.18;overflow-wrap:anywhere;}.gm-command-module-copy small{display:block;margin-top:3px;color:#40506c;font-size:9px;line-height:1.2;}.gm-command-arrow{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:var(--gm-accent,#1689ed);color:#fff;font-size:21px;line-height:1;}.gm-card-blue{--gm-card-bg:rgba(231,243,255,.9);--gm-accent:#1689ed;--gm-icon-bg:#d9efff;}.gm-card-pink{--gm-card-bg:rgba(255,231,238,.88);--gm-accent:#f43776;--gm-icon-bg:#ffd4df;}.gm-card-green{--gm-card-bg:rgba(237,248,238,.9);--gm-accent:#31b43c;--gm-icon-bg:#dbf3df;}.gm-card-purple{--gm-card-bg:rgba(243,235,255,.9);--gm-accent:#a54ef2;--gm-icon-bg:#ebdcff;}.gm-card-orange{--gm-card-bg:rgba(255,246,229,.9);--gm-accent:#ffa000;--gm-icon-bg:#ffedc7;}',
-      '.gm-command-cid{box-sizing:border-box;display:grid;grid-template-columns:62px 1fr 34px;align-items:center;gap:12px;width:100%;min-height:92px;margin:2px 0 12px;padding:13px 15px;border:1px solid rgba(0,142,164,.2);border-radius:19px;background:rgba(230,247,249,.9);color:#14233a;text-align:left;cursor:pointer;}.gm-command-cid-icon{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;background:#078da5;color:#fff;font-size:34px;}.gm-command-cid strong{display:block;font-size:18px;line-height:1.18;}.gm-command-cid small{display:block;margin-top:5px;color:#087f98;font-size:12px;line-height:1.25;}.gm-command-cid .gm-command-arrow{background:#078da5;}',
       '.gm-command-stats{margin-bottom:12px;padding:12px 14px;border:1px solid rgba(236,133,166,.14);border-radius:19px;background:rgba(255,255,255,.78);}.gm-command-stats h3{margin:0 0 10px;font-size:14px;}.gm-command-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}.gm-command-stat{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:7px;min-width:0;padding:4px 8px;}.gm-command-stat+.gm-command-stat{border-left:1px solid rgba(232,105,145,.18);}.gm-command-stat-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#05889e;color:#fff;font-size:20px;}.gm-command-stat strong{display:block;font-size:17px;}.gm-command-stat small{display:block;color:#40506c;font-size:9px;line-height:1.25;}.gm-command-stat-review{border-radius:12px;background:#fff1d9;}.gm-command-stat-review .gm-command-stat-icon{background:transparent;color:#704016;font-size:25px;}.gm-command-stat-review strong,.gm-command-stat-review small{color:#7b380a;}',
       '.gm-command-evidence{display:grid;grid-template-columns:54px 1fr 58px;align-items:center;gap:10px;margin-bottom:12px;padding:11px 13px;border:1px solid rgba(236,133,166,.18);border-radius:19px;background:rgba(255,235,242,.82);}.gm-command-evidence-icon,.gm-command-evidence-check{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:#f33878;color:#fff;font-size:29px;}.gm-command-evidence-check{background:#53b92d;font-size:31px;}.gm-command-evidence strong{display:block;color:#e22662;font-size:14px;}.gm-command-evidence small{display:block;margin-top:3px;color:#29344b;font-size:10px;line-height:1.35;}',
       '.gm-command-nav{position:sticky;z-index:20;bottom:max(0px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;margin:4px -3px 0;padding:7px 3px 6px;border:1px solid rgba(236,133,166,.16);border-radius:21px;background:rgba(255,255,255,.96);box-shadow:0 -7px 22px rgba(102,42,67,.08);backdrop-filter:blur(14px);}.gm-command-nav button{min-width:0;padding:2px;border:0;background:transparent;color:#40475a;cursor:pointer;font-size:10px;}.gm-command-nav-icon{display:block;margin-bottom:3px;color:#c05b81;font-size:22px;line-height:1;}.gm-command-nav .gm-nav-active{color:#ef1760;font-weight:760;}.gm-command-nav .gm-nav-active .gm-command-nav-icon{color:#ef1760;}.gm-command-nav .gm-nav-main{transform:translateY(-8px);}.gm-command-nav .gm-nav-main .gm-command-nav-icon{display:grid;place-items:center;width:48px;height:48px;margin:-10px auto 2px;border-radius:50%;background:linear-gradient(145deg,#f8568b,#ed1f63);box-shadow:0 8px 18px rgba(229,35,99,.28);color:#fff;font-size:28px;}',
       '#gm-home-dev-message{position:fixed;inset:0;z-index:2147483647;background:rgba(45,24,38,.42);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:24px;}.gm-home-dev-card{width:min(88vw,360px);background:#fff;border-radius:24px;padding:26px 22px;text-align:center;box-shadow:0 24px 70px rgba(82,33,61,.28);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#3b2333;}.gm-home-dev-card strong{display:block;font-size:20px;margin:4px 0 8px;}.gm-home-dev-card p{margin:0 0 20px;color:#76576a;font-size:15px;}.gm-home-dev-icon{font-size:34px;}.gm-home-dev-card button{border:0;border-radius:999px;background:#ec4899;color:#fff;font-weight:800;font-size:15px;padding:12px 26px;}',
       '#gm-home-notices{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:flex-start;justify-content:center;padding:max(74px,env(safe-area-inset-top)) 20px 24px;background:rgba(45,24,38,.38);backdrop-filter:blur(5px);}.gm-notices-card{box-sizing:border-box;width:min(92vw,420px);max-height:min(72vh,560px);overflow:hidden;border:1px solid rgba(238,105,149,.2);border-radius:24px;background:#fffafb;box-shadow:0 24px 70px rgba(82,33,61,.25);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#262037;}.gm-notices-card header{display:flex;align-items:center;justify-content:space-between;padding:16px 17px 12px;border-bottom:1px solid #f4dce5;}.gm-notices-card h2{margin:0;color:#a91f51;font-size:20px;}.gm-notices-card header button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:#fff0f5;color:#cf2c61;font-size:25px;cursor:pointer;}.gm-notices-list{max-height:calc(min(72vh,560px) - 62px);padding:13px;overflow-y:auto;}.gm-notices-empty{margin:14px 8px 18px;color:#775b69;text-align:center;font-size:14px;}.gm-notice-item{padding:12px 13px;border:1px solid #f2d7e1;border-radius:15px;background:#fff;}.gm-notice-item+.gm-notice-item{margin-top:9px;}.gm-notice-item strong{display:block;color:#9f214e;font-size:14px;}.gm-notice-item p{margin:5px 0 0;color:#4c3a45;font-size:13px;line-height:1.4;}',
       '#gm-app-flow [hidden]{display:none!important;}#gm-app-flow button:disabled{opacity:.58;cursor:wait;}.gm-status-card{max-width:390px;}.gm-status-icon{margin:18px auto 0;font-size:36px;}.gm-status-card .gm-account-status-message{margin-top:11px;line-height:1.5;}.gm-account-status-reason{margin-top:13px!important;padding:10px;border-radius:12px;background:#fff0d8;color:#7b4b13!important;line-height:1.4;}.gm-account-refresh{min-height:52px;margin-top:22px;border-radius:16px;font-size:16px;}.gm-secondary-button{width:100%;min-height:45px;margin-top:10px;border:1px solid #edb7c9;border-radius:15px;background:#fff;color:#a91f51;font-weight:750;cursor:pointer;}',
-      '.gm-admin-shell{box-sizing:border-box;width:min(100%,600px);min-height:100%;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom));background:#fff4f7 url("gestamed-background-clean.jpg?v=202") center/cover fixed;color:#17233c;}.gm-admin-shell>header{display:flex;align-items:center;gap:12px;padding:6px 3px 15px;}.gm-admin-back{display:grid;place-items:center;width:42px;height:42px;border:1px solid #f2c4d3;border-radius:50%;background:#fff;color:#b91f53;font-size:32px;line-height:1;}.gm-admin-shell h1{margin:0;color:#941843;font-size:25px;}.gm-admin-shell header p{margin:3px 0 0;color:#765467;font-size:12px;}.gm-admin-tabs{display:flex;gap:7px;padding:2px 1px 10px;overflow-x:auto;}.gm-admin-tabs button{flex:0 0 auto;padding:9px 13px;border:1px solid #edc7d4;border-radius:999px;background:#fff;color:#71364c;font-weight:700;}.gm-admin-tabs .gm-admin-tab-active{border-color:#e92c66;background:#e92c66;color:#fff;}.gm-admin-user-list{display:grid;gap:10px;padding:3px 0 20px;}.gm-admin-user-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:14px;border:1px solid #f0d7df;border-radius:17px;background:rgba(255,255,255,.92);box-shadow:0 5px 16px rgba(97,43,65,.06);}.gm-admin-user-card>strong{font-size:16px;}.gm-admin-user-card>span{grid-column:1;color:#6e5b66;font-size:12px;overflow-wrap:anywhere;}.gm-admin-status{grid-column:2;grid-row:1/3;align-self:start;padding:5px 8px;border-radius:999px;background:#fff0ca;color:#805200;font-size:10px;font-style:normal;font-weight:800;}.gm-admin-status-approved{background:#dcf7e8;color:#17683f;}.gm-admin-status-blocked,.gm-admin-status-denied{background:#ffe2e6;color:#9d1c34;}.gm-admin-user-actions{grid-column:1/-1;display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap;}.gm-admin-user-actions button{padding:8px 11px;border:1px solid #edbfd0;border-radius:10px;background:#fff5f8;color:#a51d50;font-weight:750;}.gm-admin-user-actions small{color:#8b5267;}.gm-admin-loading,.gm-admin-error{padding:24px 12px;text-align:center;color:#765467;}.gm-admin-error{color:#a61c45;}',
+      '.gm-admin-shell{box-sizing:border-box;width:min(100%,600px);min-height:100%;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 14px max(24px,env(safe-area-inset-bottom));background:#fff4f7 url("gestamed-background-clean.jpg?v=202") center/cover fixed;color:#17233c;}.gm-admin-shell>header{display:flex;align-items:center;gap:12px;padding:6px 3px 15px;}.gm-admin-back{display:grid;place-items:center;width:42px;height:42px;border:1px solid #f2c4d3;border-radius:50%;background:#fff;color:#b91f53;font-size:32px;line-height:1;}.gm-admin-shell h1{margin:0;color:#941843;font-size:25px;}.gm-admin-shell header p{margin:3px 0 0;color:#765467;font-size:12px;}.gm-admin-tabs{display:flex;gap:7px;padding:2px 1px 10px;overflow-x:auto;}.gm-admin-tabs button{flex:0 0 auto;padding:9px 13px;border:1px solid #edc7d4;border-radius:999px;background:#fff;color:#71364c;font-weight:700;}.gm-admin-tabs .gm-admin-tab-active{border-color:#e92c66;background:#e92c66;color:#fff;}.gm-admin-user-list{display:grid;gap:10px;padding:3px 0 20px;}.gm-admin-user-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:14px;border:1px solid #f0d7df;border-radius:17px;background:rgba(255,255,255,.92);box-shadow:0 5px 16px rgba(97,43,65,.06);}.gm-admin-user-card>strong{font-size:16px;}.gm-admin-user-card>span{grid-column:1;color:#6e5b66;font-size:12px;overflow-wrap:anywhere;}.gm-admin-status{grid-column:2;grid-row:1/3;align-self:start;padding:5px 8px;border-radius:999px;background:#fff0ca;color:#805200;font-size:10px;font-style:normal;font-weight:800;}.gm-admin-status-approved,.gm-admin-status-pending{background:#dcf7e8;color:#17683f;}.gm-admin-status-blocked,.gm-admin-status-denied{background:#ffe2e6;color:#9d1c34;}.gm-admin-user-actions{grid-column:1/-1;display:flex;align-items:center;gap:7px;margin-top:9px;flex-wrap:wrap;}.gm-admin-user-actions button{padding:8px 11px;border:1px solid #edbfd0;border-radius:10px;background:#fff5f8;color:#a51d50;font-weight:750;}.gm-admin-user-actions small{color:#8b5267;}.gm-admin-loading,.gm-admin-error{padding:24px 12px;text-align:center;color:#765467;}.gm-admin-error{color:#a61c45;}',
+      '.gm-simple-shell{position:relative;padding:max(64px,calc(env(safe-area-inset-top) + 44px)) 24px 32px;min-height:100%;box-sizing:border-box;}.gm-simple-title{margin:0 0 4px;color:#86143d;font-size:24px;}.gm-simple-sub{margin:0 0 20px;color:#815165;font-size:13px;word-break:break-word;}',
+      '.gm-profile-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;margin-bottom:12px;border:1px solid rgba(180,31,79,.14);border-radius:18px;background:rgba(255,255,255,.85);}.gm-profile-card strong{font-size:14px;color:#3b2333;}',
+      '.gm-profile-action{border:0;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:750;cursor:pointer;white-space:nowrap;}.gm-profile-request{background:#ec4899;color:#fff;}.gm-profile-pending{background:#f1e4e8;color:#8a6b76;}.gm-profile-action.gm-primary-button{width:auto;min-height:0;padding:10px 18px;font-size:13px;}',
+      '.gm-profile-loading{color:#815165;font-size:13px;}',
+      '.gm-profile-logout{margin-top:24px;width:100%;border:1px solid rgba(180,31,79,.2);border-radius:14px;padding:13px;background:transparent;color:#8f183d;font-weight:750;cursor:pointer;}',
+      '#gm-toast{position:fixed;left:50%;bottom:28px;z-index:2147483647;transform:translate(-50%,20px);opacity:0;transition:opacity .2s,transform .2s;max-width:min(88vw,360px);padding:13px 18px;border-radius:14px;background:#1f1522;color:#fff;font-size:13px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,.28);}#gm-toast.gm-toast-visible{opacity:1;transform:translate(-50%,0);}',
       '@media(min-width:700px){.gm-screen-shell,.gm-home-shell{min-height:calc(100% - 48px);margin:24px auto;border-radius:36px;}}',
       '@media(max-width:430px){.gm-home-shell{padding-left:12px;padding-right:12px;}.gm-command-header{grid-template-columns:minmax(0,61%) minmax(0,39%);min-height:204px;margin-left:-12px;margin-right:-12px;padding:10px 12px 9px;}.gm-command-logo{width:43px;height:51px;}.gm-command-name{font-size:clamp(28px,8vw,34px);}.gm-command-clinician img{right:-7px;bottom:-12px;width:127%;height:calc(100% + 9px);}.gm-command-greeting{padding-top:6px;}.gm-command-greeting h2{font-size:clamp(18px,5vw,21px);}.gm-command-greeting p{font-size:clamp(11px,3.15vw,13px);}.gm-command-quick-grid{gap:5px;}.gm-command-quick-label{font-size:9px;}.gm-command-module-grid{gap:8px;}.gm-command-module{grid-template-columns:40px minmax(0,1fr) 23px;gap:5px;min-height:84px;padding:7px;}.gm-command-module-icon{width:38px;height:38px;font-size:22px;}.gm-command-arrow{width:23px;height:23px;font-size:19px;}.gm-command-module-copy strong{font-size:11px;}.gm-command-module-copy small{font-size:8px;}.gm-command-stat{grid-template-columns:31px 1fr;padding:3px 5px;}.gm-command-stat-icon{width:30px;height:30px;font-size:17px;}.gm-command-stat strong{font-size:14px;}.gm-command-stat small{font-size:8px;}}',
       '@media(max-width:350px){.gm-command-header{grid-template-columns:minmax(0,64%) minmax(0,36%);}.gm-command-name{font-size:27px;}.gm-command-greeting h2{font-size:17px;}.gm-command-module-grid{grid-template-columns:1fr;}.gm-command-stat-grid{grid-template-columns:1fr;}.gm-command-stat+.gm-command-stat{border-left:0;border-top:1px solid rgba(232,105,145,.18);}}',
@@ -613,6 +619,119 @@
     return { pending:'Pendente', approved:'Aprovado', denied:'Negado', blocked:'Bloqueado' }[status] || status;
   }
 
+  function resourceLabel(resource) {
+    return resource === 'cid' ? 'Consulta de Exames — CID' : 'Laboratório Labor Análise';
+  }
+
+  function showToast(message) {
+    var old = document.getElementById('gm-toast');
+    if (old) old.remove();
+    var toast = document.createElement('div');
+    toast.id = 'gm-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    window.setTimeout(function () { toast.classList.add('gm-toast-visible'); }, 10);
+    window.setTimeout(function () { toast.remove(); }, 3200);
+  }
+
+  function fetchMyAccessRequests() {
+    if (!activeProfile) return Promise.resolve({});
+    return supabaseRestRequest('access_requests?user_id=eq.' + encodeURIComponent(activeProfile.id) + '&select=resource,status').then(function (rows) {
+      var map = {};
+      (rows || []).forEach(function (row) { map[row.resource] = row.status; });
+      return map;
+    }).catch(function () { return {}; });
+  }
+
+  function requestAccess(resource) {
+    return supabaseRestRequest('rpc/request_resource_access', { method: 'POST', body: { p_resource: resource } });
+  }
+
+  function renderProfile() {
+    var emailLine = document.getElementById('gm-profile-email');
+    if (emailLine && activeProfile) emailLine.textContent = activeProfile.email;
+    var body = document.getElementById('gm-profile-body');
+    if (!body || !activeProfile) return;
+    body.innerHTML = '<p class="gm-profile-loading">Carregando...</p>';
+    fetchMyAccessRequests().then(function (requests) {
+      function card(resource, url) {
+        var granted = activeProfile[resource === 'cid' ? 'cid_access' : 'labor_access'];
+        var status = requests[resource];
+        var actionHtml;
+        if (granted) {
+          actionHtml = url
+            ? '<button type="button" class="gm-profile-action gm-primary-button" data-action="open" data-url="' + url + '">Acessar</button>'
+            : '<button type="button" class="gm-profile-action gm-profile-pending" disabled>Em breve</button>';
+        } else if (status === 'pending') {
+          actionHtml = '<button type="button" class="gm-profile-action gm-profile-pending" disabled>Aguardando aprovação</button>';
+        } else {
+          actionHtml = '<button type="button" class="gm-profile-action gm-profile-request" data-action="request" data-resource="' + resource + '">Solicitar acesso</button>';
+        }
+        return '<div class="gm-profile-card"><strong>' + resourceLabel(resource) + '</strong>' + actionHtml + '</div>';
+      }
+      body.innerHTML = card('cid', CID_URL) + card('labor_analise', LABOR_ANALISE_URL);
+      body.querySelectorAll('[data-action="request"]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          button.disabled = true; button.textContent = 'Enviando...';
+          requestAccess(button.getAttribute('data-resource')).then(function () {
+            showToast('Pedido enviado! Você será avisado quando for autorizado.');
+            renderProfile();
+          }).catch(function () {
+            showToast('Não foi possível enviar o pedido. Tente novamente.');
+            renderProfile();
+          });
+        });
+      });
+      body.querySelectorAll('[data-action="open"]').forEach(function (button) {
+        button.addEventListener('click', function () { openExternal(button.getAttribute('data-url')); });
+      });
+    }).catch(function () {
+      body.innerHTML = '<p class="gm-profile-loading">Não foi possível carregar suas permissões.</p>';
+    });
+  }
+
+  function buildProfile() {
+    var screen = document.createElement('section');
+    screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'profile'); screen.setAttribute('aria-label', 'Perfil');
+    screen.innerHTML = '<div class="gm-screen-shell"><button class="gm-back-button" type="button" aria-label="Voltar">‹</button><div class="gm-simple-shell"><h1 class="gm-simple-title">Perfil</h1><p class="gm-simple-sub" id="gm-profile-email"></p><div id="gm-profile-body"></div><button type="button" class="gm-profile-logout">Sair</button></div></div>';
+    screen.querySelector('.gm-back-button').addEventListener('click', showHome);
+    screen.querySelector('.gm-profile-logout').addEventListener('click', logout);
+    return screen;
+  }
+
+  function loadAccessRequests() {
+    var list = document.querySelector('#gm-app-flow .gm-admin-user-list');
+    if (!list) return;
+    list.innerHTML = '<p class="gm-admin-loading">Carregando pedidos…</p>';
+    supabaseRestRequest('access_requests?status=eq.pending&select=id,resource,requested_at,profiles(email,display_name)&order=requested_at.asc').then(function (rows) {
+      list.innerHTML = '';
+      if (!rows || !rows.length) { list.innerHTML = '<p class="gm-admin-loading">Nenhum pedido de acesso pendente.</p>'; return; }
+      rows.forEach(function (row) {
+        var card = document.createElement('article'); card.className = 'gm-admin-user-card';
+        var title = document.createElement('strong'); title.textContent = (row.profiles && (row.profiles.display_name || row.profiles.email)) || 'Usuário';
+        var email = document.createElement('span'); email.textContent = (row.profiles && row.profiles.email) || '';
+        var badge = document.createElement('em'); badge.className = 'gm-admin-status gm-admin-status-pending'; badge.textContent = resourceLabel(row.resource);
+        var actions = document.createElement('div'); actions.className = 'gm-admin-user-actions';
+        [['approved','Aprovar'],['denied','Negar']].forEach(function (choice) {
+          var button = document.createElement('button'); button.type = 'button'; button.textContent = choice[1];
+          button.addEventListener('click', function () { decideAccessRequest(row.id, choice[0], button); });
+          actions.appendChild(button);
+        });
+        card.appendChild(title); card.appendChild(email); card.appendChild(badge); card.appendChild(actions); list.appendChild(card);
+      });
+    }).catch(function () { list.innerHTML = '<p class="gm-admin-error">Não foi possível carregar os pedidos.</p>'; });
+  }
+
+  function decideAccessRequest(requestId, decision, button) {
+    button.parentNode.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+    supabaseRestRequest('rpc/admin_decide_request', { method: 'POST', body: { request_id: requestId, decision: decision } }).then(function () {
+      loadAccessRequests();
+    }).catch(function () {
+      window.alert('Não foi possível decidir o pedido. Tente novamente.');
+      button.parentNode.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
+    });
+  }
+
   function loadAdminUsers(status) {
     var list = document.querySelector('#gm-app-flow .gm-admin-user-list');
     if (!list) return;
@@ -662,9 +781,16 @@
   function buildAdmin() {
     var screen = document.createElement('section');
     screen.className = 'gm-flow-screen'; screen.setAttribute('data-screen', 'admin'); screen.setAttribute('aria-label', 'Administração de acessos');
-    screen.innerHTML = '<main class="gm-admin-shell"><header><button class="gm-admin-back" type="button" aria-label="Voltar">‹</button><div><h1>Administração</h1><p>Cadastros e permissões de acesso</p></div></header><div class="gm-admin-tabs"><button class="gm-admin-tab-active" data-status="pending" type="button">Pendentes</button><button data-status="approved" type="button">Aprovados</button><button data-status="blocked" type="button">Bloqueados</button><button data-status="denied" type="button">Negados</button><button data-status="all" type="button">Todos</button></div><section class="gm-admin-user-list" aria-live="polite"></section></main>';
+    screen.innerHTML = '<main class="gm-admin-shell"><header><button class="gm-admin-back" type="button" aria-label="Voltar">‹</button><div><h1>Administração</h1><p>Cadastros e permissões de acesso</p></div></header><div class="gm-admin-tabs"><button class="gm-admin-tab-active" data-status="pending" type="button">Pendentes</button><button data-status="approved" type="button">Aprovados</button><button data-status="blocked" type="button">Bloqueados</button><button data-status="denied" type="button">Negados</button><button data-status="all" type="button">Todos</button><button data-status="access-requests" type="button">Acessos (CID/Labor)</button></div><section class="gm-admin-user-list" aria-live="polite"></section></main>';
     screen.querySelector('.gm-admin-back').addEventListener('click', showHome);
-    screen.querySelectorAll('.gm-admin-tabs button').forEach(function (button) { button.addEventListener('click', function () { screen.querySelectorAll('.gm-admin-tabs button').forEach(function (item) { item.classList.remove('gm-admin-tab-active'); }); button.classList.add('gm-admin-tab-active'); loadAdminUsers(button.getAttribute('data-status')); }); });
+    screen.querySelectorAll('.gm-admin-tabs button').forEach(function (button) {
+      button.addEventListener('click', function () {
+        screen.querySelectorAll('.gm-admin-tabs button').forEach(function (item) { item.classList.remove('gm-admin-tab-active'); });
+        button.classList.add('gm-admin-tab-active');
+        var status = button.getAttribute('data-status');
+        if (status === 'access-requests') loadAccessRequests(); else loadAdminUsers(status);
+      });
+    });
     return screen;
   }
 
@@ -677,7 +803,6 @@
       '<div class="gm-command-filter-row" aria-label="Filtros por sintomas e classes farmacêuticas">' + commandFilterMarkup() + '</div>' +
       '<h2 class="gm-command-section-title">Acesso rápido</h2><div class="gm-command-quick-grid"><button class="gm-command-quick gm-quick-agenda" type="button" data-gm-dev="Agenda"><span class="gm-command-quick-icon">▦</span><span class="gm-command-quick-label">Agenda</span></button><button class="gm-command-quick gm-quick-checklists" type="button" data-gm-dev="Checklists"><span class="gm-command-quick-icon">✓</span><span class="gm-command-quick-label">Checklists</span></button><button class="gm-command-quick gm-quick-calculadoras" type="button" data-gm-dev="Calculadoras"><span class="gm-command-quick-icon">∑</span><span class="gm-command-quick-label">Calculadoras</span></button><button class="gm-command-quick gm-quick-favoritos" type="button" data-gm-dev="Favoritos"><span class="gm-command-quick-icon">♥</span><span class="gm-command-quick-label">Favoritos</span></button><button class="gm-command-quick gm-quick-lembretes" type="button" data-gm-dev="Lembretes"><span class="gm-command-quick-icon">!</span><span class="gm-command-quick-label">Lembretes</span></button></div>' +
       '<section class="gm-command-module-grid" aria-label="Módulos do GestaMed"><button class="gm-command-module gm-card-blue" type="button" data-gm-module="idade"><span class="gm-command-module-icon">📅</span><span class="gm-command-module-copy"><strong>Idade gestacional</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-pink" type="button" data-gm-module="insulina"><span class="gm-command-module-icon">🩸</span><span class="gm-command-module-copy"><strong>Cálculo de insulina (DMG)</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-green" type="button" data-gm-module="exames"><span class="gm-command-module-icon">📋</span><span class="gm-command-module-copy"><strong>Painel de Exames</strong><small>Pré-natal habitual, baixo risco</small></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-purple" type="button" data-gm-module="peso"><span class="gm-command-module-icon">📈</span><span class="gm-command-module-copy"><strong>Ganho de peso gestacional</strong></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-orange" type="button" data-gm-module="prescricoes"><span class="gm-command-module-icon">💊</span><span class="gm-command-module-copy"><strong>Prescrições por Trimestre</strong><small>Dose e posologia</small></span><span class="gm-command-arrow">›</span></button><button class="gm-command-module gm-card-pink" type="button" data-gm-module="condutas"><span class="gm-command-module-icon">🩺</span><span class="gm-command-module-copy"><strong>Condutas Obstétricas</strong><small>Emergências e prescrição-modelo</small></span><span class="gm-command-arrow">›</span></button></section>' +
-      '<button class="gm-command-cid" type="button"><span class="gm-command-cid-icon">🧪</span><span><strong>Consulta de Exames — CID</strong><small>Acessar resultados laboratoriais da gestante</small></span><span class="gm-command-arrow">›</span></button>' +
       '<section class="gm-command-stats" aria-label="Base de medicamentos"><h3>Base de medicamentos</h3><div class="gm-command-stat-grid"><div class="gm-command-stat"><span class="gm-command-stat-icon">▤</span><span><strong>1.514</strong><small>registros pesquisáveis</small></span></div><div class="gm-command-stat"><span class="gm-command-stat-icon">🧬</span><span><strong>614</strong><small>princípios ativos</small></span></div><div class="gm-command-stat gm-command-stat-review"><span class="gm-command-stat-icon">⏱</span><span><strong>900</strong><small>pendentes de revisão</small></span></div></div></section>' +
       '<section class="gm-command-evidence"><span class="gm-command-evidence-icon">♢</span><span><strong>Conteúdo baseado em evidências</strong><small>Informações atualizadas conforme diretrizes do Ministério da Saúde e FEBRASGO.</small></span><span class="gm-command-evidence-check">✓</span></section>' +
       '<nav class="gm-command-nav" aria-label="Navegação principal"><button class="gm-nav-active" type="button" data-gm-nav="inicio"><span class="gm-command-nav-icon">⌂</span>Início</button><button type="button" data-gm-nav="obstetricia"><span class="gm-command-nav-icon">♧</span>Obstetrícia</button><button class="gm-nav-main" type="button" data-gm-nav="prenatal"><span class="gm-command-nav-icon">♡</span>Pré-natal</button><button type="button" data-gm-nav="protocolos"><span class="gm-command-nav-icon">▤</span>Protocolos</button><button type="button" data-gm-nav="perfil"><span class="gm-command-nav-icon">♙</span>Perfil</button></nav>';
@@ -698,19 +823,18 @@
     shell.querySelectorAll('[data-gm-dev]').forEach(function (button) { button.addEventListener('click', function () { showDevelopmentMessage(button.getAttribute('data-gm-dev')); }); });
     var moduleActions = {idade:['Idade gestacional'],insulina:['Cálculo de insulina','Calculo de insulina','Insulina','DMG'],exames:['Painel de Exames','Painel de exames'],peso:['Ganho de peso gestacional','Ganho de peso'],prescricoes:['Prescrições por Trimestre','Prescricoes por Trimestre','Prescrições'],condutas:['Condutas Obstétricas','Condutas Obstetricas','Condutas']};
     shell.querySelectorAll('[data-gm-module]').forEach(function (button) { button.addEventListener('click', function () { var labels = moduleActions[button.getAttribute('data-gm-module')]; if (!activate(labels)) showDevelopmentMessage(labels[0]); }); });
-    shell.querySelector('.gm-command-cid').addEventListener('click', function () { openExternal(CID_URL); });
     shell.querySelector('[data-gm-nav="inicio"]').addEventListener('click', showHome);
     shell.querySelector('[data-gm-nav="obstetricia"]').addEventListener('click', function () { if (!activate(['Obstetrícia','Obstetricia','Condutas Obstétricas','Condutas Obstetricas','Condutas'])) showDevelopmentMessage('Obstetrícia'); });
     shell.querySelector('[data-gm-nav="prenatal"]').addEventListener('click', function () { if (!activate(['Pré-natal','Pre natal'])) showDevelopmentMessage('Pré-natal'); });
     shell.querySelector('[data-gm-nav="protocolos"]').addEventListener('click', function () { showDevelopmentMessage('Protocolos'); });
-    shell.querySelector('[data-gm-nav="perfil"]').addEventListener('click', function () { showDevelopmentMessage('Perfil'); });
+    shell.querySelector('[data-gm-nav="perfil"]').addEventListener('click', function () { setFlowScreen('profile'); renderProfile(); });
     screen.appendChild(shell); return screen;
   }
 
   function buildFlow() {
     removeLegacyEntryLayers(); ensureStyle();
     var flow = document.createElement('div'); flow.id = 'gm-app-flow';
-    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildResetPassword()); flow.appendChild(buildAccountStatus()); flow.appendChild(buildAdmin()); flow.appendChild(buildHome());
+    flow.appendChild(buildWelcome()); flow.appendChild(buildLogin()); flow.appendChild(buildRegister()); flow.appendChild(buildResetPassword()); flow.appendChild(buildAccountStatus()); flow.appendChild(buildAdmin()); flow.appendChild(buildHome()); flow.appendChild(buildProfile());
     document.body.appendChild(flow);
     if (readRecoveryCallback()) {
       setFlowScreen('reset-password');
