@@ -2,7 +2,6 @@
 'use strict';
 
 var ROOT_ID='gm-gestational-diabetes-screen';
-var BRIDGE_ID='gm-gestational-diabetes-entry';
 var STYLE_ID='gm-gestational-diabetes-style';
 
 function flow(){return document.getElementById('gm-app-flow');}
@@ -16,34 +15,56 @@ function activate(name){
   var active=screen(name); if(active)active.scrollTop=0;
 }
 function home(){activate('home');}
-function triggerHome(selector){
-  home();
-  var el=document.querySelector('#gm-app-flow [data-screen="home"] '+selector);
-  if(el)el.click();
-}
+function triggerHome(selector){home();var el=document.querySelector('#gm-app-flow [data-screen="home"] '+selector);if(el)el.click();}
 function toast(message){
-  var old=document.getElementById('gm-gestational-diabetes-toast'); if(old)old.remove();
-  var el=document.createElement('div'); el.id='gm-gestational-diabetes-toast'; el.textContent=message; document.body.appendChild(el);
+  var old=document.getElementById('gm-gestational-diabetes-toast');if(old)old.remove();
+  var el=document.createElement('div');el.id='gm-gestational-diabetes-toast';el.textContent=message;document.body.appendChild(el);
   requestAnimationFrame(function(){el.classList.add('show');});
   window.setTimeout(function(){el.classList.remove('show');window.setTimeout(function(){el.remove();},180);},2200);
 }
-function openTopic(title){toast(title+' — conteúdo será inserido na próxima etapa.');}
-function openGestationalDiabetesModule(){activate('gestational-diabetes');}
+
+var TOPICS={
+  diagnosis:{title:'Diagnóstico do DMG',subtitle:'Visão geral do diagnóstico',icon:'🔬'},
+  criteria:{title:'Critérios diagnósticos',subtitle:'IADPSG / OMS / SBD 2025',icon:'📋'},
+  totg:{title:'TOTG 75 g (24–28 semanas)',subtitle:'Como interpretar',icon:'🗓️'},
+  fasting:{title:'Glicemia de jejum',subtitle:'Quando pode ser usado',icon:'🩸'},
+  early:{title:'Diagnóstico precoce',subtitle:'Antes de 24 semanas',icon:'⏱️'},
+  previous:{title:'DM prévio x DMG',subtitle:'Como diferenciar',icon:'♀'},
+  flowchart:{title:'Fluxograma completo',subtitle:'Fluxo diagnóstico do diabetes gestacional',icon:'⌘'}
+};
+
+function openGestationalDiabetesModule(){activate('gestational-diabetes');showMenu();}
 function closeGestationalDiabetesModule(){home();}
+function showMenu(){
+  var root=document.getElementById(ROOT_ID);if(!root)return;
+  var menu=root.querySelector('.gm-dmg-new-menu');var detail=root.querySelector('.gm-dmg-new-detail');
+  if(menu)menu.hidden=false;if(detail)detail.hidden=true;root.scrollTop=0;
+}
+function openTopic(key){
+  var root=document.getElementById(ROOT_ID);var data=TOPICS[key];if(!root||!data)return;
+  var menu=root.querySelector('.gm-dmg-new-menu');var detail=root.querySelector('.gm-dmg-new-detail');
+  if(menu)menu.hidden=true;if(!detail)return;
+  detail.hidden=false;detail.setAttribute('data-topic',key);
+  detail.querySelector('.gm-dmg-detail-icon').textContent=data.icon;
+  detail.querySelector('h2').textContent=data.title;
+  detail.querySelector('.gm-dmg-detail-subtitle').textContent=data.subtitle;
+  detail.querySelector('.gm-dmg-detail-status').textContent='Tela conectada e funcionando. O conteúdo clínico desta seção será inserido na próxima etapa.';
+  root.scrollTop=0;
+}
 
 window.openGestationalDiabetesModule=openGestationalDiabetesModule;
 window.closeGestationalDiabetesModule=closeGestationalDiabetesModule;
-window.openDmgDiagnosis=function(){openTopic('Diagnóstico do DMG');};
-window.openDmgCriteria=function(){openTopic('Critérios diagnósticos');};
-window.openDmgTotg=function(){openTopic('TOTG 75 g (24–28 semanas)');};
-window.openDmgFastingGlucose=function(){openTopic('Glicemia de jejum');};
-window.openDmgEarlyDiagnosis=function(){openTopic('Diagnóstico precoce');};
-window.openDmgPreviousVsGestational=function(){openTopic('DM prévio x DMG');};
-window.openDmgFlowchart=function(){toast('Fluxograma em construção.');};
+window.openDmgDiagnosis=function(){openTopic('diagnosis');};
+window.openDmgCriteria=function(){openTopic('criteria');};
+window.openDmgTotg=function(){openTopic('totg');};
+window.openDmgFastingGlucose=function(){openTopic('fasting');};
+window.openDmgEarlyDiagnosis=function(){openTopic('early');};
+window.openDmgPreviousVsGestational=function(){openTopic('previous');};
+window.openDmgFlowchart=function(){openTopic('flowchart');};
 
 function ensureStyle(){
   if(document.getElementById(STYLE_ID))return;
-  var style=document.createElement('style'); style.id=STYLE_ID;
+  var style=document.createElement('style');style.id=STYLE_ID;
   style.textContent=[
     '#gm-app-flow [data-gm-module="insulina"] .gm-command-module-copy strong{font-size:0!important;}',
     '#gm-app-flow [data-gm-module="insulina"] .gm-command-module-copy strong:before{content:"Diabetes Gestacional";font-size:13px;line-height:1.18;font-weight:800;}',
@@ -51,10 +72,11 @@ function ensureStyle(){
     '#'+ROOT_ID+'{background:#fff4f7!important;}',
     '#'+ROOT_ID+' .gm-dmg-new-shell{box-sizing:border-box;position:relative;width:min(100%,600px);min-height:100%;margin:0 auto;padding:0 14px 88px;background:linear-gradient(180deg,#fff8fb 0%,#fff 46%,#fff7fa 100%);box-shadow:0 0 40px rgba(98,37,65,.12);color:#17233c;}',
     '#'+ROOT_ID+' .gm-dmg-new-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin:0 -14px 12px;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:rgba(255,249,252,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(236,87,137,.12);}',
-    '#'+ROOT_ID+' .gm-dmg-new-back{height:38px;padding:0 12px;border:1px solid #f0c8d7;border-radius:13px;background:#fff;color:#b71d50;font-weight:800;cursor:pointer;}',
+    '#'+ROOT_ID+' .gm-dmg-new-back,#'+ROOT_ID+' .gm-dmg-detail-back{height:38px;padding:0 12px;border:1px solid #f0c8d7;border-radius:13px;background:#fff;color:#b71d50;font-weight:800;cursor:pointer;}',
     '#'+ROOT_ID+' .gm-dmg-new-brand{text-align:center;color:#e32668;font-size:15px;font-weight:850;}',
     '#'+ROOT_ID+' .gm-dmg-new-actions{display:flex;gap:7px;justify-content:flex-end;}',
-    '#'+ROOT_ID+' .gm-dmg-new-action{display:grid;place-items:center;width:38px;height:38px;padding:0;border:1px solid #f0c8d7;border-radius:13px;background:#fff;color:#d72b66;cursor:pointer;font-size:17px;}',
+    '#'+ROOT_ID+' .gm-dmg-new-action{display:grid;place-items:center;min-width:38px;height:38px;padding:0 9px;border:1px solid #f0c8d7;border-radius:13px;background:#fff;color:#d72b66;cursor:pointer;font-size:15px;font-weight:750;}',
+    '#'+ROOT_ID+' .gm-dmg-new-menu[hidden],#'+ROOT_ID+' .gm-dmg-new-detail[hidden]{display:none!important;}',
     '#'+ROOT_ID+' .gm-dmg-new-hero{position:relative;min-height:168px;padding:18px 45% 8px 3px;margin-bottom:12px;overflow:hidden;border-radius:24px;background:linear-gradient(135deg,#fff,#fff0f5);}',
     '#'+ROOT_ID+' .gm-dmg-new-hero h1{margin:0;color:#111a33;font-size:clamp(30px,7.6vw,42px);line-height:1.02;letter-spacing:-1.2px;}',
     '#'+ROOT_ID+' .gm-dmg-new-hero p{margin:10px 0 0;color:#596174;font-size:14px;font-weight:600;}',
@@ -70,6 +92,14 @@ function ensureStyle(){
     '#'+ROOT_ID+' .c2{--bg:#faf2ff;--bd:#ead8f8;--accent:#a855e8;--icon:#f0e2fb;}#'+ROOT_ID+' .c3{--bg:#f2fae9;--bd:#d9edbd;--accent:#35c83c;--icon:#e4f8d3;}#'+ROOT_ID+' .c4{--bg:#fff9e9;--bd:#f3e1ae;--accent:#f7b900;--icon:#fff0bd;}#'+ROOT_ID+' .c5{--bg:#edf6ff;--bd:#cfe2f7;--accent:#4b9df0;--icon:#dceeff;}#'+ROOT_ID+' .c6{--bg:#fff2ef;--bd:#f4d1c9;--accent:#ff7665;--icon:#ffe0da;}',
     '#'+ROOT_ID+' .gm-dmg-new-flow{width:100%;min-height:64px;margin-top:11px;display:grid;grid-template-columns:52px 1fr 30px;align-items:center;gap:9px;padding:7px 12px;border:1px solid #f2c1d3;border-radius:20px;background:linear-gradient(135deg,#fff3f8,#ffe4ef);color:#e31e65;text-align:left;font-size:16px;font-weight:900;cursor:pointer;}',
     '#'+ROOT_ID+' .gm-dmg-new-flow-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#fff;font-size:25px;}',
+    '#'+ROOT_ID+' .gm-dmg-new-detail{padding:8px 0 20px;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-head{display:flex;align-items:center;gap:12px;margin:8px 0 14px;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-icon{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:#ffe1ea;font-size:30px;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-head h2{margin:0;color:#111a33;font-size:25px;line-height:1.08;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-subtitle{margin:5px 0 0;color:#6a6270;font-size:13px;font-weight:650;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-card{padding:18px;border:1px solid #f0ccd9;border-radius:20px;background:#fff;box-shadow:0 7px 20px rgba(99,45,68,.06);}',
+    '#'+ROOT_ID+' .gm-dmg-detail-card h3{margin:0 0 7px;color:#c5255d;font-size:16px;}',
+    '#'+ROOT_ID+' .gm-dmg-detail-status{margin:0;color:#50596a;font-size:14px;line-height:1.5;}',
     '#'+ROOT_ID+' .gm-dmg-new-nav{position:sticky;bottom:max(0px,env(safe-area-inset-bottom));z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;margin:14px -3px 0;padding:7px 3px 6px;border:1px solid rgba(236,133,166,.16);border-radius:21px;background:rgba(255,255,255,.97);box-shadow:0 -7px 22px rgba(102,42,67,.08);}',
     '#'+ROOT_ID+' .gm-dmg-new-nav button{min-width:0;padding:2px;border:0;background:transparent;color:#40475a;cursor:pointer;font-size:10px;}#'+ROOT_ID+' .gm-dmg-new-nav span{display:block;margin-bottom:3px;color:#c05b81;font-size:22px;line-height:1;}#'+ROOT_ID+' .gm-dmg-new-nav .active{color:#ef1760;font-weight:760;}',
     '#gm-gestational-diabetes-toast{position:fixed;left:50%;bottom:90px;z-index:2147483647;max-width:min(86vw,360px);padding:11px 15px;border-radius:13px;background:#261920;color:#fff;font-size:12px;text-align:center;opacity:0;transform:translate(-50%,10px);transition:.18s;}#gm-gestational-diabetes-toast.show{opacity:1;transform:translate(-50%,0);}',
@@ -79,47 +109,35 @@ function ensureStyle(){
 }
 
 function buildScreen(){
-  var f=flow(); if(!f||document.getElementById(ROOT_ID))return;
-  var s=document.createElement('section'); s.id=ROOT_ID; s.className='gm-flow-screen'; s.setAttribute('data-screen','gestational-diabetes'); s.setAttribute('aria-label','Diabetes Gestacional');
-  s.innerHTML='<main class="gm-dmg-new-shell"><header class="gm-dmg-new-top"><button class="gm-dmg-new-back" type="button" aria-label="Voltar para a tela de comando">‹ Voltar</button><div class="gm-dmg-new-brand">GestaMed</div><div class="gm-dmg-new-actions"><button class="gm-dmg-new-action gm-dmg-new-notices" type="button" aria-label="Abrir avisos">🔔</button><button class="gm-dmg-new-action gm-dmg-new-logout" type="button" aria-label="Sair">Sair</button></div></header><section class="gm-dmg-new-hero"><h1>Diabetes<br>Gestacional</h1><p>Selecione o tópico desejado</p><img src="gestamed-hero.jpg?v=204" alt="Ilustração de gestante"></section><div class="gm-dmg-new-list"><button class="gm-dmg-new-card" type="button" data-topic="diagnosis" aria-label="Diagnóstico do DMG"><span class="gm-dmg-new-icon">🔬</span><span class="gm-dmg-new-num">1</span><span class="gm-dmg-new-copy"><strong>Diagnóstico do DMG</strong></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c2" type="button" data-topic="criteria" aria-label="Critérios diagnósticos"><span class="gm-dmg-new-icon">📋</span><span class="gm-dmg-new-num">2</span><span class="gm-dmg-new-copy"><strong>Critérios diagnósticos</strong><small>IADPSG / OMS / SBD 2025</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c3" type="button" data-topic="totg" aria-label="TOTG 75 g de 24 a 28 semanas"><span class="gm-dmg-new-icon">🗓️</span><span class="gm-dmg-new-num">3</span><span class="gm-dmg-new-copy"><strong>TOTG 75 g (24–28 semanas)</strong><small>Como interpretar</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c4" type="button" data-topic="fasting" aria-label="Glicemia de jejum"><span class="gm-dmg-new-icon">🩸</span><span class="gm-dmg-new-num">4</span><span class="gm-dmg-new-copy"><strong>Glicemia de jejum</strong><small>Quando pode ser usado</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c5" type="button" data-topic="early" aria-label="Diagnóstico precoce"><span class="gm-dmg-new-icon">⏱️</span><span class="gm-dmg-new-num">5</span><span class="gm-dmg-new-copy"><strong>Diagnóstico precoce</strong><small>Antes de 24 semanas</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c6" type="button" data-topic="previous" aria-label="DM prévio versus DMG"><span class="gm-dmg-new-icon">♀</span><span class="gm-dmg-new-num">6</span><span class="gm-dmg-new-copy"><strong>DM prévio x DMG</strong><small>Como diferenciar</small></span><span class="gm-dmg-new-chevron">›</span></button></div><button class="gm-dmg-new-flow" type="button" aria-label="Ver fluxograma completo"><span class="gm-dmg-new-flow-icon">⌘</span><span>Ver fluxograma completo</span><span>↗</span></button><nav class="gm-dmg-new-nav" aria-label="Navegação principal"><button class="active" type="button" data-home-nav="inicio"><span>⌂</span>Início</button><button type="button" data-home-nav="obstetricia"><span>♧</span>Obstetrícia</button><button type="button" data-home-nav="prenatal"><span>♡</span>Pré-natal</button><button type="button" data-home-nav="protocolos"><span>▤</span>Protocolos</button><button type="button" data-home-nav="perfil"><span>♙</span>Perfil</button></nav></main>';
+  var f=flow();if(!f||document.getElementById(ROOT_ID))return false;
+  var s=document.createElement('section');s.id=ROOT_ID;s.className='gm-flow-screen';s.setAttribute('data-screen','gestational-diabetes');s.setAttribute('aria-label','Diabetes Gestacional');
+  s.innerHTML='<main class="gm-dmg-new-shell"><header class="gm-dmg-new-top"><button class="gm-dmg-new-back" type="button" aria-label="Voltar para a tela de comando">‹ Voltar</button><div class="gm-dmg-new-brand">GestaMed</div><div class="gm-dmg-new-actions"><button class="gm-dmg-new-action gm-dmg-new-notices" type="button" aria-label="Abrir avisos">🔔</button><button class="gm-dmg-new-action gm-dmg-new-logout" type="button" aria-label="Sair">Sair</button></div></header><section class="gm-dmg-new-menu"><section class="gm-dmg-new-hero"><h1>Diabetes<br>Gestacional</h1><p>Selecione o tópico desejado</p><img src="gestamed-hero.jpg?v=204" alt="Ilustração de gestante"></section><div class="gm-dmg-new-list"><button class="gm-dmg-new-card" type="button" data-topic="diagnosis"><span class="gm-dmg-new-icon">🔬</span><span class="gm-dmg-new-num">1</span><span class="gm-dmg-new-copy"><strong>Diagnóstico do DMG</strong></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c2" type="button" data-topic="criteria"><span class="gm-dmg-new-icon">📋</span><span class="gm-dmg-new-num">2</span><span class="gm-dmg-new-copy"><strong>Critérios diagnósticos</strong><small>IADPSG / OMS / SBD 2025</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c3" type="button" data-topic="totg"><span class="gm-dmg-new-icon">🗓️</span><span class="gm-dmg-new-num">3</span><span class="gm-dmg-new-copy"><strong>TOTG 75 g (24–28 semanas)</strong><small>Como interpretar</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c4" type="button" data-topic="fasting"><span class="gm-dmg-new-icon">🩸</span><span class="gm-dmg-new-num">4</span><span class="gm-dmg-new-copy"><strong>Glicemia de jejum</strong><small>Quando pode ser usado</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c5" type="button" data-topic="early"><span class="gm-dmg-new-icon">⏱️</span><span class="gm-dmg-new-num">5</span><span class="gm-dmg-new-copy"><strong>Diagnóstico precoce</strong><small>Antes de 24 semanas</small></span><span class="gm-dmg-new-chevron">›</span></button><button class="gm-dmg-new-card c6" type="button" data-topic="previous"><span class="gm-dmg-new-icon">♀</span><span class="gm-dmg-new-num">6</span><span class="gm-dmg-new-copy"><strong>DM prévio x DMG</strong><small>Como diferenciar</small></span><span class="gm-dmg-new-chevron">›</span></button></div><button class="gm-dmg-new-flow" type="button" data-topic="flowchart"><span class="gm-dmg-new-flow-icon">⌘</span><span>Ver fluxograma completo</span><span>↗</span></button></section><section class="gm-dmg-new-detail" hidden><button class="gm-dmg-detail-back" type="button">‹ Voltar aos tópicos</button><div class="gm-dmg-detail-head"><div class="gm-dmg-detail-icon"></div><div><h2></h2><p class="gm-dmg-detail-subtitle"></p></div></div><div class="gm-dmg-detail-card"><h3>Seção pronta</h3><p class="gm-dmg-detail-status"></p></div></section><nav class="gm-dmg-new-nav" aria-label="Navegação principal"><button class="active" type="button" data-home-nav="inicio"><span>⌂</span>Início</button><button type="button" data-home-nav="obstetricia"><span>♧</span>Obstetrícia</button><button type="button" data-home-nav="prenatal"><span>♡</span>Pré-natal</button><button type="button" data-home-nav="protocolos"><span>▤</span>Protocolos</button><button type="button" data-home-nav="perfil"><span>♙</span>Perfil</button></nav></main>';
   f.appendChild(s);
   s.querySelector('.gm-dmg-new-back').addEventListener('click',closeGestationalDiabetesModule);
+  s.querySelector('.gm-dmg-detail-back').addEventListener('click',showMenu);
   s.querySelector('.gm-dmg-new-notices').addEventListener('click',function(){triggerHome('.gm-command-notices');});
   s.querySelector('.gm-dmg-new-logout').addEventListener('click',function(){triggerHome('.gm-command-logout');});
-  var topicMap={diagnosis:window.openDmgDiagnosis,criteria:window.openDmgCriteria,totg:window.openDmgTotg,fasting:window.openDmgFastingGlucose,early:window.openDmgEarlyDiagnosis,previous:window.openDmgPreviousVsGestational};
-  s.querySelectorAll('[data-topic]').forEach(function(btn){btn.addEventListener('click',function(){var fn=topicMap[btn.getAttribute('data-topic')];if(fn)fn();});});
-  s.querySelector('.gm-dmg-new-flow').addEventListener('click',window.openDmgFlowchart);
-  s.querySelectorAll('[data-home-nav]').forEach(function(btn){btn.addEventListener('click',function(){var key=btn.getAttribute('data-home-nav'); if(key==='inicio'){home();return;} triggerHome('[data-gm-nav="'+key+'"]');});});
+  s.querySelectorAll('[data-topic]').forEach(function(btn){btn.addEventListener('click',function(){openTopic(btn.getAttribute('data-topic'));});});
+  s.querySelectorAll('[data-home-nav]').forEach(function(btn){btn.addEventListener('click',function(){var key=btn.getAttribute('data-home-nav');if(key==='inicio'){home();return;}triggerHome('[data-gm-nav="'+key+'"]');});});
+  return true;
 }
 
 function retitleHomeCard(){
-  var button=document.querySelector('#gm-app-flow [data-gm-module="insulina"]'); if(!button)return;
-  button.setAttribute('aria-label','Diabetes Gestacional'); button.setAttribute('title','Diabetes Gestacional');
-  var copy=button.querySelector('.gm-command-module-copy'); if(!copy)return;
-  var subtitle=copy.querySelector('.gm-dmg-new-subtitle');
-  if(!subtitle){subtitle=document.createElement('small');subtitle.className='gm-dmg-new-subtitle';subtitle.textContent='Diagnóstico, rastreio e critérios';copy.appendChild(subtitle);}
-}
-
-function createBridge(){
-  if(document.getElementById(BRIDGE_ID))return;
-  var bridge=document.createElement('button'); bridge.id=BRIDGE_ID; bridge.type='button'; bridge.setAttribute('aria-label','DMG'); bridge.setAttribute('title','Diabetes Gestacional');
-  bridge.style.cssText='position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;';
-  bridge.addEventListener('click',openGestationalDiabetesModule);
-  document.body.insertBefore(bridge,document.body.firstChild);
-}
-
-function init(){
-  ensureStyle();
-  createBridge();
-  if(!flow())return false;
-  buildScreen();
-  retitleHomeCard();
+  var button=document.querySelector('#gm-app-flow [data-gm-module="insulina"]');if(!button)return false;
+  button.setAttribute('aria-label','Diabetes Gestacional');button.setAttribute('title','Diabetes Gestacional');
+  var copy=button.querySelector('.gm-command-module-copy');if(!copy)return false;
+  var subtitle=copy.querySelector('.gm-dmg-new-subtitle');if(!subtitle){subtitle=document.createElement('small');subtitle.className='gm-dmg-new-subtitle';subtitle.textContent='Diagnóstico, rastreio e critérios';copy.appendChild(subtitle);}
+  if(button.getAttribute('data-gm-diabetes-bound')!=='true'){
+    button.setAttribute('data-gm-diabetes-bound','true');
+    button.addEventListener('click',function(event){event.preventDefault();event.stopPropagation();openGestationalDiabetesModule();},false);
+  }
   return true;
 }
-function initWhenReady(){
-  if(init())return;
-  window.addEventListener('load',init,{once:true});
+
+function mount(){ensureStyle();var built=buildScreen();var titled=retitleHomeCard();return !!(built||document.getElementById(ROOT_ID))&&titled;}
+function init(){
+  if(mount())return;
+  window.addEventListener('load',function(){mount();},{once:true});
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWhenReady,{once:true});
-else if(!init())window.addEventListener('load',init,{once:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
