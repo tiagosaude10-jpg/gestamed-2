@@ -1,7 +1,16 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-14-200';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-16-204';
+
+  function loadDmgMenu() {
+    if (document.querySelector('script[data-gm-dmg-menu-loader]')) return;
+    var script = document.createElement('script');
+    script.src = 'dmg-menu-v204.js?v=204';
+    script.async = false;
+    script.setAttribute('data-gm-dmg-menu-loader', 'true');
+    document.head.appendChild(script);
+  }
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -43,6 +52,7 @@
   }
 
   ensureStyle();
+  loadDmgMenu();
 
   var attempts = 0;
   function start() {
