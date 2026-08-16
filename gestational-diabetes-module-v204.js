@@ -108,6 +108,18 @@ function createBridge(){
   document.body.insertBefore(bridge,document.body.firstChild);
 }
 
-function init(){ensureStyle();buildScreen();retitleHomeCard();createBridge();}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+function init(){
+  ensureStyle();
+  createBridge();
+  if(!flow())return false;
+  buildScreen();
+  retitleHomeCard();
+  return true;
+}
+function initWhenReady(){
+  if(init())return;
+  window.addEventListener('load',init,{once:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initWhenReady,{once:true});
+else if(!init())window.addEventListener('load',init,{once:true});
 })();
