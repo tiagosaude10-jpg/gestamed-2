@@ -1,11 +1,12 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-214';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-215';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
   var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
   var ADMIN_MANAGER_SRC = 'admin-access-manager-v214.js?v=20260817-214';
+  var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -48,6 +49,7 @@
   loadOnce('gm-admin-cid-labor-fix-loader',ADMIN_ACCESS_FIX_SRC,'admin-cid-labor-v212');
   loadOnce('gm-resource-buttons-dedupe-loader',RESOURCE_DEDUPE_SRC,'resource-buttons-dedupe-v213');
   loadOnce('gm-admin-access-manager-loader',ADMIN_MANAGER_SRC,'admin-access-manager-v214');
+  loadOnce('gm-home-greeting-text-loader',HOME_GREETING_TEXT_SRC,'home-greeting-text-v215');
 
   var attempts = 0;
   function start() {
