@@ -1,9 +1,10 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-212';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-213';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
+  var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -55,8 +56,7 @@
   }
 
   function ensureAdminAccessFix() {
-    var old = document.getElementById('gm-admin-cid-labor-fix-loader');
-    if (old) old.remove();
+    if (document.getElementById('gm-admin-cid-labor-fix-loader')) return;
     var script = document.createElement('script');
     script.id = 'gm-admin-cid-labor-fix-loader';
     script.src = ADMIN_ACCESS_FIX_SRC;
@@ -65,9 +65,20 @@
     document.head.appendChild(script);
   }
 
+  function ensureResourceDedupe() {
+    if (document.getElementById('gm-resource-buttons-dedupe-loader')) return;
+    var script = document.createElement('script');
+    script.id = 'gm-resource-buttons-dedupe-loader';
+    script.src = RESOURCE_DEDUPE_SRC;
+    script.async = false;
+    script.setAttribute('data-gestamed-module', 'resource-buttons-dedupe-v213');
+    document.head.appendChild(script);
+  }
+
   ensureStyle();
   ensureIicModule();
   ensureAdminAccessFix();
+  ensureResourceDedupe();
 
   var attempts = 0;
   function start() {
