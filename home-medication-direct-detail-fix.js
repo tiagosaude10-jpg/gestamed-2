@@ -1,10 +1,36 @@
 (function(){
   'use strict';
-  var PATCH_ID='gestamed-home-medication-direct-detail-2026-07-25-170';
+  var PATCH_ID='gestamed-home-medication-direct-detail-2026-08-17-226';
   document.documentElement.setAttribute('data-gm-direct-detail',PATCH_ID);
 
   function normalize(value){
     return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase();
+  }
+
+  function newHomeActive(){
+    var screen=document.querySelector('#gm-app-flow [data-screen="home"]');
+    return !!(screen&&screen.classList.contains('gm-screen-active'));
+  }
+
+  function selectIntoNewSearch(card){
+    if(!card)return false;
+    var name=String(card.getAttribute('data-medication-name')||'').replace(/\s+/g,' ').trim();
+    if(!name){
+      var title=card.querySelector('strong,.gm-home-result-name,.gm-drug,h3,h4');
+      name=String(title?title.textContent:'').replace(/\s+/g,' ').trim();
+    }
+    if(!name)return false;
+    var input=document.querySelector('#gm-app-flow #gm-home-search');
+    if(!input)return false;
+    input.value=name;
+    input.setAttribute('value',name);
+    var panel=document.getElementById('gm-home-filter-results');
+    if(panel){
+      panel.classList.remove('gm-home-results-open');
+      panel.setAttribute('aria-hidden','true');
+    }
+    try{input.blur();}catch(e){}
+    return true;
   }
 
   function ensureStyle(){
@@ -127,6 +153,17 @@
   document.addEventListener('click',function(event){
     var card=event.target&&event.target.closest?event.target.closest('#gm-home-filter-results .gm-home-result-card'):null;
     if(!card)return;
+
+    /* Na tela nova, a lista colorida serve apenas para selecionar o nome.
+       A lupa da barra executa a abertura do medicamento. */
+    if(newHomeActive()){
+      event.preventDefault();
+      event.stopPropagation();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+      selectIntoNewSearch(card);
+      return;
+    }
+
     event.preventDefault();
     event.stopPropagation();
     if(event.stopImmediatePropagation)event.stopImmediatePropagation();
