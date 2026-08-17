@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-222';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-223';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
   var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
@@ -10,6 +10,7 @@
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-219';
   var HOME_AUTOCOMPLETE_SYNC_SRC = 'home-medication-autocomplete-sync-v219.js?v=20260817-222';
   var LEGAL_REGISTRATION_SRC = 'legal-registration-v215.js?v=20260817-221';
+  var MOBILE_INPUT_SELECTION_FIX_SRC = 'mobile-input-selection-fix-v216.js?v=20260817-223';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -55,6 +56,7 @@
   loadOnce('gm-home-med-search-fix-loader',HOME_MED_SEARCH_FIX_SRC,'home-medication-search-v219');
   loadOnce('gm-home-med-autocomplete-sync-loader',HOME_AUTOCOMPLETE_SYNC_SRC,'home-medication-autocomplete-sync-v220');
   loadOnce('gm-legal-registration-loader',LEGAL_REGISTRATION_SRC,'legal-registration-v215');
+  loadOnce('gm-mobile-input-selection-loader',MOBILE_INPUT_SELECTION_FIX_SRC,'mobile-input-selection-v216');
 
   var attempts = 0;
   function start() {
