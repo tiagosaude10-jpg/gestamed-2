@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-14-200';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-211';
+  var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -42,7 +43,18 @@
     document.head.appendChild(style);
   }
 
+  function ensureIicModule() {
+    if (window.openIicCerclageProgesteroneModule || document.getElementById('gm-iic-cerclage-module-loader')) return;
+    var script = document.createElement('script');
+    script.id = 'gm-iic-cerclage-module-loader';
+    script.src = IIC_MODULE_SRC;
+    script.async = false;
+    script.setAttribute('data-gestamed-module', 'iic-cerclage-progesterone-v211');
+    document.head.appendChild(script);
+  }
+
   ensureStyle();
+  ensureIicModule();
 
   var attempts = 0;
   function start() {
