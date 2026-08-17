@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var PATCH_ID='gestamed-home-medication-direct-detail-2026-08-17-226';
+  var PATCH_ID='gestamed-home-medication-direct-detail-2026-08-17-227';
   document.documentElement.setAttribute('data-gm-direct-detail',PATCH_ID);
 
   function normalize(value){
@@ -12,13 +12,16 @@
     return !!(screen&&screen.classList.contains('gm-screen-active'));
   }
 
-  function selectIntoNewSearch(card){
-    if(!card)return false;
+  function selectedName(card){
+    if(!card)return '';
     var name=String(card.getAttribute('data-medication-name')||'').replace(/\s+/g,' ').trim();
-    if(!name){
-      var title=card.querySelector('strong,.gm-home-result-name,.gm-drug,h3,h4');
-      name=String(title?title.textContent:'').replace(/\s+/g,' ').trim();
-    }
+    if(name)return name;
+    var title=card.querySelector('strong,.gm-home-result-name,.gm-drug,h3,h4');
+    return String(title?title.textContent:'').replace(/\s+/g,' ').trim();
+  }
+
+  function selectIntoNewSearch(card){
+    var name=selectedName(card);
     if(!name)return false;
     var input=document.querySelector('#gm-app-flow #gm-home-search');
     if(!input)return false;
@@ -29,7 +32,9 @@
       panel.classList.remove('gm-home-results-open');
       panel.setAttribute('aria-hidden','true');
     }
-    try{input.blur();}catch(e){}
+    document.documentElement.classList.remove('gm-home-filter-mode');
+    try{input.focus({preventScroll:true});}catch(e){try{input.focus();}catch(e2){}}
+    try{input.setSelectionRange(name.length,name.length);}catch(e){}
     return true;
   }
 
@@ -101,10 +106,10 @@
       var search=document.getElementById('gm-med-search');
       if(shell&&search){
         search.value=name;
-        search.dispatchEvent(new Event('input',{bubbles:true}));
+        try{search.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}
         var card=findExactCard(name);
         if(card){
-          card.click();
+          try{card.click();}catch(e){}
           var detailAttempts=0;
           (function waitDetail(){
             detailAttempts+=1;
@@ -127,25 +132,30 @@
   }
 
   function openDirect(name){
+    name=String(name||'').replace(/\s+/g,' ').trim();
+    if(!name)return false;
     var mask=ensureMask();
     mask.classList.add('gm-show');
     showPinkHome();
-    if(typeof window.GestaMedOpenMedication!=='function'){
+    var start=function(){
+      try{window.GestaMedOpenMedication(name);}catch(e){}
+      waitForModuleAndOpen(name,mask);
+    };
+    if(typeof window.GestaMedOpenMedication==='function'){
+      start();
+    }else{
       var tries=0;
       (function waitApi(){
         tries+=1;
-        if(typeof window.GestaMedOpenMedication==='function'){
-          window.GestaMedOpenMedication(name);
-          waitForModuleAndOpen(name,mask);
-          return;
-        }
+        if(typeof window.GestaMedOpenMedication==='function'){start();return;}
         if(tries<100)setTimeout(waitApi,50);else mask.classList.remove('gm-show');
       })();
-      return;
     }
-    window.GestaMedOpenMedication(name);
-    waitForModuleAndOpen(name,mask);
+    return true;
   }
+
+  window.GestaMedOpenMedicationFromHome=openDirect;
+  window.GestaMedSelectMedicationFromAutocomplete=function(card){return selectIntoNewSearch(card);};
 
   ensureStyle();
   ensureMask();
@@ -153,22 +163,15 @@
   document.addEventListener('click',function(event){
     var card=event.target&&event.target.closest?event.target.closest('#gm-home-filter-results .gm-home-result-card'):null;
     if(!card)return;
-
-    /* Na tela nova, a lista colorida serve apenas para selecionar o nome.
-       A lupa da barra executa a abertura do medicamento. */
     if(newHomeActive()){
       event.preventDefault();
       event.stopPropagation();
-      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
       selectIntoNewSearch(card);
       return;
     }
-
     event.preventDefault();
     event.stopPropagation();
-    if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-    var name=String(card.getAttribute('data-medication-name')||'').trim();
-    if(!name){var title=card.querySelector('strong');name=String(title?title.textContent:'').trim();}
+    var name=selectedName(card);
     if(name)openDirect(name);
   },true);
 
