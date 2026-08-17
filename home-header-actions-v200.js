@@ -1,14 +1,14 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-225';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-226';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
   var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
   var ADMIN_MANAGER_SRC = 'admin-access-manager-v214.js?v=20260817-214';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-219';
-  var HOME_AUTOCOMPLETE_SYNC_SRC = 'home-medication-autocomplete-sync-v219.js?v=20260817-222';
+  var HOME_AUTOCOMPLETE_SYNC_SRC = 'home-medication-autocomplete-sync-v219.js?v=20260817-226';
   var LEGAL_REGISTRATION_SRC = 'legal-registration-v215.js?v=20260817-221';
   var MOBILE_INPUT_SELECTION_FIX_SRC = 'mobile-input-selection-fix-v216.js?v=20260817-225';
   var REGISTER_MOBILE_SCROLL_FIX_SRC = 'register-mobile-scroll-fix-v217.js?v=20260817-224';
@@ -56,7 +56,7 @@
   loadOnce('gm-admin-access-manager-loader',ADMIN_MANAGER_SRC,'admin-access-manager-v214');
   loadOnce('gm-home-greeting-text-loader',HOME_GREETING_TEXT_SRC,'home-greeting-text-v215');
   loadOnce('gm-home-med-search-fix-loader',HOME_MED_SEARCH_FIX_SRC,'home-medication-search-v219');
-  loadOnce('gm-home-med-autocomplete-sync-loader',HOME_AUTOCOMPLETE_SYNC_SRC,'home-medication-autocomplete-sync-v220');
+  loadOnce('gm-home-med-autocomplete-sync-loader',HOME_AUTOCOMPLETE_SYNC_SRC,'home-medication-autocomplete-sync-v221');
   loadOnce('gm-legal-registration-loader',LEGAL_REGISTRATION_SRC,'legal-registration-v215');
   loadOnce('gm-mobile-input-selection-loader',MOBILE_INPUT_SELECTION_FIX_SRC,'mobile-input-selection-v216');
   loadOnce('gm-register-mobile-scroll-loader',REGISTER_MOBILE_SCROLL_FIX_SRC,'register-mobile-scroll-v217');
