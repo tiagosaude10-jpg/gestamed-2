@@ -3,53 +3,30 @@
 var ROOT='#gm-app-flow';
 var INPUT='#gm-home-search';
 
-function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
-
 function removeDuplicateSearch(){
   var duplicate=document.getElementById('gm-command-med-search-results');
   if(duplicate)duplicate.remove();
-  var oldStyle=document.getElementById('gm-command-med-search-v216-style');
-  if(oldStyle)oldStyle.remove();
-  var older=document.getElementById('gm-command-med-search-v215-style');
-  if(older)older.remove();
-}
-
-function openMedication(name){
-  name=String(name||'').trim();
-  if(!name)return;
-  var input=document.querySelector(ROOT+' '+INPUT);
-  if(input){input.value=name;try{input.blur();}catch(e){}}
-
-  try{
-    if(typeof window.GestaMedOpenMedication==='function'){
-      window.GestaMedOpenMedication(name);
-      return;
-    }
-  }catch(e){}
-
-  var legacy=document.querySelector('#gm-med-search,#searchInput,input[type="search"]:not(#gm-home-search)');
-  if(!legacy)return;
-  legacy.value=name;
-  ['input','change','keyup','search'].forEach(function(type){try{legacy.dispatchEvent(new Event(type,{bubbles:true}));}catch(e){}});
-
-  var attempts=0;
-  (function clickExact(){
-    attempts+=1;
-    var cards=Array.prototype.slice.call(document.querySelectorAll('#gm-med-body .gm-card[data-id],.gm-card[data-id]'));
-    var target=cards.find(function(card){var t=card.querySelector('.gm-drug,strong,h3,h4');return norm(t?t.textContent:'')===norm(name);});
-    if(target){try{target.click();}catch(e){}return;}
-    if(attempts<40)setTimeout(clickExact,60);
-  })();
+  ['gm-command-med-search-v216-style','gm-command-med-search-v215-style'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
 }
 
 function currentChosenName(){
   var input=document.querySelector(ROOT+' '+INPUT);
-  return input?String(input.value||'').trim():'';
+  return input?String(input.value||'').replace(/\s+/g,' ').trim():'';
 }
 
 function doSearch(){
   var name=currentChosenName();
-  if(name)openMedication(name);
+  if(!name)return;
+  var input=document.querySelector(ROOT+' '+INPUT);
+  if(input){try{input.blur();}catch(e){}}
+  if(typeof window.GestaMedOpenMedicationFromHome==='function'){
+    window.GestaMedOpenMedicationFromHome(name);
+    return;
+  }
+  /* fallback único para versões antigas: não cria outro autocomplete */
+  try{
+    if(typeof window.GestaMedOpenMedication==='function')window.GestaMedOpenMedication(name);
+  }catch(e){}
 }
 
 function ensureStyle(){
@@ -81,31 +58,21 @@ function install(){
   input.setAttribute('autocapitalize','none');
   input.setAttribute('enterkeyhint','search');
 
-  if(button.getAttribute('data-gm-search-go-v218')!=='1'){
-    button.setAttribute('data-gm-search-go-v218','1');
+  if(button.getAttribute('data-gm-search-go-v227')!=='1'){
+    button.setAttribute('data-gm-search-go-v227','1');
     button.setAttribute('aria-label','Pesquisar e abrir medicamento');
     button.setAttribute('title','Pesquisar medicamento');
     button.addEventListener('click',function(e){
-      e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+      e.preventDefault();
       doSearch();
     },true);
   }
 
-  if(form.getAttribute('data-gm-search-submit-v218')!=='1'){
-    form.setAttribute('data-gm-search-submit-v218','1');
+  if(form.getAttribute('data-gm-search-submit-v227')!=='1'){
+    form.setAttribute('data-gm-search-submit-v227','1');
     form.addEventListener('submit',function(e){
-      e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+      e.preventDefault();
       doSearch();
-    },true);
-  }
-
-  if(input.getAttribute('data-gm-search-key-v218')!=='1'){
-    input.setAttribute('data-gm-search-key-v218','1');
-    input.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){
-        e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();
-        doSearch();
-      }
     },true);
   }
 
