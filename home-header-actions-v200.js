@@ -1,10 +1,11 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-213';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-214';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
   var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
+  var ADMIN_MANAGER_SRC = 'admin-access-manager-v214.js?v=20260817-214';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -13,23 +14,18 @@
     var notices = document.querySelector('#gm-app-flow .gm-command-notices');
 
     if (!header || !actions || !logout || !notices) return false;
-
     if (actions.parentElement !== header) header.appendChild(actions);
-
     logout.textContent = 'Sair';
     logout.setAttribute('aria-label', 'Sair da conta');
     logout.setAttribute('title', 'Sair');
-
     notices.setAttribute('aria-label', 'Abrir avisos');
     notices.setAttribute('title', 'Avisos');
-
     document.documentElement.setAttribute('data-gm-header-actions', PATCH_ID);
     return true;
   }
 
   function ensureStyle() {
     if (document.getElementById('gm-header-actions-v200-style')) return;
-
     var style = document.createElement('style');
     style.id = 'gm-header-actions-v200-style';
     style.textContent = [
@@ -45,40 +41,13 @@
     document.head.appendChild(style);
   }
 
-  function ensureIicModule() {
-    if (window.openIicCerclageProgesteroneModule || document.getElementById('gm-iic-cerclage-module-loader')) return;
-    var script = document.createElement('script');
-    script.id = 'gm-iic-cerclage-module-loader';
-    script.src = IIC_MODULE_SRC;
-    script.async = false;
-    script.setAttribute('data-gestamed-module', 'iic-cerclage-progesterone-v211');
-    document.head.appendChild(script);
-  }
-
-  function ensureAdminAccessFix() {
-    if (document.getElementById('gm-admin-cid-labor-fix-loader')) return;
-    var script = document.createElement('script');
-    script.id = 'gm-admin-cid-labor-fix-loader';
-    script.src = ADMIN_ACCESS_FIX_SRC;
-    script.async = false;
-    script.setAttribute('data-gestamed-module', 'admin-cid-labor-v212');
-    document.head.appendChild(script);
-  }
-
-  function ensureResourceDedupe() {
-    if (document.getElementById('gm-resource-buttons-dedupe-loader')) return;
-    var script = document.createElement('script');
-    script.id = 'gm-resource-buttons-dedupe-loader';
-    script.src = RESOURCE_DEDUPE_SRC;
-    script.async = false;
-    script.setAttribute('data-gestamed-module', 'resource-buttons-dedupe-v213');
-    document.head.appendChild(script);
-  }
+  function loadOnce(id,src,module){if(document.getElementById(id))return;var s=document.createElement('script');s.id=id;s.src=src;s.async=false;s.setAttribute('data-gestamed-module',module);document.head.appendChild(s);}
 
   ensureStyle();
-  ensureIicModule();
-  ensureAdminAccessFix();
-  ensureResourceDedupe();
+  loadOnce('gm-iic-cerclage-module-loader',IIC_MODULE_SRC,'iic-cerclage-progesterone-v211');
+  loadOnce('gm-admin-cid-labor-fix-loader',ADMIN_ACCESS_FIX_SRC,'admin-cid-labor-v212');
+  loadOnce('gm-resource-buttons-dedupe-loader',RESOURCE_DEDUPE_SRC,'resource-buttons-dedupe-v213');
+  loadOnce('gm-admin-access-manager-loader',ADMIN_MANAGER_SRC,'admin-access-manager-v214');
 
   var attempts = 0;
   function start() {
@@ -87,9 +56,6 @@
     if (attempts < 120) window.setTimeout(start, 100);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();
