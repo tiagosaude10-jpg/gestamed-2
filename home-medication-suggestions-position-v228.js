@@ -21,6 +21,8 @@ function style(){
         'background:#fff!important;',
         'box-shadow:0 10px 28px rgba(76,31,52,.18)!important;',
         'overflow:hidden!important;',
+        'margin:0!important;',
+        'transform:none!important;',
       '}',
       '#gm-home-filter-results.'+CLASS+' .gm-home-results-head,',
       '#gm-home-filter-results.'+CLASS+' .gm-category-body>h2,',
@@ -51,6 +53,7 @@ function clearPosition(panel){
 function place(){
   var input=getInput(),panel=getPanel(),canvas=getCanvas();
   if(!input||!panel||!canvas)return;
+
   var value=String(input.value||'').trim();
   var focused=document.activeElement===input;
   if(!focused||value.length<2||!panel.classList.contains('gm-home-results-open')){
@@ -60,23 +63,39 @@ function place(){
 
   var ir=input.getBoundingClientRect();
   var cr=canvas.getBoundingClientRect();
-  var gap=8;
-  var top=Math.round(ir.bottom-cr.top+gap);
-  var left=Math.max(10,Math.round(ir.left-cr.left));
-  var width=Math.min(Math.round(ir.width),Math.round(cr.width-left-10));
 
-  /* Com o teclado aberto, mostrar poucas opções e permitir rolagem interna.
-     Não altera seleção, lupa ou abertura da ficha. */
+  /* O canvas do GestaMed é redimensionado visualmente no celular.
+     getBoundingClientRect() retorna coordenadas já escaladas, enquanto top/left
+     absolutos são aplicados no sistema interno do canvas. Corrigir pelo scale
+     evita a lista subir e cobrir a barra de pesquisa no Safari/iPhone. */
+  var rawW=canvas.offsetWidth||cr.width;
+  var rawH=canvas.offsetHeight||cr.height;
+  var scaleX=cr.width/rawW;
+  var scaleY=cr.height/rawH;
+  if(!isFinite(scaleX)||scaleX<=0)scaleX=1;
+  if(!isFinite(scaleY)||scaleY<=0)scaleY=1;
+
+  var gapPx=10;
+  var top=(ir.bottom-cr.top+gapPx)/scaleY;
+  var left=(ir.left-cr.left)/scaleX;
+  var width=ir.width/scaleX;
+
+  left=Math.max(10,left);
+  width=Math.min(width,rawW-left-10);
+
   var vv=window.visualViewport;
   var keyboardOpen=!!(vv&&window.innerHeight-vv.height>120);
-  var maxHeight=keyboardOpen?230:310;
+  var desiredPx=keyboardOpen?225:310;
+  var maxHeight=desiredPx/scaleY;
 
   panel.classList.add(CLASS);
-  panel.style.setProperty('top',top+'px','important');
-  panel.style.setProperty('left',left+'px','important');
-  panel.style.setProperty('width',width+'px','important');
+  panel.style.setProperty('top',Math.round(top)+'px','important');
+  panel.style.setProperty('left',Math.round(left)+'px','important');
+  panel.style.setProperty('width',Math.round(width)+'px','important');
   panel.style.setProperty('height','auto','important');
-  panel.style.setProperty('max-height',maxHeight+'px','important');
+  panel.style.setProperty('max-height',Math.round(maxHeight)+'px','important');
+  panel.style.setProperty('right','auto','important');
+  panel.style.setProperty('bottom','auto','important');
 }
 
 function schedule(){requestAnimationFrame(function(){place();setTimeout(place,30);});}
@@ -85,16 +104,19 @@ function install(){
   var input=getInput();
   if(!input)return false;
   style();
-  if(input.getAttribute('data-gm-suggestions-position-v229')!=='1'){
-    input.setAttribute('data-gm-suggestions-position-v229','1');
+  if(input.getAttribute('data-gm-suggestions-position-v230')!=='1'){
+    input.setAttribute('data-gm-suggestions-position-v230','1');
     ['input','focus','keyup'].forEach(function(type){input.addEventListener(type,schedule,false);});
     input.addEventListener('blur',function(){setTimeout(function(){clearPosition(getPanel());},180);},false);
   }
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize',schedule);
-    window.visualViewport.addEventListener('scroll',schedule);
+  if(document.documentElement.getAttribute('data-gm-suggestions-global-v230')!=='1'){
+    document.documentElement.setAttribute('data-gm-suggestions-global-v230','1');
+    if(window.visualViewport){
+      window.visualViewport.addEventListener('resize',schedule);
+      window.visualViewport.addEventListener('scroll',schedule);
+    }
+    window.addEventListener('resize',schedule);
   }
-  window.addEventListener('resize',schedule);
   return true;
 }
 
