@@ -1,32 +1,36 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-14-200';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-17-301-rollback-search';
+  var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
+  var ADMIN_ACCESS_FIX_SRC = 'admin-cid-labor-fix-v212.js?v=20260817-212';
+  var RESOURCE_DEDUPE_SRC = 'resource-buttons-dedupe-v213.js?v=20260817-213';
+  var ADMIN_MANAGER_SRC = 'admin-access-manager-v214.js?v=20260817-214';
+  var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
+  var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
+  var LEGAL_REGISTRATION_SRC = 'legal-registration-v215.js?v=20260817-221';
+  var MOBILE_INPUT_SELECTION_FIX_SRC = 'mobile-input-selection-fix-v216.js?v=20260817-225';
+  var REGISTER_MOBILE_SCROLL_FIX_SRC = 'register-mobile-scroll-fix-v217.js?v=20260817-224';
+  var MOBILE_EMAIL_PASTE_FIX_SRC = 'mobile-email-paste-fix-v217.js?v=20260817-225';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
     var actions = document.querySelector('#gm-app-flow .gm-command-actions');
     var logout = document.querySelector('#gm-app-flow .gm-command-logout');
     var notices = document.querySelector('#gm-app-flow .gm-command-notices');
-
     if (!header || !actions || !logout || !notices) return false;
-
     if (actions.parentElement !== header) header.appendChild(actions);
-
     logout.textContent = 'Sair';
     logout.setAttribute('aria-label', 'Sair da conta');
     logout.setAttribute('title', 'Sair');
-
     notices.setAttribute('aria-label', 'Abrir avisos');
     notices.setAttribute('title', 'Avisos');
-
     document.documentElement.setAttribute('data-gm-header-actions', PATCH_ID);
     return true;
   }
 
   function ensureStyle() {
     if (document.getElementById('gm-header-actions-v200-style')) return;
-
     var style = document.createElement('style');
     style.id = 'gm-header-actions-v200-style';
     style.textContent = [
@@ -42,7 +46,22 @@
     document.head.appendChild(style);
   }
 
+  function loadOnce(id,src,module){if(document.getElementById(id))return;var s=document.createElement('script');s.id=id;s.src=src;s.async=false;s.setAttribute('data-gestamed-module',module);document.head.appendChild(s);}
+
   ensureStyle();
+  loadOnce('gm-iic-cerclage-module-loader',IIC_MODULE_SRC,'iic-cerclage-progesterone-v211');
+  loadOnce('gm-admin-cid-labor-fix-loader',ADMIN_ACCESS_FIX_SRC,'admin-cid-labor-v212');
+  loadOnce('gm-resource-buttons-dedupe-loader',RESOURCE_DEDUPE_SRC,'resource-buttons-dedupe-v213');
+  loadOnce('gm-admin-access-manager-loader',ADMIN_MANAGER_SRC,'admin-access-manager-v214');
+  loadOnce('gm-home-greeting-text-loader',HOME_GREETING_TEXT_SRC,'home-greeting-text-v215');
+
+  /* RESTAURAÇÃO: usa somente a busca que estava funcional antes da reconstrução v300. */
+  loadOnce('gm-home-med-search-fix-loader',HOME_MED_SEARCH_FIX_SRC,'home-medication-search-v228-restored');
+
+  loadOnce('gm-legal-registration-loader',LEGAL_REGISTRATION_SRC,'legal-registration-v215');
+  loadOnce('gm-mobile-input-selection-loader',MOBILE_INPUT_SELECTION_FIX_SRC,'mobile-input-selection-v216');
+  loadOnce('gm-register-mobile-scroll-loader',REGISTER_MOBILE_SCROLL_FIX_SRC,'register-mobile-scroll-v217');
+  loadOnce('gm-mobile-email-paste-loader',MOBILE_EMAIL_PASTE_FIX_SRC,'mobile-email-paste-v217');
 
   var attempts = 0;
   function start() {
@@ -51,9 +70,6 @@
     if (attempts < 120) window.setTimeout(start, 100);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();
