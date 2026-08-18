@@ -828,7 +828,16 @@
     shell.querySelector('.gm-command-notices').addEventListener('click', showNotices);
     shell.querySelector('.gm-command-admin').addEventListener('click', showAdmin);
     shell.querySelector('.gm-command-logout').addEventListener('click', logout);
-    search.addEventListener('input', function () { var original = findSearchInput(); if (!original) return; original.value = search.value; dispatchInput(original); });
+    search.addEventListener('input', function () {
+      var original = findSearchInput();
+      if (!original) return;
+      original.value = search.value;
+      dispatchInput(original);
+      if (search.value.trim()) {
+        hideFlow();
+        window.setTimeout(function () { original.focus(); }, 30);
+      }
+    });
     shell.querySelector('.gm-command-search').addEventListener('submit', function (event) { event.preventDefault(); var original = findSearchInput(); if (!original) { showDevelopmentMessage('Pesquisa de medicamentos'); return; } original.value = search.value; dispatchInput(original); hideFlow(); window.setTimeout(function () { original.focus(); }, 30); });
     shell.querySelector('.gm-command-filter-button').addEventListener('click', function () { if (!activate(['Filtros','Filtrar','Filtro'])) showDevelopmentMessage('Filtros de pesquisa'); });
     shell.querySelectorAll('[data-gm-command-filter]').forEach(function (button) {
