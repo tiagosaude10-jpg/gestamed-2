@@ -146,8 +146,15 @@
     activeDisplayName = cleanDisplayName(activeProfile.display_name) || 'Profissional';
     updateGreeting();
     updateHomeAccountControls();
+    syncFlowSearchInput();
     setFlowScreen('home');
     loadServerNotices();
+  }
+
+  function syncFlowSearchInput() {
+    var flowSearch = document.getElementById('gm-flow-home-search');
+    var original = findSearchInput();
+    if (flowSearch) flowSearch.value = original ? original.value : '';
   }
 
   function activate(labels) {
