@@ -43,6 +43,7 @@ layout: null
 {% capture filtros_js %}{% include_relative quick-filter-bar-patch.js %}{% endcapture %}
 {% capture limpar_js %}{% include_relative search-clear-and-size-patch.js %}{% endcapture %}
 {% capture home_js %}{% include_relative home-screen-patch.js %}{% endcapture %}
+{% capture home_direct_detail_js %}{% include_relative home-medication-direct-detail-fix.js %}{% endcapture %}
 {% capture gestational_diabetes_js %}{% include_relative gestational-diabetes-module-v204.js %}{% endcapture %}
 {% capture gestational_diabetes_diagnosis_205_js %}{% include_relative gestational-diabetes-diagnosis-v205.js %}{% endcapture %}
 {% capture gestational_diabetes_totg_206_js %}{% include_relative gestational-diabetes-totg-v206.js %}{% endcapture %}
@@ -53,21 +54,12 @@ layout: null
 {% capture home_header_actions_js %}{% include_relative home-header-actions-v200.js %}{% endcapture %}
 {% capture cid_js %}{% include_relative cid-module-patch.js %}{% endcapture %}
 {% capture home_carousel_js %}{% include_relative home-filter-carousel-patch.js %}{% endcapture %}
-{% capture home_layout_js %}{% include_relative home-layout-v174-patch.js %}{% endcapture %}
-{% capture home_direct_detail_js %}{% include_relative home-medication-direct-detail-fix.js %}{% endcapture %}
 {% capture home_scroll_indicator_js %}{% include_relative home-carousel-scroll-indicator.js %}{% endcapture %}
 {% capture home_carousel_visibility_fix_js %}{% include_relative home-carousel-visibility-fix.js %}{% endcapture %}
-{% capture loader_js %}{% include_relative base-medicamentos/loader.js %}{% endcapture %}
-{% capture medication_js %}{% include_relative medication-button-patch.js %}{% endcapture %}
-{% capture medication_nav_fix_js %}{% include_relative medication-detail-navigation-fix.js %}{% endcapture %}
-{% capture medication_fda_fix_js %}{% include_relative medication-fda-badge-fix.js %}{% endcapture %}
-{% capture home_search_js %}{% include_relative home-search-submit-patch.js %}{% endcapture %}
-{% capture home_clear_close_js %}{% include_relative home-search-clear-and-medication-close-fix.js %}{% endcapture %}
-{% capture interaction_fix_js %}{% include_relative interaction-emergency-fix.js %}{% endcapture %}
 {% capture medication_detail_responsive_fix_js %}{% include_relative medication-detail-responsive-fix.js %}{% endcapture %}
 {% capture scripts_integracao %}
-<script>document.documentElement.setAttribute('data-gestamed-build','2026.08.16.210');document.documentElement.setAttribute('data-base-integrada','arquivo-independente-1514-autocomplete-completo');</script>
-<script>{{ resumo_js }}</script><script>{{ exames_js }}</script><script>{{ filtros_js }}</script><script>{{ limpar_js }}</script><script>{{ home_js }}</script><script>{{ gestational_diabetes_js }}</script><script>{{ gestational_diabetes_diagnosis_205_js }}</script><script>{{ gestational_diabetes_totg_206_js }}</script><script>{{ gestational_diabetes_third_trimester_207_js }}</script><script>{{ gestational_diabetes_navigation_208_js }}</script><script>{{ gestational_diabetes_targets_monitoring_209_js }}</script><script>{{ gestational_diabetes_targets_hero_210_js }}</script><script>{{ home_header_actions_js }}</script><script>{{ cid_js }}</script><script>{{ home_carousel_js }}</script><script>{{ home_layout_js }}</script><script>{{ home_direct_detail_js }}</script><script>{{ home_scroll_indicator_js }}</script><script>{{ home_carousel_visibility_fix_js }}</script><script>{{ loader_js }}</script><script>{{ medication_js }}</script><script>{{ medication_nav_fix_js }}</script><script>{{ medication_fda_fix_js }}</script><script>{{ home_search_js }}</script><script>{{ home_clear_close_js }}</script><script>{{ interaction_fix_js }}</script><script>{{ medication_detail_responsive_fix_js }}</script>
+<script>document.documentElement.setAttribute('data-gestamed-build','2026.08.17.229');document.documentElement.setAttribute('data-base-integrada','arquivo-independente-1514-autocomplete-completo');</script>
+<script>{{ resumo_js }}</script><script>{{ exames_js }}</script><script>{{ filtros_js }}</script><script>{{ limpar_js }}</script><script>{{ home_js }}</script><script>{{ home_direct_detail_js }}</script><script>{{ gestational_diabetes_js }}</script><script>{{ gestational_diabetes_diagnosis_205_js }}</script><script>{{ gestational_diabetes_totg_206_js }}</script><script>{{ gestational_diabetes_third_trimester_207_js }}</script><script>{{ gestational_diabetes_navigation_208_js }}</script><script>{{ gestational_diabetes_targets_monitoring_209_js }}</script><script>{{ gestational_diabetes_targets_hero_210_js }}</script><script>{{ home_header_actions_js }}</script><script>{{ cid_js }}</script><script>{{ home_carousel_js }}</script><script>{{ home_scroll_indicator_js }}</script><script>{{ home_carousel_visibility_fix_js }}</script><script>{{ medication_detail_responsive_fix_js }}</script>
 {% endcapture %}
 {% assign fechamento_integrado = scripts_integracao | append: '</body>' %}
 {{ nucleo_integrado | replace: '</body>', fechamento_integrado }}

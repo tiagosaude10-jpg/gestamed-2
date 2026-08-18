@@ -20,16 +20,15 @@
       name=String(title?title.textContent:'').replace(/\s+/g,' ').trim();
     }
     if(!name)return false;
-    var input=document.querySelector('#gm-app-flow #gm-home-search');
+    var input=document.querySelector('#gm-app-flow #gm-flow-home-search');
     if(!input)return false;
     input.value=name;
-    input.setAttribute('value',name);
+    input.dispatchEvent(new Event('input',{bubbles:true}));
     var panel=document.getElementById('gm-home-filter-results');
     if(panel){
       panel.classList.remove('gm-home-results-open');
       panel.setAttribute('aria-hidden','true');
     }
-    try{input.blur();}catch(e){}
     return true;
   }
 
