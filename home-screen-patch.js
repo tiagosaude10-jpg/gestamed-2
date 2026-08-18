@@ -166,15 +166,20 @@
   function renderResourceButtons() {
     var home = document.querySelector('#gm-app-flow [data-screen="home"]');
     if (!home || !activeProfile) return;
-    var grid = home.querySelector('.gm-command-module-grid');
-    if (!grid) return;
-    grid.querySelectorAll('[data-gm-resource]').forEach(function (button) { button.remove(); });
+    var old = home.querySelector('#gm-command-resource-grid');
+    if (old) old.remove();
     var canCid = !!(activeProfile.is_admin || activeProfile.cid_access);
     var canLabor = !!(activeProfile.is_admin || activeProfile.labor_access);
-    var html = (canCid ? resourceButtonMarkup('cid') : '') + (canLabor ? resourceButtonMarkup('labor_analise') : '');
-    if (!html) return;
-    grid.insertAdjacentHTML('afterbegin', html);
-    grid.querySelectorAll('[data-gm-resource]').forEach(function (button) {
+    if (!canCid && !canLabor) return;
+    var stats = home.querySelector('.gm-command-stats');
+    if (!stats) return;
+    var section = document.createElement('section');
+    section.id = 'gm-command-resource-grid';
+    section.className = 'gm-command-module-grid';
+    section.setAttribute('aria-label', 'Acesso a laboratórios');
+    section.innerHTML = (canCid ? resourceButtonMarkup('cid') : '') + (canLabor ? resourceButtonMarkup('labor_analise') : '');
+    stats.insertAdjacentElement('afterend', section);
+    section.querySelectorAll('[data-gm-resource]').forEach(function (button) {
       button.addEventListener('click', function () { showCredentialModal(button.getAttribute('data-gm-resource')); });
     });
   }
