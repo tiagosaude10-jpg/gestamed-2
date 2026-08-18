@@ -3,37 +3,42 @@
 var ROOT='#gm-app-flow';
 var INPUT='#gm-home-search';
 
-function removeDuplicateSearch(){
-  var duplicate=document.getElementById('gm-command-med-search-results');
-  if(duplicate)duplicate.remove();
-  ['gm-command-med-search-v216-style','gm-command-med-search-v215-style'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
-}
-
 function currentChosenName(){
   var input=document.querySelector(ROOT+' '+INPUT);
   return input?String(input.value||'').replace(/\s+/g,' ').trim():'';
 }
 
-function doSearch(){
+function openChosen(){
   var name=currentChosenName();
   if(!name)return;
-  var input=document.querySelector(ROOT+' '+INPUT);
-  if(input){try{input.blur();}catch(e){}}
-  if(typeof window.GestaMedOpenMedicationFromHome==='function'){
-    window.GestaMedOpenMedicationFromHome(name);
-    return;
-  }
-  /* fallback único para versões antigas: não cria outro autocomplete */
+
   try{
-    if(typeof window.GestaMedOpenMedication==='function')window.GestaMedOpenMedication(name);
+    if(typeof window.GestaMedOpenMedicationDirect==='function'){
+      window.GestaMedOpenMedicationDirect(name);
+      return;
+    }
   }catch(e){}
+
+  try{
+    if(typeof window.GestaMedOpenMedication==='function'){
+      window.GestaMedOpenMedication(name);
+      return;
+    }
+  }catch(e){}
+
+  var legacy=document.querySelector('#gm-med-search');
+  if(!legacy)return;
+  legacy.value=name;
+  try{legacy.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}
 }
 
 function ensureStyle(){
-  var old=document.getElementById('gm-command-search-single-v218-style');
+  var old=document.getElementById('gm-command-search-single-v228-style');
   if(old)old.remove();
+  var prior=document.getElementById('gm-command-search-single-v218-style');
+  if(prior)prior.remove();
   var s=document.createElement('style');
-  s.id='gm-command-search-single-v218-style';
+  s.id='gm-command-search-single-v228-style';
   s.textContent=[
     '#gm-app-flow .gm-command-search{grid-template-columns:minmax(0,1fr) 64px!important;overflow:visible!important;}',
     '#gm-app-flow .gm-command-search>button[type="submit"]:first-child{display:none!important;}',
@@ -49,32 +54,32 @@ function ensureStyle(){
 function install(){
   var input=document.querySelector(ROOT+' '+INPUT);
   var form=document.querySelector(ROOT+' .gm-command-search');
-  var button=document.querySelector(ROOT+' .gm-command-filter-button');
-  if(!input||!form||!button)return false;
+  var oldButton=document.querySelector(ROOT+' .gm-command-filter-button');
+  if(!input||!form||!oldButton)return false;
 
-  removeDuplicateSearch();
   ensureStyle();
   input.setAttribute('autocomplete','off');
   input.setAttribute('autocapitalize','none');
   input.setAttribute('enterkeyhint','search');
 
-  if(button.getAttribute('data-gm-search-go-v227')!=='1'){
-    button.setAttribute('data-gm-search-go-v227','1');
-    button.setAttribute('aria-label','Pesquisar e abrir medicamento');
-    button.setAttribute('title','Pesquisar medicamento');
-    button.addEventListener('click',function(e){
-      e.preventDefault();
-      doSearch();
-    },true);
-  }
+  var button=oldButton.cloneNode(true);
+  oldButton.parentNode.replaceChild(button,oldButton);
+  button.setAttribute('aria-label','Pesquisar e abrir medicamento');
+  button.setAttribute('title','Pesquisar medicamento');
+  button.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();openChosen();},false);
 
-  if(form.getAttribute('data-gm-search-submit-v227')!=='1'){
-    form.setAttribute('data-gm-search-submit-v227','1');
-    form.addEventListener('submit',function(e){
+  var newForm=form.cloneNode(false);
+  while(form.firstChild)newForm.appendChild(form.firstChild);
+  form.parentNode.replaceChild(newForm,form);
+  newForm.addEventListener('submit',function(e){e.preventDefault();e.stopPropagation();openChosen();},false);
+
+  input=document.querySelector(ROOT+' '+INPUT);
+  input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){
       e.preventDefault();
-      doSearch();
-    },true);
-  }
+      openChosen();
+    }
+  },false);
 
   return true;
 }
