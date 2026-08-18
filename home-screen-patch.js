@@ -850,6 +850,11 @@
       button.addEventListener('click', function () {
         var filter = commandFilters.find(function (item) { return item.id === button.getAttribute('data-gm-command-filter'); });
         if (!filter) return;
+        if (typeof window.GestaMedShowFilterGroup === 'function') {
+          hideFlow();
+          window.GestaMedShowFilterGroup(filter.label);
+          return;
+        }
         if (!activate([filter.label])) showDevelopmentMessage(filter.label);
       });
     });

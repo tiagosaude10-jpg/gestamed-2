@@ -29,6 +29,12 @@
       panel.classList.remove('gm-home-results-open');
       panel.setAttribute('aria-hidden','true');
     }
+    var target=normalize(name);
+    var exact=Array.prototype.slice.call(document.querySelectorAll('#suggestions .suggestion-item')).find(function(item){
+      var nameEl=item.querySelector('.suggestion-name');
+      return nameEl&&normalize(nameEl.textContent)===target;
+    });
+    if(exact)exact.click();
     return true;
   }
 
