@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-entry-flow-2026-08-15-203';
+  var PATCH_ID = 'gestamed-entry-flow-2026-08-18-230';
   var CID_URL = 'https://laboratoriocid.com.br/logins/login';
-  var LABOR_ANALISE_URL = '';
+  var LABOR_ANALISE_URL = 'https://www.laboranalises.uniexames.srv.br/logins/login';
   var SUPABASE_URL = 'https://ptymhmvkuedgudhlvcxo.supabase.co';
   var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SbzuQSBhwR3PXlaRrUsPnw_2plttVAf';
   var PROFILE_STORAGE_KEY = 'gestamed-display-profiles-v1';
@@ -146,9 +146,103 @@
     activeDisplayName = cleanDisplayName(activeProfile.display_name) || 'Profissional';
     updateGreeting();
     updateHomeAccountControls();
+    renderResourceButtons();
     syncFlowSearchInput();
     setFlowScreen('home');
     loadServerNotices();
+  }
+
+  function resourceLabelShort(resource) {
+    return resource === 'cid' ? 'Consulta de Exames — CID' : 'LaboraAnálises';
+  }
+
+  function resourceButtonMarkup(resource) {
+    if (resource === 'cid') {
+      return '<button class="gm-command-module gm-card-teal" type="button" data-gm-resource="cid"><span class="gm-command-module-icon">🧪</span><span class="gm-command-module-copy"><strong>Consulta de Exames — CID</strong><small>Acesso autorizado ao laboratório</small></span><span class="gm-command-arrow">›</span></button>';
+    }
+    return '<button class="gm-command-module gm-card-red" type="button" data-gm-resource="labor_analise"><span class="gm-command-module-icon">🔬</span><span class="gm-command-module-copy"><strong>LaboraAnálises</strong><small>Resultados laboratoriais</small></span><span class="gm-command-arrow">›</span></button>';
+  }
+
+  function renderResourceButtons() {
+    var home = document.querySelector('#gm-app-flow [data-screen="home"]');
+    if (!home || !activeProfile) return;
+    var grid = home.querySelector('.gm-command-module-grid');
+    if (!grid) return;
+    grid.querySelectorAll('[data-gm-resource]').forEach(function (button) { button.remove(); });
+    var canCid = !!(activeProfile.is_admin || activeProfile.cid_access);
+    var canLabor = !!(activeProfile.is_admin || activeProfile.labor_access);
+    var html = (canCid ? resourceButtonMarkup('cid') : '') + (canLabor ? resourceButtonMarkup('labor_analise') : '');
+    if (!html) return;
+    grid.insertAdjacentHTML('afterbegin', html);
+    grid.querySelectorAll('[data-gm-resource]').forEach(function (button) {
+      button.addEventListener('click', function () { showCredentialModal(button.getAttribute('data-gm-resource')); });
+    });
+  }
+
+  function fetchResourceCredentials(resource) {
+    return supabaseRestRequest('rpc/get_resource_credentials', { method: 'POST', body: { p_resource: resource } });
+  }
+
+  function copyResourceValue(text, button) {
+    var value = String(text || '');
+    var done = function () {
+      var old = button.textContent;
+      button.textContent = 'Copiado';
+      window.setTimeout(function () { button.textContent = old; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(value).then(done).catch(done); return; }
+    var area = document.createElement('textarea');
+    area.value = value;
+    document.body.appendChild(area);
+    area.select();
+    try { document.execCommand('copy'); } catch (error) {}
+    area.remove();
+    done();
+  }
+
+  function closeResourceModal() {
+    var modal = document.getElementById('gm-resource-modal');
+    if (modal) modal.remove();
+  }
+
+  function showCredentialModal(resource) {
+    var label = resourceLabelShort(resource);
+    var url = resource === 'cid' ? CID_URL : LABOR_ANALISE_URL;
+    closeResourceModal();
+    var modal = document.createElement('div');
+    modal.id = 'gm-resource-modal';
+    modal.innerHTML = '<section class="gm-resource-modal-card"><header><h2>' + label + '</h2><button type="button" class="gm-resource-modal-close" aria-label="Fechar">×</button></header><p class="gm-admin-loading">Carregando credenciais autorizadas…</p></section>';
+    document.getElementById('gm-app-flow').appendChild(modal);
+    modal.addEventListener('click', function (event) { if (event.target === modal) closeResourceModal(); });
+    modal.querySelector('.gm-resource-modal-close').addEventListener('click', closeResourceModal);
+    fetchResourceCredentials(resource).then(function (data) {
+      var user = (data && data.username) || '';
+      var pass = (data && data.password) || '';
+      var type = (data && data.user_type) || '';
+      var card = modal.querySelector('.gm-resource-modal-card');
+      if (!card) return;
+      card.innerHTML = '<header><h2>' + label + '</h2><button type="button" class="gm-resource-modal-close" aria-label="Fechar">×</button></header>' +
+        '<div class="gm-resource-field"><div><label>Usuário</label><code data-field="user"></code></div><button type="button" class="gm-resource-copy" data-copy="user">Copiar</button></div>' +
+        '<div class="gm-resource-field"><div><label>Senha</label><code data-field="pass"></code></div><button type="button" class="gm-resource-copy" data-copy="pass">Copiar</button></div>' +
+        (type ? '<div class="gm-resource-field"><div><label>Tipo de usuário</label><code data-field="type"></code></div><button type="button" class="gm-resource-copy" data-copy="type">Copiar</button></div>' : '') +
+        '<button type="button" class="gm-primary-button gm-resource-open">Abrir ' + label + '</button>' +
+        '<p class="gm-resource-note">As credenciais ficam protegidas no servidor e só são exibidas para contas autorizadas.</p>';
+      var userField = card.querySelector('[data-field="user"]'); if (userField) userField.textContent = user;
+      var passField = card.querySelector('[data-field="pass"]'); if (passField) passField.textContent = pass;
+      var typeField = card.querySelector('[data-field="type"]'); if (typeField) typeField.textContent = type;
+      card.querySelector('.gm-resource-modal-close').addEventListener('click', closeResourceModal);
+      card.querySelectorAll('.gm-resource-copy').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var key = button.getAttribute('data-copy');
+          copyResourceValue(key === 'user' ? user : (key === 'pass' ? pass : type), button);
+        });
+      });
+      var openButton = card.querySelector('.gm-resource-open');
+      if (openButton) openButton.addEventListener('click', function () { openExternal(url); });
+    }).catch(function (error) {
+      var body = modal.querySelector('.gm-admin-loading');
+      if (body) { body.className = 'gm-admin-error'; body.textContent = 'Não foi possível carregar as credenciais: ' + ((error && error.message) || 'erro desconhecido'); }
+    });
   }
 
   function syncFlowSearchInput() {
@@ -467,6 +561,9 @@
       '.gm-profile-loading{color:#815165;font-size:13px;}',
       '.gm-profile-logout{margin-top:24px;width:100%;border:1px solid rgba(180,31,79,.2);border-radius:14px;padding:13px;background:transparent;color:#8f183d;font-weight:750;cursor:pointer;}',
       '#gm-toast{position:fixed;left:50%;bottom:28px;z-index:2147483647;transform:translate(-50%,20px);opacity:0;transition:opacity .2s,transform .2s;max-width:min(88vw,360px);padding:13px 18px;border-radius:14px;background:#1f1522;color:#fff;font-size:13px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,.28);}#gm-toast.gm-toast-visible{opacity:1;transform:translate(-50%,0);}',
+      '.gm-card-teal{--gm-card-bg:rgba(223,245,248,.9);--gm-accent:#078da5;--gm-icon-bg:#078da5;}.gm-card-teal .gm-command-module-icon{color:#fff;}.gm-card-red{--gm-card-bg:rgba(255,231,231,.9);--gm-accent:#ba171d;--gm-icon-bg:#ba171d;}.gm-card-red .gm-command-module-icon{color:#fff;}',
+      '#gm-resource-modal{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(45,24,38,.42);backdrop-filter:blur(5px);}.gm-resource-modal-card{box-sizing:border-box;width:min(92vw,400px);padding:22px;border:1px solid rgba(238,105,149,.2);border-radius:24px;background:#fffafb;box-shadow:0 24px 70px rgba(82,33,61,.25);color:#262037;}.gm-resource-modal-card header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;}.gm-resource-modal-card h2{margin:0;color:#a91f51;font-size:19px;}.gm-resource-modal-close{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:#fff0f5;color:#cf2c61;font-size:22px;cursor:pointer;}',
+      '.gm-resource-field{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:9px;padding:10px 11px;border:1px solid #f2d7e1;border-radius:14px;background:#fff;}.gm-resource-field label{display:block;color:#8a5568;font-size:10px;font-weight:800;text-transform:uppercase;}.gm-resource-field code{display:block;margin-top:4px;color:#233353;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;font-weight:800;overflow-wrap:anywhere;}.gm-resource-copy{padding:8px 10px;border:0;border-radius:10px;background:#f4e9ee;color:#8d2348;font-size:10px;font-weight:800;cursor:pointer;}.gm-resource-open{width:100%;margin-top:14px;min-height:50px;font-size:15px;}.gm-resource-note{margin:11px 2px 0;color:#775b69;font-size:11px;line-height:1.4;}',
       '@media(min-width:700px){.gm-screen-shell,.gm-home-shell{min-height:calc(100% - 48px);margin:24px auto;border-radius:36px;}}',
       '@media(max-width:430px){.gm-home-shell{padding-left:12px;padding-right:12px;}.gm-command-header{grid-template-columns:minmax(0,61%) minmax(0,39%);min-height:204px;margin-left:-12px;margin-right:-12px;padding:10px 12px 9px;}.gm-command-logo{width:43px;height:51px;}.gm-command-name{font-size:clamp(28px,8vw,34px);}.gm-command-clinician img{right:-7px;bottom:-12px;width:127%;height:calc(100% + 9px);}.gm-command-greeting{padding-top:6px;}.gm-command-greeting h2{font-size:clamp(18px,5vw,21px);}.gm-command-greeting p{font-size:clamp(11px,3.15vw,13px);}.gm-command-quick-grid{gap:5px;}.gm-command-quick-label{font-size:9px;}.gm-command-module-grid{gap:8px;}.gm-command-module{grid-template-columns:40px minmax(0,1fr) 23px;gap:5px;min-height:84px;padding:7px;}.gm-command-module-icon{width:38px;height:38px;font-size:22px;}.gm-command-arrow{width:23px;height:23px;font-size:19px;}.gm-command-module-copy strong{font-size:11px;}.gm-command-module-copy small{font-size:8px;}.gm-command-stat{grid-template-columns:31px 1fr;padding:3px 5px;}.gm-command-stat-icon{width:30px;height:30px;font-size:17px;}.gm-command-stat strong{font-size:14px;}.gm-command-stat small{font-size:8px;}}',
       '@media(max-width:350px){.gm-command-header{grid-template-columns:minmax(0,64%) minmax(0,36%);}.gm-command-name{font-size:27px;}.gm-command-greeting h2{font-size:17px;}.gm-command-module-grid{grid-template-columns:1fr;}.gm-command-stat-grid{grid-template-columns:1fr;}.gm-command-stat+.gm-command-stat{border-left:0;border-top:1px solid rgba(232,105,145,.18);}}',
@@ -724,37 +821,72 @@
     return screen;
   }
 
-  function loadAccessRequests() {
-    var list = document.querySelector('#gm-app-flow .gm-admin-user-list');
-    if (!list) return;
-    list.innerHTML = '<p class="gm-admin-loading">Carregando pedidos…</p>';
-    supabaseRestRequest('access_requests?status=eq.pending&select=id,resource,requested_at,profiles(email,display_name)&order=requested_at.asc').then(function (rows) {
-      list.innerHTML = '';
-      if (!rows || !rows.length) { list.innerHTML = '<p class="gm-admin-loading">Nenhum pedido de acesso pendente.</p>'; return; }
-      rows.forEach(function (row) {
-        var card = document.createElement('article'); card.className = 'gm-admin-user-card';
-        var title = document.createElement('strong'); title.textContent = (row.profiles && (row.profiles.display_name || row.profiles.email)) || 'Usuário';
-        var email = document.createElement('span'); email.textContent = (row.profiles && row.profiles.email) || '';
-        var badge = document.createElement('em'); badge.className = 'gm-admin-status gm-admin-status-pending'; badge.textContent = resourceLabel(row.resource);
-        var actions = document.createElement('div'); actions.className = 'gm-admin-user-actions';
-        [['approved','Aprovar'],['denied','Negar']].forEach(function (choice) {
-          var button = document.createElement('button'); button.type = 'button'; button.textContent = choice[1];
-          button.addEventListener('click', function () { decideAccessRequest(row.id, choice[0], button); });
-          actions.appendChild(button);
-        });
-        card.appendChild(title); card.appendChild(email); card.appendChild(badge); card.appendChild(actions); list.appendChild(card);
-      });
-    }).catch(function () { list.innerHTML = '<p class="gm-admin-error">Não foi possível carregar os pedidos.</p>'; });
+  function pendingRequestMap(rows) {
+    var map = {};
+    (rows || []).forEach(function (row) {
+      if (!map[row.user_id]) map[row.user_id] = {};
+      map[row.user_id][row.resource] = row;
+    });
+    return map;
   }
 
-  function decideAccessRequest(requestId, decision, button) {
-    button.parentNode.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
-    supabaseRestRequest('rpc/admin_decide_request', { method: 'POST', body: { request_id: requestId, decision: decision } }).then(function () {
-      loadAccessRequests();
+  function setResourceAccess(userId, resource, grant, button) {
+    button.disabled = true;
+    var column = resource === 'cid' ? 'cid_access' : 'labor_access';
+    var body = {}; body[column] = grant;
+    supabaseRestRequest('profiles?id=eq.' + encodeURIComponent(userId), { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: body }).then(function () {
+      return supabaseRestRequest('access_requests?user_id=eq.' + encodeURIComponent(userId) + '&resource=eq.' + encodeURIComponent(resource) + '&status=eq.pending', {
+        method: 'PATCH', headers: { 'Prefer': 'return=minimal' },
+        body: { status: grant ? 'approved' : 'denied', decided_at: new Date().toISOString(), decided_by: activeProfile.id }
+      }).catch(function () {});
+    }).then(function () {
+      renderAccessManager();
     }).catch(function () {
-      window.alert('Não foi possível decidir o pedido. Tente novamente.');
-      button.parentNode.querySelectorAll('button').forEach(function (b) { b.disabled = false; });
+      window.alert('Não foi possível alterar a permissão. Tente novamente.');
+      button.disabled = false;
     });
+  }
+
+  function renderAccessManager() {
+    var list = document.querySelector('#gm-app-flow .gm-admin-user-list');
+    if (!list) return;
+    list.innerHTML = '<p class="gm-admin-loading">Carregando usuários e permissões…</p>';
+    Promise.all([
+      supabaseRestRequest('profiles?select=id,email,display_name,is_admin,account_status,cid_access,labor_access,created_at&order=created_at.asc'),
+      supabaseRestRequest('access_requests?status=eq.pending&select=id,user_id,resource,status,requested_at&order=requested_at.asc')
+    ]).then(function (data) {
+      var users = data[0] || [];
+      var pending = pendingRequestMap(data[1]);
+      list.innerHTML = '';
+      if (!users.length) { list.innerHTML = '<p class="gm-admin-loading">Nenhum usuário encontrado.</p>'; return; }
+      var intro = document.createElement('p');
+      intro.className = 'gm-admin-loading';
+      intro.textContent = 'Libere ou retire diretamente o acesso ao CID e ao Labor Análise para qualquer usuário, sem precisar aguardar solicitação.';
+      list.appendChild(intro);
+      users.forEach(function (profile) {
+        var card = document.createElement('article'); card.className = 'gm-admin-user-card';
+        var title = document.createElement('strong'); title.textContent = profile.display_name || profile.email || 'Usuário';
+        var email = document.createElement('span'); email.textContent = profile.email || '';
+        var badge = document.createElement('em');
+        badge.className = 'gm-admin-status ' + (profile.is_admin ? 'gm-admin-status-approved' : 'gm-admin-status-' + profile.account_status);
+        badge.textContent = profile.is_admin ? 'ADMIN' : statusLabel(profile.account_status);
+        var actions = document.createElement('div'); actions.className = 'gm-admin-user-actions';
+        if (profile.is_admin) {
+          var note = document.createElement('small'); note.textContent = 'Administrador raiz — acesso permanente a CID e Labor Análise.'; actions.appendChild(note);
+        } else {
+          [['cid', 'cid_access'], ['labor_analise', 'labor_access']].forEach(function (cfg) {
+            var resource = cfg[0], column = cfg[1];
+            var granted = !!profile[column];
+            var button = document.createElement('button'); button.type = 'button';
+            button.textContent = (granted ? 'Retirar acesso — ' : 'Liberar acesso — ') + resourceLabel(resource);
+            if (!granted && pending[profile.id] && pending[profile.id][resource]) button.textContent += ' (pedido pendente)';
+            button.addEventListener('click', function () { setResourceAccess(profile.id, resource, !granted, button); });
+            actions.appendChild(button);
+          });
+        }
+        card.appendChild(title); card.appendChild(email); card.appendChild(badge); card.appendChild(actions); list.appendChild(card);
+      });
+    }).catch(function () { list.innerHTML = '<p class="gm-admin-error">Não foi possível carregar usuários e permissões.</p>'; });
   }
 
   function loadAdminUsers(status) {
@@ -813,7 +945,7 @@
         screen.querySelectorAll('.gm-admin-tabs button').forEach(function (item) { item.classList.remove('gm-admin-tab-active'); });
         button.classList.add('gm-admin-tab-active');
         var status = button.getAttribute('data-status');
-        if (status === 'access-requests') loadAccessRequests(); else loadAdminUsers(status);
+        if (status === 'access-requests') renderAccessManager(); else loadAdminUsers(status);
       });
     });
     return screen;
