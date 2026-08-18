@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var PATCH_ID='gestamed-home-medication-direct-detail-2026-08-17-227';
+  var PATCH_ID='gestamed-home-medication-direct-detail-2026-08-17-228';
   document.documentElement.setAttribute('data-gm-direct-detail',PATCH_ID);
 
   function normalize(value){
@@ -12,16 +12,13 @@
     return !!(screen&&screen.classList.contains('gm-screen-active'));
   }
 
-  function selectedName(card){
-    if(!card)return '';
-    var name=String(card.getAttribute('data-medication-name')||'').replace(/\s+/g,' ').trim();
-    if(name)return name;
-    var title=card.querySelector('strong,.gm-home-result-name,.gm-drug,h3,h4');
-    return String(title?title.textContent:'').replace(/\s+/g,' ').trim();
-  }
-
   function selectIntoNewSearch(card){
-    var name=selectedName(card);
+    if(!card)return false;
+    var name=String(card.getAttribute('data-medication-name')||'').replace(/\s+/g,' ').trim();
+    if(!name){
+      var title=card.querySelector('strong,.gm-home-result-name,.gm-drug,h3,h4');
+      name=String(title?title.textContent:'').replace(/\s+/g,' ').trim();
+    }
     if(!name)return false;
     var input=document.querySelector('#gm-app-flow #gm-home-search');
     if(!input)return false;
@@ -32,9 +29,7 @@
       panel.classList.remove('gm-home-results-open');
       panel.setAttribute('aria-hidden','true');
     }
-    document.documentElement.classList.remove('gm-home-filter-mode');
-    try{input.focus({preventScroll:true});}catch(e){try{input.focus();}catch(e2){}}
-    try{input.setSelectionRange(name.length,name.length);}catch(e){}
+    try{input.blur();}catch(e){}
     return true;
   }
 
@@ -106,10 +101,10 @@
       var search=document.getElementById('gm-med-search');
       if(shell&&search){
         search.value=name;
-        try{search.dispatchEvent(new Event('input',{bubbles:true}));}catch(e){}
+        search.dispatchEvent(new Event('input',{bubbles:true}));
         var card=findExactCard(name);
         if(card){
-          try{card.click();}catch(e){}
+          card.click();
           var detailAttempts=0;
           (function waitDetail(){
             detailAttempts+=1;
@@ -137,25 +132,34 @@
     var mask=ensureMask();
     mask.classList.add('gm-show');
     showPinkHome();
-    var start=function(){
-      try{window.GestaMedOpenMedication(name);}catch(e){}
+
+    function launch(){
+      try{if(typeof window.GestaMedOpenMedication==='function')window.GestaMedOpenMedication(name);}catch(e){}
       waitForModuleAndOpen(name,mask);
-    };
-    if(typeof window.GestaMedOpenMedication==='function'){
-      start();
-    }else{
-      var tries=0;
-      (function waitApi(){
-        tries+=1;
-        if(typeof window.GestaMedOpenMedication==='function'){start();return;}
-        if(tries<100)setTimeout(waitApi,50);else mask.classList.remove('gm-show');
-      })();
     }
+
+    if(typeof window.GestaMedOpenMedication==='function'){
+      launch();
+      return true;
+    }
+
+    var tries=0;
+    (function waitApi(){
+      tries+=1;
+      if(typeof window.GestaMedOpenMedication==='function'){
+        launch();
+        return;
+      }
+      if(tries<80)setTimeout(waitApi,50);
+      else{
+        /* fallback: tenta usar diretamente o módulo já presente na página */
+        waitForModuleAndOpen(name,mask);
+      }
+    })();
     return true;
   }
 
-  window.GestaMedOpenMedicationFromHome=openDirect;
-  window.GestaMedSelectMedicationFromAutocomplete=function(card){return selectIntoNewSearch(card);};
+  window.GestaMedOpenMedicationDirect=openDirect;
 
   ensureStyle();
   ensureMask();
@@ -163,15 +167,20 @@
   document.addEventListener('click',function(event){
     var card=event.target&&event.target.closest?event.target.closest('#gm-home-filter-results .gm-home-result-card'):null;
     if(!card)return;
+
     if(newHomeActive()){
       event.preventDefault();
       event.stopPropagation();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
       selectIntoNewSearch(card);
       return;
     }
+
     event.preventDefault();
     event.stopPropagation();
-    var name=selectedName(card);
+    if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+    var name=String(card.getAttribute('data-medication-name')||'').trim();
+    if(!name){var title=card.querySelector('strong');name=String(title?title.textContent:'').trim();}
     if(name)openDirect(name);
   },true);
 
