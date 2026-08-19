@@ -23,25 +23,12 @@ function toast(message){
   window.setTimeout(function(){el.classList.remove('show');window.setTimeout(function(){el.remove();},180);},2200);
 }
 
-var TOPICS={
-  diagnosis:{title:'Diagnóstico do DMG',subtitle:'Como identificar corretamente',icon:'🎯'},
-  criteria:{title:'Critérios diagnósticos',subtitle:'IADPSG / OMS / SBD 2025',icon:'📋'},
-  totg:{title:'TOTG 75 g (24–28 semanas)',subtitle:'Como interpretar',icon:'🗓️'},
-  fasting:{title:'Glicemia de jejum',subtitle:'Quando pode ser usado',icon:'🩸'},
-  early:{title:'Diagnóstico precoce',subtitle:'Antes de 24 semanas',icon:'⏱️'},
-  previous:{title:'DM prévio x DMG',subtitle:'Como diferenciar',icon:'♀'},
-  flowchart:{title:'Fluxograma completo',subtitle:'Fluxo diagnóstico do diabetes gestacional',icon:'⌘'}
-};
-
 function openGestationalDiabetesModule(){activate('gestational-diabetes');showMenu();}
 function closeGestationalDiabetesModule(){home();}
 function showMenu(){
   var root=document.getElementById(ROOT_ID);if(!root)return;
   var menu=root.querySelector('.gm-dmg-new-menu');var detail=root.querySelector('.gm-dmg-new-detail');
   if(menu)menu.hidden=false;if(detail)detail.hidden=true;root.scrollTop=0;
-}
-function placeholderDetail(data,key){
-  return '<div class="gm-dmg-placeholder"><span class="gm-dmg-placeholder-icon">'+data.icon+'</span><h2>'+data.title+'</h2><p>'+data.subtitle+'</p><div class="gm-dmg-placeholder-card"><strong>Tela conectada e funcionando.</strong><span>O conteúdo clínico desta seção será inserido na próxima etapa.</span></div></div>';
 }
 function diagnosisMarkup(){
   return '<section class="gm-diagnosis-page" aria-label="Diagnóstico do diabetes gestacional">'+
