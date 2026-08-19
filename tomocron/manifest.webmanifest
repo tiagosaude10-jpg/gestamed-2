@@ -1,32 +1,16 @@
 {
   "name": "TomoCron — Tomografia com Contraste",
   "short_name": "TomoCron",
-  "description": "Apoio técnico para avaliação renal, contraste iodado e protocolos de tomografia.",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#fff4eb",
   "theme_color": "#f97316",
-  "orientation": "portrait",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
-  "id": "./"
+    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icon-512.webp","sizes":"512x512","type":"image/webp","purpose":"any"},
+    {"src":"./icon-maskable-512.webp","sizes":"512x512","type":"image/webp","purpose":"maskable"}
+  ]
 }
