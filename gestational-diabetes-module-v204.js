@@ -146,15 +146,6 @@ function buildScreen(){
   return true;
 }
 
-function retitleHomeCard(){
-  var button=document.querySelector('#gm-app-flow [data-gm-module="insulina"]');if(!button)return false;
-  button.setAttribute('aria-label','Diabetes Gestacional');button.setAttribute('title','Diabetes Gestacional');
-  var copy=button.querySelector('.gm-command-module-copy');if(!copy)return false;
-  var subtitle=copy.querySelector('.gm-dmg-new-subtitle');
-  if(!subtitle){subtitle=document.createElement('small');subtitle.className='gm-dmg-new-subtitle';subtitle.textContent='Diagnóstico, rastreio e critérios';copy.appendChild(subtitle);}
-  button.onclick=function(event){if(event){event.preventDefault();event.stopPropagation();}openGestationalDiabetesModule();};
-  return true;
-}
 function init(){ensureStyle();buildScreen();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.addEventListener('load',function(){if(!document.getElementById(ROOT_ID))buildScreen();},{once:true});
