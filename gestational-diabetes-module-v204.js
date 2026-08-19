@@ -78,13 +78,6 @@ function bindDiagnosis(detail){
 
 window.openGestationalDiabetesModule=openGestationalDiabetesModule;
 window.closeGestationalDiabetesModule=closeGestationalDiabetesModule;
-window.openDmgDiagnosis=function(){openTopic('diagnosis');};
-window.openDmgCriteria=function(){openTopic('criteria');};
-window.openDmgTotg=function(){openTopic('totg');};
-window.openDmgFastingGlucose=function(){openTopic('fasting');};
-window.openDmgEarlyDiagnosis=function(){openTopic('early');};
-window.openDmgPreviousVsGestational=function(){openTopic('previous');};
-window.openDmgFlowchart=function(){openTopic('flowchart');};
 
 function ensureStyle(){
   if(document.getElementById(STYLE_ID))return;
