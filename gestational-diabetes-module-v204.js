@@ -47,21 +47,13 @@ function diagnosisMarkup(){
   return '<section class="gm-diagnosis-page" aria-label="Diagnóstico do diabetes gestacional">'+
     '<div class="gm-diagnosis-toolbar"><button type="button" data-diagnosis-back>← <b>Voltar</b></button><button type="button" data-diagnosis-clear>🗑 <b>Limpar</b></button><button class="gm-diagnosis-close" type="button" data-diagnosis-close aria-label="Fechar">×</button></div>'+
     '<section class="gm-diagnosis-hero"><div><h1>Diagnóstico do DMG</h1><p>Como identificar corretamente</p></div><img src="gestamed-hero.jpg?v=204" alt="Ilustração de gestante"></section>'+
-
     '<section class="gm-clinical-card gm-track-card"><header><span>🎯</span><strong>Quem deve ser rastreada</strong></header><div class="gm-track-grid"><div class="gm-track-copy"><article><span class="gm-risk-icon pink">📅</span><div><b>Todas as gestantes</b><small>entre 24 e 28 semanas.</small></div></article><article><span class="gm-risk-icon pink">⚠</span><div><b>Antes de 24 semanas</b><small>em mulheres com alto risco.</small></div></article></div><div class="gm-clipboard-art" aria-hidden="true"><span class="clip">📋</span><span class="pen">✏️</span><span class="plant">🌱</span></div></div></section>'+
-
     '<section class="gm-clinical-card"><header><span>🛡️</span><strong>Fatores de alto risco</strong></header><div class="gm-risk-columns"><div><article><span class="gm-risk-icon pink">🩸</span><p><b>DMG prévio</b></p></article><article><span class="gm-risk-icon orange">👨‍👩‍👧</span><p><b>História familiar de DM</b><small>(1º grau)</small></p></article><article><span class="gm-risk-icon green">⚖️</span><p><b>Obesidade</b><small>(IMC ≥ 30 kg/m²)</small></p></article><article><span class="gm-risk-icon pink">💓</span><p><b>Hipertensão arterial prévia</b></p></article><article><span class="gm-risk-icon purple">🧬</span><p><b>SOP</b><small>(síndrome dos ovários policísticos)</small></p></article></div><div><article><span class="gm-risk-icon blue">👶</span><p><b>Antecedente de RN ≥ 4 kg ou macrossomia</b></p></article><article><span class="gm-risk-icon orange">💧</span><p><b>Intolerância à glicose prévia</b><small>(pré-diabetes)</small></p></article><article><span class="gm-risk-icon green">🩺</span><p><b>Outras condições associadas</b><small>dislipidemia, doença tireoidiana, acantose nigricans, entre outras.</small></p></article></div></div></section>'+
-
     '<aside class="gm-info-note"><span>ⓘ</span><p>A presença de um ou mais fatores de risco justifica o <b>rastreamento precoce</b>.</p></aside>'+
-
     '<section class="gm-point-title"><span>🎯</span><div><h2>Ponto diagnóstico do DMG</h2><p>Como identificar corretamente</p></div></section>'+
-
     '<section class="gm-clinical-card gm-flow-card"><header><span>🤰</span><strong>Quem deve ser rastreada</strong></header><div class="gm-diagnostic-flow"><div class="gm-flow-start"><div class="gm-flow-box"><span class="gm-risk-icon pink">📅</span><div><b>Todas as gestantes</b><small>1ª consulta do pré-natal</small></div></div><div class="gm-down-arrow">↓</div><div class="gm-flow-box"><span class="gm-risk-icon pink">🩸</span><div><b>Realizar glicemia de jejum</b></div></div></div><div class="gm-flow-branches"><article class="red"><b>≥126<br><small>mg/dL</small></b><p><strong>Diabetes manifesto</strong><span>(diabetes pré-existente)</span></p></article><article class="amber"><b>92 a 125<br><small>mg/dL</small></b><p><strong>Diabetes Mellitus Gestacional (DMG)</strong><span>Diagnóstico confirmado na 1ª consulta</span></p></article><article class="green"><b>&lt;92<br><small>mg/dL</small></b><p><strong>Realizar TOTG 75 g entre 24 e 28 semanas</strong><span>(para gestantes ainda sem DM prévio ou DMG)</span></p></article></div></div></section>'+
-
     '<section class="gm-clinical-card gm-second-trimester"><h3>Realizar teste segundo trimestre</h3><div class="gm-second-grid"><article><span class="gm-risk-icon pink">📅</span><p><b>TOTG 75 g entre 24 e 28 semanas</b><small>Para gestantes não diagnosticadas com DMG ou diabetes pré-existente na 1ª consulta.</small></p></article><article class="important"><span class="gm-risk-icon pink">📋</span><p><b>Importante</b><small>Reavaliar o risco e os resultados em todas as consultas do pré-natal.</small></p></article></div></section>'+
-
     '<section class="gm-clinical-card gm-high-risk"><header><span>🛡️</span><strong>Alto risco – rastrear já na 1ª consulta do pré-natal</strong></header><div class="gm-high-risk-grid"><article><span>🩸</span><b>DMG prévio</b></article><article><span>👨‍👩‍👧</span><b>História familiar de DM (1º grau)</b></article><article><span>⚖️</span><b>Obesidade<br><small>(IMC ≥ 30 kg/m²)</small></b></article><article><span>♀</span><b>SOP<br><small>(síndrome dos ovários policísticos)</small></b></article><article><span>💚</span><b>Hipertensão arterial crônica / síndrome metabólica</b></article><article><span>35+</span><b>Idade materna<br>≥ 35 anos</b></article><article><span>💧</span><b>Pré-diabetes ou glicemia alterada antes da gestação</b></article><article><span>👶</span><b>Antecedente de RN ≥ 4 kg ou macrossomia</b></article></div></section>'+
-
     '<aside class="gm-reminder"><span>💡</span><strong>Lembre-se</strong><p>Rastreamento precoce, diagnóstico correto e acompanhamento contínuo reduzem complicações maternas e fetais.</p></aside>'+
   '</section>';
 }
@@ -163,7 +155,7 @@ function retitleHomeCard(){
   button.onclick=function(event){if(event){event.preventDefault();event.stopPropagation();}openGestationalDiabetesModule();};
   return true;
 }
-function init(){ensureStyle();if(buildScreen())retitleHomeCard();}
+function init(){ensureStyle();buildScreen();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
-window.addEventListener('load',function(){if(!document.getElementById(ROOT_ID)){buildScreen();retitleHomeCard();}else retitleHomeCard();},{once:true});
+window.addEventListener('load',function(){if(!document.getElementById(ROOT_ID))buildScreen();},{once:true});
 })();
