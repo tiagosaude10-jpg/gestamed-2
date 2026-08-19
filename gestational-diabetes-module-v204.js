@@ -134,7 +134,6 @@ function buildScreen(){
   s.querySelector('.gm-dmg-new-back').addEventListener('click',closeGestationalDiabetesModule);
   s.querySelector('.gm-dmg-new-notices').addEventListener('click',function(){triggerHome('.gm-command-notices');});
   s.querySelector('.gm-dmg-new-logout').addEventListener('click',function(){triggerHome('.gm-command-logout');});
-  s.querySelectorAll('[data-topic]').forEach(function(btn){btn.addEventListener('click',function(){openTopic(btn.getAttribute('data-topic'));});});
   s.querySelectorAll('[data-home-nav]').forEach(function(btn){btn.addEventListener('click',function(){var key=btn.getAttribute('data-home-nav');if(key==='inicio'){home();return;}triggerHome('[data-gm-nav="'+key+'"]');});});
   return true;
 }
