@@ -4,7 +4,7 @@ var ROOT_ID='gm-gestational-diabetes-screen';
 function root(){return document.getElementById(ROOT_ID);}
 function empty(id){var e=document.getElementById(id);return !e||String(e.value||'').trim()==='';}
 function alertHtml(title,text){return '<aside class="gm-master-alert warn"><b>'+title+'</b><span>'+text+'</span></aside>';}
-function validNumber(value){if(value==null)return null;var s=String(value).trim().replace(',','.');if(s==='')return null;var x=Number(s);return Number.isFinite(x)?x:null;}
+function validNumber(value){if(value==null)return null;var s=String(value).trim().replace(',','.');if(s==='')return null;var x=Number(s);return Number.isFinite(x)&&x>0?x:null;}
 function analyzeProfileSafe(){
  var api=window.GestaMedDMGMaster;if(!api||!api.state)return;
  var state=api.state,keys=state.profileType===6?['fasting','postbreakfast','prelunch','postlunch','predinner','postdinner']:['fasting','postbreakfast','postlunch','postdinner'];
@@ -12,7 +12,7 @@ function analyzeProfileSafe(){
  var total=0,high=0,low=0,stats={};keys.forEach(function(k){stats[k]={total:0,high:0,low:0};});
  (state.profileRows||[]).forEach(function(r){keys.forEach(function(k){var v=validNumber(r[k]);if(v==null)return;total++;stats[k].total++;var target=(k==='fasting'||k==='prelunch'||k==='predinner')?95:140;if(v<70){low++;stats[k].low++;}else if(v>=target){high++;stats[k].high++;}});});
  var out=document.getElementById('gm-profile-result');if(!out)return;
- if(!total){out.innerHTML=alertHtml('Sem medidas válidas','Preencha ao menos uma glicemia para analisar. Campos vazios não entram no cálculo.');return;}
+ if(!total){out.innerHTML=alertHtml('Sem medidas válidas','Preencha ao menos uma glicemia para analisar. Campos vazios e valores inválidos não entram no cálculo.');return;}
  var pct=high/total*100,maxKey=keys[0],maxRate=-1;keys.forEach(function(k){var s=stats[k],rate=s.total?s.high/s.total:0;if(rate>maxRate){maxRate=rate;maxKey=k;}});
  var pattern=maxRate>0?labels[maxKey]:'Sem predomínio de hiperglicemia';
  var kind=pct>=30?'danger':high?'warn':'ok';
