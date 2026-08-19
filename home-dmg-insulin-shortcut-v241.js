@@ -1,31 +1,105 @@
 (function(){
 'use strict';
-var PATCH='2026.08.19.242';
-var ATTR='data-gm-dmg-home-layout-v242';
-var SHORTCUT='data-gm-insulin-shortcut';
+var PATCH='2026.08.19.243';
+var HOME_ATTR='data-gm-dmg-home-layout-v243';
+var DMG_ATTR='data-gm-dmg-home-card';
 var running=false;
-function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+
 function home(){return document.querySelector('#gm-app-flow [data-screen="home"]');}
-function grid(){var h=home();return h&&h.querySelector('.gm-command-module-grid');}
-function buttons(){var g=grid();return g?Array.prototype.slice.call(g.querySelectorAll(':scope > button, :scope > a, :scope > [role="button"]')):[];}
-function byText(words){var wanted=words.map(norm);return buttons().find(function(el){var t=norm((el.getAttribute('aria-label')||'')+' '+(el.getAttribute('title')||'')+' '+(el.textContent||''));return wanted.every(function(w){return t.indexOf(w)!==-1;});})||null;}
-function findAge(){return byText(['idade','gestacional']);}
-function findDmg(){return buttons().find(function(el){if(el.hasAttribute(SHORTCUT))return false;var t=norm(el.textContent||'');return t.indexOf('diabetes')!==-1&&t.indexOf('gestacional')!==-1;})||null;}
-function findIic(){return buttons().find(function(el){var t=norm(el.textContent||'');return (t.indexOf('iic')!==-1||t.indexOf('insuficiencia istmo')!==-1)&&t.indexOf('cerclagem')!==-1&&t.indexOf('progesterona')!==-1;})||null;}
-function stripActionAttrs(el){Array.prototype.slice.call(el.attributes||[]).forEach(function(a){if(a.name.indexOf('data-gm-')===0||a.name==='onclick'||a.name==='id')el.removeAttribute(a.name);});el.setAttribute(SHORTCUT,'1');el.setAttribute('aria-label','Cálculo de Insulina');}
-function rewriteShortcut(btn){var icon=btn.querySelector('.gm-command-module-icon')||btn.querySelector('[class*="icon"]');if(icon)icon.textContent='💉';var strong=btn.querySelector('strong');if(strong)strong.textContent='Cálculo de Insulina';var small=btn.querySelector('small');if(small)small.textContent='Dose, NPH e esquema inicial';if(!strong){btn.innerHTML='<span class="gm-command-module-icon">💉</span><span class="gm-command-module-copy"><strong>Cálculo de Insulina</strong><small>Dose, NPH e esquema inicial</small></span><span class="gm-command-arrow">›</span>';}}
-function openInsulinFromDmg(dmg){if(!dmg)return;try{dmg.click();}catch(e){try{if(typeof window.openGestationalDiabetesModule==='function')window.openGestationalDiabetesModule();}catch(_){} }var tries=0;var timer=window.setInterval(function(){tries++;try{if(window.GestaMedDMGMaster&&typeof window.GestaMedDMGMaster.open==='function'){window.GestaMedDMGMaster.open('insulin');window.clearInterval(timer);return;}if(typeof window.openGestationalDiabetesModule==='function'&&tries===2)window.openGestationalDiabetesModule();}catch(e){}if(tries>=24)window.clearInterval(timer);},80);}
-function ensureShortcut(dmg){var h=home(),g=grid();if(!h||!g||!dmg)return null;var shortcut=h.querySelector('['+SHORTCUT+'="1"]');if(!shortcut){shortcut=dmg.cloneNode(true);stripActionAttrs(shortcut);rewriteShortcut(shortcut);shortcut.classList.add('gm-insulin-shortcut-card');shortcut.addEventListener('click',function(ev){ev.preventDefault();ev.stopPropagation();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();openInsulinFromDmg(findDmg()||dmg);},true);}else{rewriteShortcut(shortcut);}return shortcut;}
-function patch(){if(running)return false;running=true;try{var h=home(),g=grid();if(!h||!g)return false;var age=findAge(),dmg=findDmg(),iic=findIic();if(!age||!dmg||!iic)return false;var shortcut=ensureShortcut(dmg);if(!shortcut)return false;
-    /* ORDEM EXATA SOLICITADA: Idade gestacional | Cálculo de Insulina */
-    if(age.nextElementSibling!==shortcut)g.insertBefore(shortcut,age.nextSibling);
-    /* Diabetes Gestacional deve ficar ao lado do IIC, logo após ele. */
-    if(iic.nextElementSibling!==dmg)g.insertBefore(dmg,iic.nextSibling);
-    h.setAttribute(ATTR,PATCH);return true;
-  }finally{running=false;}}
-function schedule(){[0,80,220,500,900,1500].forEach(function(ms){window.setTimeout(patch,ms);});}
-function addStyle(){if(document.getElementById('gm-home-insulin-shortcut-v242-style'))return;var s=document.createElement('style');s.id='gm-home-insulin-shortcut-v242-style';s.textContent='[data-gm-insulin-shortcut="1"] .gm-command-module-icon{font-size:30px}[data-gm-insulin-shortcut="1"] strong{line-height:1.08}[data-gm-insulin-shortcut="1"] small{line-height:1.15}';document.head.appendChild(s);}
-function init(){addStyle();schedule();var target=document.getElementById('gm-app-flow')||document.body;if(target){new MutationObserver(function(){schedule();}).observe(target,{subtree:true,childList:true,attributes:true,attributeFilter:['class','data-screen']});}document.addEventListener('click',function(e){var homeNav=e.target.closest&&e.target.closest('[data-gm-nav="inicio"], [aria-label="Início"]');if(homeNav)schedule();},true);}
+function grid(){var h=home();return h&&h.querySelector('.gm-command-module-grid[aria-label="Módulos do GestaMed"]');}
+function insulinCard(){var h=home();return h&&h.querySelector('[data-gm-module="insulina"]');}
+function iicCard(){return document.getElementById('gm-iic-cerclage-command-button') || (function(){var g=grid();if(!g)return null;return Array.prototype.slice.call(g.children).find(function(el){var t=(el.textContent||'').toLowerCase();return t.indexOf('iic')!==-1&&t.indexOf('cerclagem')!==-1&&t.indexOf('progesterona')!==-1;})||null;})();}
+function dmgCard(){var h=home();return h&&h.querySelector('['+DMG_ATTR+'="1"]');}
+
+function setCopy(btn,title,subtitle,icon){
+  if(!btn)return;
+  var ico=btn.querySelector('.gm-command-module-icon');if(ico)ico.textContent=icon;
+  var copy=btn.querySelector('.gm-command-module-copy');
+  if(copy){
+    var strong=copy.querySelector('strong');if(strong)strong.textContent=title;
+    var small=copy.querySelector('small');
+    if(!small){small=document.createElement('small');copy.appendChild(small);}
+    small.className='gm-insulin-home-subtitle';small.textContent=subtitle;
+  }
+  btn.setAttribute('aria-label',title);btn.setAttribute('title',title);
+}
+
+function openInsulin(){
+  try{if(typeof window.openGestationalDiabetesModule==='function')window.openGestationalDiabetesModule();}catch(e){}
+  var tries=0,t=window.setInterval(function(){tries++;
+    try{if(window.GestaMedDMGMaster&&typeof window.GestaMedDMGMaster.open==='function'){window.GestaMedDMGMaster.open('insulin');window.clearInterval(t);return;}}catch(e){}
+    if(tries>=30)window.clearInterval(t);
+  },70);
+}
+function openDmg(){try{if(typeof window.openGestationalDiabetesModule==='function')window.openGestationalDiabetesModule();}catch(e){}}
+
+function bindInsulin(btn){
+  if(!btn||btn.getAttribute('data-gm-insulin-direct-v243')==='1')return;
+  btn.setAttribute('data-gm-insulin-direct-v243','1');
+  btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();openInsulin();},true);
+}
+function bindDmg(btn){
+  if(!btn||btn.getAttribute('data-gm-dmg-direct-v243')==='1')return;
+  btn.setAttribute('data-gm-dmg-direct-v243','1');
+  btn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();if(e.stopImmediatePropagation)e.stopImmediatePropagation();openDmg();},true);
+}
+
+function createDmgCard(g){
+  var btn=document.createElement('button');
+  btn.type='button';btn.className='gm-command-module gm-card-pink';btn.setAttribute(DMG_ATTR,'1');
+  btn.innerHTML='<span class="gm-command-module-icon">🩸</span><span class="gm-command-module-copy"><strong>Diabetes Gestacional</strong><small>Diagnóstico, rastreio e critérios</small></span><span class="gm-command-arrow">›</span>';
+  bindDmg(btn);return btn;
+}
+
+function fix(){
+  if(running)return false;running=true;
+  try{
+    var h=home(),g=grid();if(!h||!g)return false;
+    var insulin=insulinCard();if(!insulin)return false;
+
+    /* 1) Restaura definitivamente o card nativo da posição 2 como Cálculo de Insulina. */
+    setCopy(insulin,'Cálculo de Insulina','Dose, NPH e esquema inicial','💉');
+    insulin.classList.remove('gm-card-pink');
+    insulin.classList.add('gm-card-blue','gm-insulin-home-card');
+    bindInsulin(insulin);
+
+    /* 2) Garante que Idade Gestacional + Cálculo de Insulina sejam os dois primeiros cards. */
+    var idade=g.querySelector('[data-gm-module="idade"]');
+    if(idade){
+      if(g.firstElementChild!==idade)g.insertBefore(idade,g.firstElementChild);
+      if(idade.nextElementSibling!==insulin)g.insertBefore(insulin,idade.nextSibling);
+    }
+
+    /* 3) Cria um card DMG independente. Nunca clona/substitui o card de insulina. */
+    var dmg=dmgCard();
+    if(!dmg){dmg=createDmgCard(g);g.appendChild(dmg);}else{setCopy(dmg,'Diabetes Gestacional','Diagnóstico, rastreio e critérios','🩸');bindDmg(dmg);}
+
+    /* 4) Posiciona a dupla IIC + Diabetes Gestacional no final da grade clínica, antes das estatísticas. */
+    var iic=iicCard();
+    if(iic){
+      g.appendChild(iic);
+      g.appendChild(dmg);
+    }
+
+    h.setAttribute(HOME_ATTR,PATCH);
+    return true;
+  } finally {running=false;}
+}
+
+function style(){
+  var id='gm-home-dmg-insulin-layout-v243-style';if(document.getElementById(id))return;
+  var s=document.createElement('style');s.id=id;s.textContent=[
+    /* neutraliza a regra antiga do v204 que escondia o texto nativo e escrevia Diabetes Gestacional via :before */
+    '#gm-app-flow [data-screen="home"] [data-gm-module="insulina"] .gm-command-module-copy strong{font-size:13px!important;line-height:1.18!important;font-weight:800!important;}',
+    '#gm-app-flow [data-screen="home"] [data-gm-module="insulina"] .gm-command-module-copy strong:before{content:none!important;display:none!important;}',
+    '#gm-app-flow [data-screen="home"] [data-gm-module="insulina"] .gm-dmg-new-subtitle{display:none!important;}',
+    '#gm-app-flow [data-screen="home"] .gm-insulin-home-subtitle,#gm-app-flow [data-screen="home"] ['+DMG_ATTR+'="1"] small{display:block!important;margin-top:3px;color:#40506c;font-size:9px;line-height:1.2;}',
+    '#gm-app-flow [data-screen="home"] .gm-insulin-home-card .gm-command-module-icon{font-size:28px;}',
+    '#gm-app-flow [data-screen="home"] ['+DMG_ATTR+'="1"] .gm-command-module-icon{font-size:28px;}'
+  ].join('');document.head.appendChild(s);
+}
+function schedule(){[0,50,120,250,500,900,1500,2500].forEach(function(ms){window.setTimeout(fix,ms);});}
+function init(){style();schedule();var f=document.getElementById('gm-app-flow');if(f)new MutationObserver(schedule).observe(f,{subtree:true,childList:true});document.addEventListener('click',function(e){var n=e.target.closest&&e.target.closest('[data-gm-nav="inicio"],[aria-label="Início"]');if(n)schedule();},true);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.addEventListener('load',schedule,{once:true});
 })();
