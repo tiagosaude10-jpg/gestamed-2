@@ -10,7 +10,7 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=4">
+<link rel="stylesheet" href="./app.css?v=5">
 </head>
 <body>
 <section id="start" class="screen start-screen">
@@ -31,7 +31,14 @@
 </section>
 <section id="command" class="screen hidden command-screen">
   <main class="command-main">
-    <button class="back" data-go="start">← Início</button>
+    <div class="command-topbar">
+      <button id="adminNoticeBtn" class="top-action bell-action" type="button" aria-label="Avisos" title="Avisos">
+        <span class="bell-icon" aria-hidden="true">🔔</span>
+        <span id="noticeDot" class="notice-dot hidden" aria-hidden="true"></span>
+      </button>
+      <button id="exitAppBtn" class="top-action exit-action" type="button" aria-label="Sair do TomoCron">Sair</button>
+    </div>
+    <div id="adminNoticePanel" class="admin-notice-panel hidden" role="status" aria-live="polite"></div>
     <div class="command-head"><h2>Tela de comando</h2><p>Selecione o módulo que deseja utilizar.</p></div>
     <div class="command-grid">
       <button class="command-card" data-view="renal"><b>Avaliação renal</b><span>TFGe CKD-EPI 2021, classificação e conduta pré-contraste.</span><em>DISPONÍVEL</em></button>
@@ -76,6 +83,6 @@
 </main>
 <nav class="bottom-nav"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=4" defer></script>
+<script src="./app.js?v=5" defer></script>
 </body>
 </html>
