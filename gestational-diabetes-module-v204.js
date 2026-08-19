@@ -44,15 +44,6 @@ function diagnosisMarkup(){
     '<aside class="gm-reminder"><span>💡</span><strong>Lembre-se</strong><p>Rastreamento precoce, diagnóstico correto e acompanhamento contínuo reduzem complicações maternas e fetais.</p></aside>'+
   '</section>';
 }
-function openTopic(key){
-  var root=document.getElementById(ROOT_ID);var data=TOPICS[key];if(!root||!data)return;
-  var menu=root.querySelector('.gm-dmg-new-menu');var detail=root.querySelector('.gm-dmg-new-detail');
-  if(menu)menu.hidden=true;if(!detail)return;
-  detail.hidden=false;detail.setAttribute('data-topic',key);
-  detail.innerHTML=key==='diagnosis'?diagnosisMarkup():placeholderDetail(data,key);
-  if(key==='diagnosis')bindDiagnosis(detail);else bindPlaceholder(detail);
-  root.scrollTop=0;
-}
 function bindPlaceholder(detail){
   var back=document.createElement('button');back.type='button';back.className='gm-dmg-detail-back';back.textContent='‹ Voltar aos tópicos';back.addEventListener('click',showMenu);detail.insertBefore(back,detail.firstChild);
 }
