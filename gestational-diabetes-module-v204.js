@@ -16,12 +16,6 @@ function activate(name){
 }
 function home(){activate('home');}
 function triggerHome(selector){home();var el=document.querySelector('#gm-app-flow [data-screen="home"] '+selector);if(el)el.click();}
-function toast(message){
-  var old=document.getElementById('gm-gestational-diabetes-toast');if(old)old.remove();
-  var el=document.createElement('div');el.id='gm-gestational-diabetes-toast';el.textContent=message;document.body.appendChild(el);
-  requestAnimationFrame(function(){el.classList.add('show');});
-  window.setTimeout(function(){el.classList.remove('show');window.setTimeout(function(){el.remove();},180);},2200);
-}
 
 function openGestationalDiabetesModule(){activate('gestational-diabetes');showMenu();}
 function closeGestationalDiabetesModule(){home();}
@@ -29,15 +23,6 @@ function showMenu(){
   var root=document.getElementById(ROOT_ID);if(!root)return;
   var menu=root.querySelector('.gm-dmg-new-menu');var detail=root.querySelector('.gm-dmg-new-detail');
   if(menu)menu.hidden=false;if(detail)detail.hidden=true;root.scrollTop=0;
-}
-function bindPlaceholder(detail){
-  var back=document.createElement('button');back.type='button';back.className='gm-dmg-detail-back';back.textContent='‹ Voltar aos tópicos';back.addEventListener('click',showMenu);detail.insertBefore(back,detail.firstChild);
-}
-function bindDiagnosis(detail){
-  var back=detail.querySelector('[data-diagnosis-back]');var clear=detail.querySelector('[data-diagnosis-clear]');var close=detail.querySelector('[data-diagnosis-close]');
-  if(back)back.addEventListener('click',showMenu);
-  if(clear)clear.addEventListener('click',function(){var root=document.getElementById(ROOT_ID);if(root)root.scrollTo({top:0,behavior:'smooth'});toast('Tela reposicionada no início.');});
-  if(close)close.addEventListener('click',closeGestationalDiabetesModule);
 }
 
 window.openGestationalDiabetesModule=openGestationalDiabetesModule;
