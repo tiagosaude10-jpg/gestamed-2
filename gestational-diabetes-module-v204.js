@@ -98,9 +98,6 @@ function ensureStyle(){
   if(document.getElementById(STYLE_ID))return;
   var style=document.createElement('style');style.id=STYLE_ID;
   style.textContent=[
-    '#gm-app-flow [data-gm-module="insulina"] .gm-command-module-copy strong{font-size:0!important;}',
-    '#gm-app-flow [data-gm-module="insulina"] .gm-command-module-copy strong:before{content:"Diabetes Gestacional";font-size:13px;line-height:1.18;font-weight:800;}',
-    '#gm-app-flow [data-gm-module="insulina"] .gm-command-module-copy small.gm-dmg-new-subtitle{display:block;margin-top:3px;color:#40506c;font-size:9px;line-height:1.2;}',
     '#'+ROOT_ID+'{background:#fff4f7!important;}',
     '#'+ROOT_ID+' .gm-dmg-new-shell{box-sizing:border-box;position:relative;width:min(100%,600px);min-height:100%;margin:0 auto;padding:0 14px 88px;background:linear-gradient(180deg,#fff8fb 0%,#fff 46%,#fff7fa 100%);box-shadow:0 0 40px rgba(98,37,65,.12);color:#17233c;}',
     '#'+ROOT_ID+' .gm-dmg-new-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin:0 -14px 12px;padding:max(10px,env(safe-area-inset-top)) 14px 10px;background:rgba(255,249,252,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(236,87,137,.12);}',
