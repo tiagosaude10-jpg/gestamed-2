@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-17-301-rollback-search';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-19-241';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -9,6 +9,7 @@
   var MOBILE_INPUT_SELECTION_FIX_SRC = 'mobile-input-selection-fix-v216.js?v=20260817-225';
   var REGISTER_MOBILE_SCROLL_FIX_SRC = 'register-mobile-scroll-fix-v217.js?v=20260817-224';
   var MOBILE_EMAIL_PASTE_FIX_SRC = 'mobile-email-paste-fix-v217.js?v=20260817-225';
+  var HOME_DMG_INSULIN_SHORTCUT_SRC = 'home-dmg-insulin-shortcut-v241.js?v=20260819-241';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -56,6 +57,7 @@
   loadOnce('gm-mobile-input-selection-loader',MOBILE_INPUT_SELECTION_FIX_SRC,'mobile-input-selection-v216');
   loadOnce('gm-register-mobile-scroll-loader',REGISTER_MOBILE_SCROLL_FIX_SRC,'register-mobile-scroll-v217');
   loadOnce('gm-mobile-email-paste-loader',MOBILE_EMAIL_PASTE_FIX_SRC,'mobile-email-paste-v217');
+  loadOnce('gm-home-dmg-insulin-shortcut-loader',HOME_DMG_INSULIN_SHORTCUT_SRC,'home-dmg-insulin-shortcut-v241');
 
   var attempts = 0;
   function start() {
