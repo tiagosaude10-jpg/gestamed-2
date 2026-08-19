@@ -4,25 +4,8 @@ var ROOT_ID='gm-gestational-diabetes-screen';
 
 function getRoot(){return document.getElementById(ROOT_ID);}
 
-function showDiabetesMenu(){
-  var root=getRoot();if(!root)return;
-  var menu=root.querySelector('.gm-dmg-new-menu');
-  var detail=root.querySelector('.gm-dmg-new-detail');
-  if(menu)menu.hidden=false;
-  if(detail){detail.hidden=true;detail.removeAttribute('data-topic');}
-  root.scrollTop=0;
-}
-
 function handleBack(){
-  var root=getRoot();if(!root)return;
-  var detail=root.querySelector('.gm-dmg-new-detail');
-  var menu=root.querySelector('.gm-dmg-new-menu');
-  var detailOpen=detail && detail.hidden===false;
-  if(detailOpen){
-    showDiabetesMenu();
-    return;
-  }
-  if(menu && menu.hidden===false && typeof window.closeGestationalDiabetesModule==='function'){
+  if(typeof window.closeGestationalDiabetesModule==='function'){
     window.closeGestationalDiabetesModule();
   }
 }
