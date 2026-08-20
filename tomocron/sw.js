@@ -1,4 +1,4 @@
-const CACHE='tomocron-v10-auditoria-limpeza-2026-08-19';
+const CACHE='tomocron-v11-dose-volume-2026-08-19';
 const ASSETS=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.svg','./icon-maskable-512.svg','./logo-tomocron.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))));self.clients.claim()});
