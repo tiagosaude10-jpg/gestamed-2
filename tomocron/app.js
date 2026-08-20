@@ -203,4 +203,11 @@ console.assert(Math.round(egfr(57,'male',1.37))===60);
 console.assert(Math.round(egfr(75,'female',1.65))===32);
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 screen('start');
+
+let hiddenAt=0;
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){hiddenAt=Date.now()}
+  else if(document.visibilityState==='visible'&&hiddenAt&&Date.now()-hiddenAt>5*60*1000){clearSessionData();screen('start')}
+});
+addEventListener('pageshow',e=>{if(e.persisted){clearSessionData();screen('start')}});
 })();
