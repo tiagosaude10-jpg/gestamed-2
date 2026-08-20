@@ -10,7 +10,7 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=10">
+<link rel="stylesheet" href="./app.css?v=11">
 </head>
 <body>
 <section id="start" class="screen start-screen">
@@ -86,13 +86,13 @@
     <div class="notice small-note">A TFGe CKD-EPI 2021 é uma estimativa em adultos. Em creatinina rapidamente variável, extremos de massa muscular e outras situações, a interpretação deve ser clínica.</div>
     <footer class="module-footer">By Tiago Pereira de Albuquerque</footer>
   </section>
-  <section id="dose" class="view hidden"><div class="bar"></div><div class="notice"><b>Dose de contraste.</b> O TomoCron executa o cálculo a partir do parâmetro definido pelo protocolo institucional.</div><div class="card"><h2>Dose de contraste</h2><label>Peso (kg)</label><input id="doseWeight" inputmode="decimal" placeholder="Ex.: 70"><label>Concentração (mg I/mL)</label><select id="conc"><option>300</option><option>320</option><option>350</option><option>370</option></select><label>Volume por peso (mL/kg)</label><input id="mlkg" inputmode="decimal" placeholder="Valor definido pelo protocolo"><label>Fluxo (mL/s) <span class="pill">OPCIONAL</span></label><input id="flow" inputmode="decimal"><button class="btn primary" id="calcDose" type="button">CALCULAR</button><div id="doseResult"></div></div></section>
+  <section id="dose" class="view hidden"><div class="bar"></div><div class="notice"><b>Dose de contraste.</b> O TomoCron executa o cálculo a partir do parâmetro definido pelo protocolo institucional.</div><div class="card"><h2>Dose de contraste</h2><label>Peso (kg)</label><input id="doseWeight" inputmode="decimal" placeholder="Ex.: 70"><label>Concentração (mg I/mL)</label><select id="conc"><option>300</option><option>320</option><option>350</option><option>370</option></select><label>Volume por peso (mL/kg)</label><select id="mlkg"><option value="" selected disabled>Selecione</option><option value="1.2">1,2 mL/kg</option><option value="1.5">1,5 mL/kg</option></select><label>Fluxo (mL/s) <span class="pill">OPCIONAL</span></label><input id="flow" inputmode="decimal"><button class="btn primary" id="calcDose" type="button">CALCULAR</button><div id="doseResult"></div></div></section>
   <section id="protocol" class="view hidden"><div class="bar"></div><div class="notice"><b>Protocolos de TC.</b> Organize os dados técnicos do exame conforme o protocolo institucional.</div><div class="card"><h2>Protocolos de TC</h2><label>Exame</label><select id="exam"><option>Crânio</option><option>Pescoço</option><option>Tórax</option><option>Abdome/Pelve</option><option>Angio-TC pulmonar</option><option>Angio-TC de aorta</option><option>Uro-TC</option></select><label>Indicação clínica</label><input id="indication"><label>Fases</label><input id="phases" placeholder="Ex.: sem contraste + portal"><label>Observações</label><textarea id="protocolNotes" rows="4"></textarea><button id="protocolSummary" class="btn primary" type="button">GERAR RESUMO</button><div id="protocolResult"></div></div></section>
   <section id="contrast" class="view hidden"><div class="bar"></div><div class="notice"><b>Contrastes iodados.</b> 300, 320, 350 e 370 representam concentração de iodo em mg I/mL.</div><div class="card"><h2>Carga total de iodo</h2><label>Concentração</label><select id="quickConc"><option>300</option><option>320</option><option>350</option><option>370</option></select><label>Volume (mL)</label><input id="quickVol" inputmode="decimal" placeholder="Ex.: 100"><button class="btn primary" id="calcIodine" type="button">CALCULAR CARGA DE IODO</button><div id="iodineResult"></div></div></section>
   <section id="safety" class="view hidden"><div class="bar"></div><div class="notice"><b>Segurança.</b> Triagem rápida antes do contraste iodado intravenoso.</div><div class="card"><h2>Triagem pré-contraste</h2><label>Reação prévia grave ao contraste?</label><select id="prior"><option value="no">Não</option><option value="yes">Sim</option></select><label>LRA/AKI ou TFGe &lt;30?</label><select id="renalRisk"><option value="no">Não</option><option value="yes">Sim</option></select><label>Gestação confirmada/possível?</label><select id="preg"><option value="no">Não</option><option value="yes">Sim</option></select><button class="btn primary" id="assessSafety" type="button">AVALIAR SEGURANÇA</button><div id="safetyResult"></div></div></section>
 </main>
 <nav class="bottom-nav" aria-label="Navegação principal"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=10" defer></script>
+<script src="./app.js?v=11" defer></script>
 </body>
 </html>
