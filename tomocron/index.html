@@ -10,7 +10,7 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=5">
+<link rel="stylesheet" href="./app.css?v=6">
 </head>
 <body>
 <section id="start" class="screen start-screen">
@@ -69,7 +69,13 @@
       <label>Ureia (mg/dL) <span class="pill">OPCIONAL</span></label><input id="urea" inputmode="decimal" placeholder="Ex.: 44">
       <label>Peso (kg) <span class="pill">OPCIONAL</span></label><input id="weight" inputmode="decimal" placeholder="Ex.: 70">
       <label>Creatinina anterior <span class="pill">OPCIONAL</span></label><input id="prevScr" inputmode="decimal" placeholder="Ex.: 1,10">
-      <label>Data do exame anterior <span class="pill">OPCIONAL</span></label><input id="prevDate" type="text" inputmode="numeric" autocomplete="off" placeholder="Ex.: 12/08/2026">
+      <label>Data do exame anterior <span class="pill">OPCIONAL</span></label>
+      <div class="date-field">
+        <input id="prevDate" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/AAAA" aria-label="Data do exame anterior">
+        <button id="prevDateCalendarBtn" class="date-icon-btn calendar-btn" type="button" aria-label="Abrir calendário" title="Abrir calendário">📅</button>
+        <button id="prevDateClearBtn" class="date-icon-btn clear-btn" type="button" aria-label="Limpar data" title="Limpar data">×</button>
+        <input id="prevDatePicker" class="date-picker-hidden" type="date" tabindex="-1" aria-hidden="true">
+      </div>
       <label>LRA/AKI conhecida ou suspeita?</label><select id="aki"><option value="no">Não</option><option value="yes">Sim</option><option value="unknown">Não sei</option></select>
       <label>Paciente em diálise?</label><select id="dialysis"><option value="no">Não</option><option value="yes">Sim</option></select></div>
     </details>
@@ -83,6 +89,6 @@
 </main>
 <nav class="bottom-nav"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=5" defer></script>
+<script src="./app.js?v=6" defer></script>
 </body>
 </html>
