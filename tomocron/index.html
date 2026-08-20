@@ -10,13 +10,34 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=18">
-<link rel="stylesheet" href="./home-v18.css?v=18">
+<link rel="stylesheet" href="./app.css?v=19">
+<style>
+/* TOMOCRON HOME V19 — fonte única da tela inicial */
+#start.tc-home{position:fixed!important;inset:0!important;z-index:20!important;width:100%!important;height:100svh!important;min-height:0!important;overflow:hidden!important;padding:calc(8px + env(safe-area-inset-top)) 10px calc(8px + env(safe-area-inset-bottom))!important;background:linear-gradient(180deg,#fffaf7 0%,#fff4ed 100%)!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#start .tc-home-card{width:min(95vw,650px)!important;height:calc(100svh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;min-height:0!important;max-height:none!important;margin:0 auto!important;padding:10px 16px 9px!important;display:grid!important;grid-template-rows:minmax(108px,15vh) auto auto auto minmax(0,1fr) auto auto!important;gap:8px!important;overflow:hidden!important;text-align:center!important;background:#fff!important;border:1px solid #efd5c9!important;border-radius:26px!important;box-shadow:0 10px 30px rgba(104,48,27,.05)!important}
+#start .tc-home-logo-wrap{width:100%!important;height:100%!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;margin:0!important;padding:0 2px!important}
+#start .tc-home-logo{display:block!important;width:100%!important;height:100%!important;max-width:620px!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;margin:0 auto!important;border:0!important;background:transparent!important}
+#start .tc-home-tag{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:max-content!important;max-width:94%!important;margin:0 auto!important;padding:6px 13px!important;border:1px solid #f2c99f!important;border-radius:999px!important;background:#fff7ee!important;color:#b94c22!important;font-size:clamp(10px,2.8vw,13px)!important;line-height:1!important;font-weight:900!important;letter-spacing:.2px!important}
+#start .tc-home-title{max-width:610px!important;margin:0 auto!important;color:#5d2a1b!important;font-size:clamp(20px,5.4vw,29px)!important;line-height:1.04!important;font-weight:950!important;letter-spacing:-.45px!important}
+#start .tc-home-subtitle{max-width:590px!important;margin:0 auto!important;color:#8b7168!important;font-size:clamp(10px,3vw,13.5px)!important;line-height:1.2!important}
+#start .tc-home-features{width:100%!important;min-height:0!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:repeat(4,minmax(0,1fr))!important;gap:7px!important;margin:0!important;text-align:left!important;overflow:hidden!important}
+#start .tc-home-feature{min-height:0!important;height:100%!important;display:grid!important;grid-template-columns:52px minmax(0,1fr) 18px!important;align-items:center!important;gap:9px!important;padding:6px 11px!important;border:1px solid #efd4c7!important;border-radius:16px!important;background:#fffaf7!important;box-shadow:none!important;overflow:hidden!important}
+#start .tc-home-icon{width:44px!important;height:44px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#ef5a12!important}
+#start .tc-home-icon svg{width:42px!important;height:42px!important;display:block!important;stroke:currentColor!important}
+#start .tc-home-copy{min-width:0!important;overflow:hidden!important}
+#start .tc-home-copy b{display:block!important;margin:0 0 3px!important;color:#4f2419!important;font-size:clamp(14px,3.8vw,18px)!important;line-height:1.03!important;font-weight:950!important}
+#start .tc-home-copy span{display:block!important;color:#7f6b64!important;font-size:clamp(9px,2.6vw,12px)!important;line-height:1.12!important}
+#start .tc-home-arrow{color:#ef5a12!important;font-size:28px!important;line-height:1!important;font-weight:300!important;text-align:right!important}
+#start .tc-home-enter{margin:0!important;min-height:0!important;padding:13px 10px!important;border-radius:17px!important;font-size:clamp(14px,4vw,18px)!important;line-height:1!important;letter-spacing:.15px!important;background:linear-gradient(100deg,#ff9f12 0%,#f36a13 48%,#e32622 100%)!important;box-shadow:none!important}
+#start .tc-home-footer{margin:0!important;padding:0!important;text-align:center!important;color:#6d3525!important;font-size:clamp(9px,2.7vw,12px)!important;line-height:1.05!important;font-weight:850!important}
+@media(max-height:760px){#start .tc-home-card{grid-template-rows:minmax(82px,12vh) auto auto auto minmax(0,1fr) auto auto!important;gap:5px!important;padding:7px 12px!important}#start .tc-home-tag{padding:5px 10px!important;font-size:9px!important}#start .tc-home-title{font-size:19px!important}#start .tc-home-subtitle{font-size:9px!important;line-height:1.12!important}#start .tc-home-feature{grid-template-columns:40px minmax(0,1fr) 15px!important;gap:7px!important;padding:4px 8px!important;border-radius:13px!important}#start .tc-home-icon{width:34px!important;height:34px!important}#start .tc-home-icon svg{width:32px!important;height:32px!important}#start .tc-home-copy b{font-size:12.5px!important}#start .tc-home-copy span{font-size:7.8px!important}#start .tc-home-arrow{font-size:22px!important}#start .tc-home-enter{padding:9px 8px!important;font-size:13px!important}#start .tc-home-footer{font-size:8px!important}}
+@media(max-height:660px){#start .tc-home-card{grid-template-rows:62px auto auto auto minmax(0,1fr) auto auto!important;gap:3px!important;padding:5px 9px!important}#start .tc-home-title{font-size:16px!important}#start .tc-home-subtitle{font-size:7.8px!important}#start .tc-home-feature{grid-template-columns:31px minmax(0,1fr) 12px!important;padding:2px 6px!important}#start .tc-home-icon{width:27px!important;height:27px!important}#start .tc-home-icon svg{width:25px!important;height:25px!important}#start .tc-home-copy b{font-size:10.8px!important}#start .tc-home-copy span{font-size:6.8px!important}#start .tc-home-enter{padding:7px!important;font-size:11px!important}#start .tc-home-footer{font-size:7px!important}}
+</style>
 </head>
 <body>
 <section id="start" class="screen tc-home">
   <div class="tc-home-card">
-    <div class="tc-home-logo-wrap"><img class="tc-home-logo" src="./logo-tomocron-final.jpg?v=18" alt="TomoCron — Tomografia com Contraste" width="1200" height="433"></div>
+    <div class="tc-home-logo-wrap"><img class="tc-home-logo" src="./logo-tomocron-final.jpg?v=19" alt="TomoCron — Tomografia com Contraste"></div>
     <span class="tc-home-tag">TOMOGRAFIA + CONTRASTE</span>
     <h1 class="tc-home-title">Tomografia com contraste: avaliação rápida, técnica e segura</h1>
     <p class="tc-home-subtitle">Ferramenta técnica para apoio à equipe de enfermagem, técnicos e tecnólogos em radiologia na avaliação pré-contraste em tomografia computadorizada.</p>
@@ -61,6 +82,6 @@
 </main>
 <nav class="bottom-nav" aria-label="Navegação principal"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=18" defer></script>
+<script src="./app.js?v=19" defer></script>
 </body>
 </html>
