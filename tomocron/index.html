@@ -10,7 +10,7 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=7">
+<link rel="stylesheet" href="./app.css?v=10">
 </head>
 <body>
 <section id="start" class="screen start-screen">
@@ -47,7 +47,7 @@
       <button class="command-card" data-view="contrast"><b>Contrastes iodados</b><span>Concentrações em mg I/mL e cálculo da carga total de iodo.</span><em>DISPONÍVEL</em></button>
       <button class="command-card" data-view="safety"><b>Segurança</b><span>Triagem pré-contraste, LRA/AKI, reação prévia e situações especiais.</span><em>DISPONÍVEL</em></button>
     </div>
-    <button id="installApp" class="install-card"><img src="./icon-192.png" alt=""><span><b>Instalar TomoCron</b><small>No iPhone: Compartilhar → Adicionar à Tela de Início.</small></span></button>
+    <button id="installApp" class="install-card" type="button"><img src="./icon-192.png" alt=""><span><b>Instalar TomoCron</b><small>No iPhone: Compartilhar → Adicionar à Tela de Início.</small></span></button>
   </main>
 </section>
 <section id="app" class="screen hidden app-screen">
@@ -60,24 +60,28 @@
       <div class="section-heading"><div><h2>Cálculo rápido da função renal</h2><p>Somente 3 dados são obrigatórios para a TFGe.</p></div><span class="essential">ESSENCIAL</span></div>
       <label>Idade (anos)</label><input id="age" inputmode="numeric" placeholder="Ex.: 57">
       <label>Sexo ao nascimento</label><div class="choices" id="sex"><button type="button" data-sex="male">Masculino</button><button type="button" data-sex="female">Feminino</button></div>
-      <label>Creatinina atual (mg/dL)</label><input id="scr" inputmode="decimal" placeholder="Ex.: 1,37"><div class="hint">Aceita vírgula ou ponto.</div>
-      <button id="calcRenal" class="btn primary renal-calc" type="button">CALCULAR TFGe + CONDUTA</button><div id="renalError"></div><div id="renalResult"></div>
+      <label>Creatinina atual (mg/dL)</label><input id="scr" inputmode="numeric" placeholder="Ex.: 1,37"><div class="hint">A vírgula e as duas casas decimais são inseridas automaticamente.</div>
+      <button id="calcRenal" class="btn primary renal-calc" type="button">CALCULAR TFGe RÁPIDO</button><div id="renalError"></div><div id="renalResult"></div>
     </div>
     <details class="card optional-card">
       <summary><span><b>Complementar avaliação</b><small>Dados opcionais para ampliar a análise de risco</small></span><span class="pill">OPCIONAL</span></summary>
       <div class="details"><div class="explain-grid"><div><b>Ureia</b><span>Dado complementar; não decide isoladamente sobre contraste.</span></div><div><b>Peso</b><span>Habilita estimativa do clearance por Cockcroft-Gault.</span></div><div><b>Creatinina anterior</b><span>Ajuda a avaliar tendência e possível alteração renal aguda.</span></div><div><b>Contexto clínico</b><span>Refina a análise quando existe LRA/AKI ou diálise.</span></div></div>
       <label>Ureia (mg/dL) <span class="pill">OPCIONAL</span></label><input id="urea" inputmode="decimal" placeholder="Ex.: 44">
       <label>Peso (kg) <span class="pill">OPCIONAL</span></label><input id="weight" inputmode="decimal" placeholder="Ex.: 70">
-      <label>Creatinina anterior <span class="pill">OPCIONAL</span></label><input id="prevScr" inputmode="decimal" placeholder="Ex.: 1,10">
+      <label>Creatinina anterior <span class="pill">OPCIONAL</span></label><input id="prevScr" inputmode="numeric" placeholder="Ex.: 1,10">
       <label>Data do exame anterior <span class="pill">OPCIONAL</span></label>
       <div class="date-field">
         <input id="prevDate" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/AAAA" aria-label="Data do exame anterior">
-        <button id="prevDateCalendarBtn" class="date-icon-btn calendar-btn" type="button" aria-label="Abrir calendário" title="Abrir calendário">📅</button>
         <button id="prevDateClearBtn" class="date-icon-btn clear-btn" type="button" aria-label="Limpar data" title="Limpar data">×</button>
-        <input id="prevDatePicker" class="date-picker-hidden" type="date" tabindex="-1" aria-hidden="true">
+        <label class="calendar-trigger" for="prevDatePicker" aria-label="Abrir calendário" title="Abrir calendário">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v3M17 2v3M3.5 9h17M5.5 4h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </label>
+        <input id="prevDatePicker" class="date-picker-hidden" type="date" aria-label="Selecionar data do exame anterior">
       </div>
       <label>LRA/AKI conhecida ou suspeita?</label><select id="aki"><option value="no">Não</option><option value="yes">Sim</option><option value="unknown">Não sei</option></select>
-      <label>Paciente em diálise?</label><select id="dialysis"><option value="no">Não</option><option value="yes">Sim</option></select></div>
+      <label>Paciente em diálise?</label><select id="dialysis"><option value="no">Não</option><option value="yes">Sim</option></select>
+      <button id="calcRenalBottom" class="btn primary renal-calc renal-calc-bottom" type="button">CALCULAR AVALIAÇÃO COMPLETA</button><div id="renalErrorBottom"></div><div id="renalResultBottom"></div>
+      </div>
     </details>
     <div class="notice small-note">A TFGe CKD-EPI 2021 é uma estimativa em adultos. Em creatinina rapidamente variável, extremos de massa muscular e outras situações, a interpretação deve ser clínica.</div>
     <footer class="module-footer">By Tiago Pereira de Albuquerque</footer>
@@ -87,8 +91,8 @@
   <section id="contrast" class="view hidden"><div class="bar"></div><div class="notice"><b>Contrastes iodados.</b> 300, 320, 350 e 370 representam concentração de iodo em mg I/mL.</div><div class="card"><h2>Carga total de iodo</h2><label>Concentração</label><select id="quickConc"><option>300</option><option>320</option><option>350</option><option>370</option></select><label>Volume (mL)</label><input id="quickVol" inputmode="decimal" placeholder="Ex.: 100"><button class="btn primary" id="calcIodine" type="button">CALCULAR CARGA DE IODO</button><div id="iodineResult"></div></div></section>
   <section id="safety" class="view hidden"><div class="bar"></div><div class="notice"><b>Segurança.</b> Triagem rápida antes do contraste iodado intravenoso.</div><div class="card"><h2>Triagem pré-contraste</h2><label>Reação prévia grave ao contraste?</label><select id="prior"><option value="no">Não</option><option value="yes">Sim</option></select><label>LRA/AKI ou TFGe &lt;30?</label><select id="renalRisk"><option value="no">Não</option><option value="yes">Sim</option></select><label>Gestação confirmada/possível?</label><select id="preg"><option value="no">Não</option><option value="yes">Sim</option></select><button class="btn primary" id="assessSafety" type="button">AVALIAR SEGURANÇA</button><div id="safetyResult"></div></div></section>
 </main>
-<nav class="bottom-nav"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
+<nav class="bottom-nav" aria-label="Navegação principal"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=7" defer></script>
+<script src="./app.js?v=10" defer></script>
 </body>
 </html>
