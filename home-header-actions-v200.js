@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-20-253';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-20-254';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -18,6 +18,7 @@
   var DMG_PRENATAL_SAFETY_SRC = 'gestational-diabetes-prenatal-safety-v251.js?v=20260820-251';
   var DMG_HOSPITAL_SAFETY_SRC = 'gestational-diabetes-hospital-safety-v252.js?v=20260820-252';
   var DMG_DELIVERY_SAFETY_SRC = 'gestational-diabetes-delivery-safety-v253.js?v=20260820-253';
+  var DMG_POSTPARTUM_SAFETY_SRC = 'gestational-diabetes-postpartum-safety-v254.js?v=20260820-254';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -74,6 +75,7 @@
   loadOnce('gm-dmg-prenatal-safety-loader',DMG_PRENATAL_SAFETY_SRC,'gestational-diabetes-prenatal-safety-v251');
   loadOnce('gm-dmg-hospital-safety-loader',DMG_HOSPITAL_SAFETY_SRC,'gestational-diabetes-hospital-safety-v252');
   loadOnce('gm-dmg-delivery-safety-loader',DMG_DELIVERY_SAFETY_SRC,'gestational-diabetes-delivery-safety-v253');
+  loadOnce('gm-dmg-postpartum-safety-loader',DMG_POSTPARTUM_SAFETY_SRC,'gestational-diabetes-postpartum-safety-v254');
 
   var attempts = 0;
   function start() {
