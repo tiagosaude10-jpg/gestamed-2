@@ -1,5 +1,5 @@
-const CACHE='tomocron-v12-red-icon-2026-08-20';
-const ASSETS=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./logo-tomocron.svg'];
+const CACHE='tomocron-v13-final-icon-2026-08-20';
+const ASSETS=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./logo-tomocron.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))));self.clients.claim()});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});
