@@ -188,8 +188,7 @@ function clearSessionData(){
 function exitApplication(){
   if(!confirm('Deseja sair do TomoCron?'))return;
   clearSessionData();
-  try{window.open('','_self');window.close()}catch(e){}
-  setTimeout(()=>{try{location.replace('about:blank')}catch(e){document.body.innerHTML='';document.body.style.background='#fff'}},120);
+  screen('start');
 }
 exitBtn?.addEventListener('click',exitApplication);
 renderAdminNotice();
