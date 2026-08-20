@@ -1,5 +1,5 @@
-const CACHE='tomocron-v29-kidney-icon-v2-2026-08-20';
-const CORE=['./','./index.html','./app.css?v=26','./app.js?v=25','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=24'];
+const CACHE='tomocron-v30-command-screen-2026-08-20';
+const CORE=['./','./index.html','./app.css?v=27','./app.js?v=27','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=24'];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE);for(const url of CORE){try{const response=await fetch(url,{cache:'reload'});if(response.ok)await cache.put(url,response.clone())}catch(_){}}await self.skipWaiting()})())});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));await self.clients.claim()})())});
 self.addEventListener('fetch',event=>{
