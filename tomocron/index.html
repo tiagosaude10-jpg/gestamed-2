@@ -84,11 +84,11 @@
 </section>
 <script>
 (function(){
-  function enter(){var s=document.getElementById('start'),c=document.getElementById('command');if(!s||!c)return;s.classList.add('hidden');c.classList.remove('hidden');window.scrollTo(0,0)}
+  function enter(){var s=document.getElementById('start'),c=document.getElementById('command'),a=document.getElementById('app');if(!s||!c)return;s.classList.add('hidden');c.classList.remove('hidden');if(a)a.classList.add('hidden');window.scrollTo(0,0)}
   document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#enterTomoCron');if(b){e.preventDefault();enter()}},true);
   document.addEventListener('touchend',function(e){var b=e.target.closest&&e.target.closest('#enterTomoCron');if(b){e.preventDefault();enter()}},true);
 })();
 </script>
-<script src="./app.js?v=21" defer></script>
+<script src="./app.js?v=23" defer></script>
 </body>
 </html>

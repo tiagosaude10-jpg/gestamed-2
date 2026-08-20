@@ -1,5 +1,5 @@
-const CACHE='tomocron-v22-logo-fix-2026-08-20';
-const CORE=['./','./index.html','./app.css?v=21','./app.js?v=21','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=22'];
+const CACHE='tomocron-v23-resume-reset-2026-08-20';
+const CORE=['./','./index.html','./app.css?v=21','./app.js?v=23','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=22'];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE);for(const url of CORE){try{const response=await fetch(url,{cache:'reload'});if(response.ok)await cache.put(url,response.clone())}catch(_){}}await self.skipWaiting()})())});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));await self.clients.claim()})())});
 self.addEventListener('fetch',event=>{
