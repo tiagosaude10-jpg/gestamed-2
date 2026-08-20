@@ -1,0 +1,1 @@
+O ícone final vermelho do TomoCron foi aprovado em 20/08/2026 e está sendo promovido para os arquivos de instalação.
