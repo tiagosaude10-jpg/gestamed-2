@@ -1,4 +1,4 @@
-const CACHE='tomocron-v5-icon-final-2026-08-19';
+const CACHE='tomocron-v7-clear-fields-2026-08-19';
 const ASSETS=['./','./index.html','./app.css','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.svg','./icon-maskable-512.svg'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))));self.clients.claim()});
