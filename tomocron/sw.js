@@ -1,6 +1,44 @@
-const CACHE='tomocron-v17-home-fit-logo-2026-08-20';
-const ASSETS=['./app.css','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg','./home-v17.css','./home-v17.js'];
-self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.open(CACHE);await Promise.all(ASSETS.map(async u=>{try{const r=await fetch(u,{cache:'reload'});if(r.ok)await c.put(u,r.clone())}catch(_){}}));await self.skipWaiting()})())});
-self.addEventListener('activate',e=>{e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));await self.clients.claim()})())});
-function injectHome(html){if(!html.includes('home-v17.css'))html=html.replace('</head>','<link rel="stylesheet" href="./home-v17.css?v=17"></head>');if(!html.includes('home-v17.js'))html=html.replace('</body>','<script src="./home-v17.js?v=17"></script></body>');return html}
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.mode==='navigate'){e.respondWith((async()=>{let r;try{r=await fetch(e.request,{cache:'no-store'});if(r.ok){const c=await caches.open(CACHE);await c.put('./index.html',r.clone())}}catch(_){}if(!r||!r.ok)r=await caches.match('./index.html');if(!r)return new Response('TomoCron indisponível offline.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});const html=injectHome(await r.text());const h=new Headers(r.headers);h.set('Content-Type','text/html; charset=utf-8');h.set('Cache-Control','no-store');return new Response(html,{status:200,headers:h})})());return}e.respondWith((async()=>{try{const r=await fetch(e.request,{cache:'no-store'});if(r.ok){const c=await caches.open(CACHE);await c.put(e.request,r.clone())}return r}catch(_){return (await caches.match(e.request))||Response.error()}})())});
+const CACHE='tomocron-v18-clean-home-2026-08-20';
+const CORE=['./','./index.html','./app.css?v=18','./home-v18.css?v=18','./app.js?v=18','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=18'];
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    for(const url of CORE){
+      try{const response=await fetch(url,{cache:'reload'});if(response.ok)await cache.put(url,response.clone())}catch(_){ }
+    }
+    await self.skipWaiting();
+  })());
+});
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  if(event.request.mode==='navigate'){
+    event.respondWith((async()=>{
+      try{
+        const response=await fetch(event.request,{cache:'no-store'});
+        if(response.ok){const cache=await caches.open(CACHE);await cache.put('./index.html',response.clone())}
+        return response;
+      }catch(_){
+        return (await caches.match('./index.html'))||new Response('TomoCron indisponível offline.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});
+      }
+    })());
+    return;
+  }
+  event.respondWith((async()=>{
+    const cached=await caches.match(event.request);
+    if(cached)return cached;
+    try{
+      const response=await fetch(event.request);
+      if(response.ok){const cache=await caches.open(CACHE);await cache.put(event.request,response.clone())}
+      return response;
+    }catch(_){
+      return Response.error();
+    }
+  })());
+});
