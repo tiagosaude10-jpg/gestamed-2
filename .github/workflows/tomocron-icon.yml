@@ -1,0 +1,69 @@
+name: Aplicar ícone final TomoCron
+
+on:
+  push:
+    paths:
+      - '.github/workflows/tomocron-icon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-icon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Decodificar ícone aprovado
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d tomocron/icon-red-approved-180.b64 > tomocron/icon-180.png
+          cp tomocron/icon-180.png tomocron/icon-192.png
+          cp tomocron/icon-180.png tomocron/icon-512.png
+          cp tomocron/icon-180.png tomocron/icon-maskable-512.png
+
+      - name: Atualizar manifest e cache
+        shell: bash
+        run: |
+          cat > tomocron/manifest.webmanifest <<'EOF'
+          {
+            "name": "TomoCron — Tomografia com Contraste",
+            "short_name": "TomoCron",
+            "id": "./",
+            "start_url": "./",
+            "scope": "./",
+            "display": "standalone",
+            "orientation": "portrait",
+            "background_color": "#8b0b0b",
+            "theme_color": "#8b0b0b",
+            "icons": [
+              {"src":"./icon-180.png","sizes":"180x180","type":"image/png","purpose":"any"},
+              {"src":"./icon-192.png","sizes":"180x180","type":"image/png","purpose":"any"}
+            ]
+          }
+          EOF
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('tomocron/sw.js')
+          s=p.read_text()
+          import re
+          s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v12-red-icon-2026-08-20';", s)
+          s=s.replace("'./icon-512.svg','./icon-maskable-512.svg'", "'./icon-512.png','./icon-maskable-512.png'")
+          p.write_text(s)
+          PY
+
+      - name: Commitar ícone aplicado
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tomocron/icon-180.png tomocron/icon-192.png tomocron/icon-512.png tomocron/icon-maskable-512.png tomocron/manifest.webmanifest tomocron/sw.js
+          if git diff --cached --quiet; then
+            echo "Nada para atualizar"
+            exit 0
+          fi
+          git commit -m "Aplicar novo ícone vermelho aprovado do TomoCron"
+          git push
