@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-20-250';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-20-251';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -15,6 +15,7 @@
   var DMG_INITIAL_SAFETY_SRC = 'gestational-diabetes-initial-safety-v247.js?v=20260819-247';
   var DMG_INSULIN_SAFETY_SRC = 'gestational-diabetes-insulin-safety-v248.js?v=20260820-249';
   var DMG_PROFILE_GUIDANCE_SRC = 'gestational-diabetes-profile-guidance-v250.js?v=20260820-250';
+  var DMG_PRENATAL_SAFETY_SRC = 'gestational-diabetes-prenatal-safety-v251.js?v=20260820-251';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -68,6 +69,7 @@
   loadOnce('gm-dmg-initial-safety-loader',DMG_INITIAL_SAFETY_SRC,'gestational-diabetes-initial-safety-v247');
   loadOnce('gm-dmg-insulin-safety-loader',DMG_INSULIN_SAFETY_SRC,'gestational-diabetes-insulin-safety-v249');
   loadOnce('gm-dmg-profile-guidance-loader',DMG_PROFILE_GUIDANCE_SRC,'gestational-diabetes-profile-guidance-v250');
+  loadOnce('gm-dmg-prenatal-safety-loader',DMG_PRENATAL_SAFETY_SRC,'gestational-diabetes-prenatal-safety-v251');
 
   var attempts = 0;
   function start() {
