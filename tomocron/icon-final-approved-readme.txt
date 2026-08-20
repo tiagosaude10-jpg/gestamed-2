@@ -1,0 +1,1 @@
+Final approved red TomoCron app icon assets are being applied to PWA metadata and cache.
