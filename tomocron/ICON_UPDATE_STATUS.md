@@ -1,0 +1,1 @@
+Novo ícone vermelho TomoCron aprovado. Aplicação em andamento nos arquivos PWA.
