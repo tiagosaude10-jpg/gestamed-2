@@ -10,101 +10,29 @@
 <title>TomoCron — Tomografia com Contraste</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<link rel="stylesheet" href="./app.css?v=12">
-<style>
-/* Tela inicial aprovada 2026-08-20 */
-#start.start-screen{position:fixed;inset:0;z-index:20;overflow-y:auto;overflow-x:hidden;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#fffaf7 0%,#fff4ed 100%);align-items:flex-start}
-#start .start-card{width:min(95vw,650px);min-height:calc(100svh - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom));height:auto;max-height:none;margin:auto;padding:16px 20px 12px;display:flex;flex-direction:column;gap:14px;justify-content:flex-start;overflow:visible;text-align:center;background:#fff;border:1px solid #efd5c9;border-radius:28px;box-shadow:0 14px 40px rgba(104,48,27,.06)}
-#start .home-logo-wrap{width:100%;height:165px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 2px}
-#start .start-logo{display:block;width:100%;height:100%;max-width:620px;max-height:none;object-fit:contain;object-position:center;margin:0 auto}
-#start .start-tag{display:inline-flex;align-items:center;justify-content:center;margin:0 auto;padding:8px 16px;border:1px solid #f4cfad;border-radius:999px;background:#fff7ee;color:#b94c22;font-size:14px;font-weight:900;letter-spacing:.25px}
-#start .start-title{max-width:610px;margin:0 auto;color:#5d2a1b;font-size:clamp(28px,6.5vw,40px);line-height:1.06;font-weight:950;letter-spacing:-.7px}
-#start .start-subtitle{max-width:590px;margin:0 auto;color:#8b7168;font-size:16px;line-height:1.38}
-#start .start-features{width:100%;display:grid;grid-template-columns:1fr;gap:10px;margin:4px 0 0;text-align:left}
-#start .start-feature{min-height:90px;display:grid;grid-template-columns:74px minmax(0,1fr) 28px;align-items:center;gap:10px;padding:12px 14px;border:1px solid #efd4c7;border-radius:20px;background:#fffaf7;box-shadow:0 3px 10px rgba(87,40,23,.025)}
-#start .start-feature-icon{width:58px;height:58px;display:flex;align-items:center;justify-content:center;color:#ef5a12}
-#start .start-feature-icon svg{width:54px;height:54px;display:block;stroke:currentColor}
-#start .start-feature-copy{min-width:0}
-#start .start-feature b{display:block;margin:0 0 5px;color:#4f2419;font-size:22px;line-height:1.05;font-weight:950}
-#start .start-feature span{display:block;color:#7f6b64;font-size:15.5px;line-height:1.28}
-#start .start-feature-arrow{color:#ef5a12;font-size:38px;line-height:1;font-weight:300;text-align:right;transform:translateY(-1px)}
-#start .start-enter{margin:4px 0 0;padding:18px 12px;border-radius:20px;font-size:22px;letter-spacing:.2px;background:linear-gradient(100deg,#ff9f12 0%,#f36a13 48%,#e32622 100%);box-shadow:none}
-#start .start-footer{margin:0;text-align:center;color:#6d3525;font-size:15px;line-height:1.2;font-weight:850;padding-bottom:2px}
-@media(max-width:430px){
- #start .start-card{padding:13px 14px 10px;gap:12px;border-radius:25px}
- #start .home-logo-wrap{height:145px}
- #start .start-tag{font-size:12.5px;padding:7px 14px}
- #start .start-title{font-size:30px;line-height:1.04}
- #start .start-subtitle{font-size:15px;line-height:1.34}
- #start .start-feature{grid-template-columns:64px minmax(0,1fr) 24px;min-height:84px;padding:10px 12px;border-radius:18px}
- #start .start-feature-icon{width:52px;height:52px}
- #start .start-feature-icon svg{width:48px;height:48px}
- #start .start-feature b{font-size:20px}
- #start .start-feature span{font-size:14px}
- #start .start-feature-arrow{font-size:34px}
- #start .start-enter{font-size:19px;padding:16px 10px}
- #start .start-footer{font-size:13px}
-}
-@media(max-height:760px){
- #start .start-card{gap:9px;padding-top:9px}
- #start .home-logo-wrap{height:110px}
- #start .start-tag{font-size:10px;padding:5px 10px}
- #start .start-title{font-size:23px}
- #start .start-subtitle{font-size:11px;line-height:1.22}
- #start .start-features{gap:7px}
- #start .start-feature{grid-template-columns:52px minmax(0,1fr) 20px;min-height:64px;padding:7px 10px}
- #start .start-feature-icon{width:42px;height:42px}
- #start .start-feature-icon svg{width:39px;height:39px}
- #start .start-feature b{font-size:16px;margin-bottom:2px}
- #start .start-feature span{font-size:10.5px;line-height:1.16}
- #start .start-feature-arrow{font-size:28px}
- #start .start-enter{font-size:16px;padding:12px 9px}
- #start .start-footer{font-size:10px}
-}
-</style>
+<link rel="stylesheet" href="./app.css?v=18">
+<link rel="stylesheet" href="./home-v18.css?v=18">
 </head>
 <body>
-<section id="start" class="screen start-screen">
-  <div class="start-card">
-    <div class="home-logo-wrap"><img class="start-logo" src="./logo-tomocron-final.jpg" alt="TomoCron — Tomografia com Contraste"></div>
-    <span class="start-tag">TOMOGRAFIA + CONTRASTE</span>
-    <h1 class="start-title">Tomografia com contraste: avaliação rápida, técnica e segura</h1>
-    <p class="start-subtitle">Ferramenta técnica para apoio à equipe de enfermagem, técnicos e tecnólogos em radiologia na avaliação pré-contraste em tomografia computadorizada.</p>
-    <div class="start-features">
-      <div class="start-feature">
-        <div class="start-feature-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13c-7-2-12 4-12 12 0 9 6 16 13 16 6 0 9-5 9-11 0-7-4-13-10-17Z"/><path d="M45 13c7-2 12 4 12 12 0 9-6 16-13 16-6 0-9-5-9-11 0-7 4-13 10-17Z"/><path d="M26 31c-4 3-6 8-6 14v6M38 31c4 3 6 8 6 14v6M20 51c5-4 9-4 12 0 3-4 7-4 12 0"/></svg></div>
-        <div class="start-feature-copy"><b>Avaliação renal</b><span>TFGe CKD-EPI 2021, creatinina, clearance e risco pré-contraste.</span></div>
-        <div class="start-feature-arrow" aria-hidden="true">›</div>
-      </div>
-      <div class="start-feature">
-        <div class="start-feature-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7h18v8H23zM20 17h24l3 7v31a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4V24l3-7Z"/><path d="M22 35h20M27 29v17M27 40h7"/></svg></div>
-        <div class="start-feature-copy"><b>Dose de contraste</b><span>Peso, concentração em mg I/mL, volume e carga total de iodo.</span></div>
-        <div class="start-feature-arrow" aria-hidden="true">›</div>
-      </div>
-      <div class="start-feature">
-        <div class="start-feature-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6c8 6 15 8 23 9v16c0 14-8 23-23 29C17 54 9 45 9 31V15c8-1 15-3 23-9Z"/><path d="m22 32 7 7 14-16"/></svg></div>
-        <div class="start-feature-copy"><b>Segurança</b><span>LRA/AKI, diálise, fatores de risco, reações e situações especiais.</span></div>
-        <div class="start-feature-arrow" aria-hidden="true">›</div>
-      </div>
-      <div class="start-feature">
-        <div class="start-feature-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="28" r="20"/><circle cx="32" cy="29" r="11"/><path d="M22 49h20M25 40 18 54h28L39 40M27 5h2M32 5h2M37 5h2"/></svg></div>
-        <div class="start-feature-copy"><b>Tomografia + contraste</b><span>Tipos de contraste, concentrações, protocolos de TC e referências.</span></div>
-        <div class="start-feature-arrow" aria-hidden="true">›</div>
-      </div>
+<section id="start" class="screen tc-home">
+  <div class="tc-home-card">
+    <div class="tc-home-logo-wrap"><img class="tc-home-logo" src="./logo-tomocron-final.jpg?v=18" alt="TomoCron — Tomografia com Contraste" width="1200" height="433"></div>
+    <span class="tc-home-tag">TOMOGRAFIA + CONTRASTE</span>
+    <h1 class="tc-home-title">Tomografia com contraste: avaliação rápida, técnica e segura</h1>
+    <p class="tc-home-subtitle">Ferramenta técnica para apoio à equipe de enfermagem, técnicos e tecnólogos em radiologia na avaliação pré-contraste em tomografia computadorizada.</p>
+    <div class="tc-home-features">
+      <div class="tc-home-feature"><div class="tc-home-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13c-7-2-12 4-12 12 0 9 6 16 13 16 6 0 9-5 9-11 0-7-4-13-10-17Z"/><path d="M45 13c7-2 12 4 12 12 0 9-6 16-13 16-6 0-9-5-9-11 0-7 4-13 10-17Z"/><path d="M26 31c-4 3-6 8-6 14v6M38 31c4 3 6 8 6 14v6M20 51c5-4 9-4 12 0 3-4 7-4 12 0"/></svg></div><div class="tc-home-copy"><b>Avaliação renal</b><span>TFGe CKD-EPI 2021, creatinina, clearance e risco pré-contraste.</span></div><div class="tc-home-arrow" aria-hidden="true">›</div></div>
+      <div class="tc-home-feature"><div class="tc-home-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7h18v8H23zM20 17h24l3 7v31a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4V24l3-7Z"/><path d="M22 35h20M27 29v17M27 40h7"/></svg></div><div class="tc-home-copy"><b>Dose de contraste</b><span>Peso, concentração em mg I/mL, volume e carga total de iodo.</span></div><div class="tc-home-arrow" aria-hidden="true">›</div></div>
+      <div class="tc-home-feature"><div class="tc-home-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6c8 6 15 8 23 9v16c0 14-8 23-23 29C17 54 9 45 9 31V15c8-1 15-3 23-9Z"/><path d="m22 32 7 7 14-16"/></svg></div><div class="tc-home-copy"><b>Segurança</b><span>LRA/AKI, diálise, fatores de risco, reações e situações especiais.</span></div><div class="tc-home-arrow" aria-hidden="true">›</div></div>
+      <div class="tc-home-feature"><div class="tc-home-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="28" r="20"/><circle cx="32" cy="29" r="11"/><path d="M22 49h20M25 40 18 54h28L39 40M27 5h2M32 5h2M37 5h2"/></svg></div><div class="tc-home-copy"><b>Tomografia + contraste</b><span>Tipos de contraste, concentrações, protocolos de TC e referências.</span></div><div class="tc-home-arrow" aria-hidden="true">›</div></div>
     </div>
-    <button class="btn primary start-enter" data-go="command">ENTRAR NO TOMOCRON</button>
-    <footer class="start-footer">By Tiago Pereira de Albuquerque</footer>
+    <button class="btn primary tc-home-enter" data-go="command">ENTRAR NO TOMOCRON</button>
+    <footer class="tc-home-footer">By Tiago Pereira de Albuquerque</footer>
   </div>
 </section>
 <section id="command" class="screen hidden command-screen">
   <main class="command-main">
-    <div class="command-topbar">
-      <button id="adminNoticeBtn" class="top-action bell-action" type="button" aria-label="Avisos" title="Avisos">
-        <span class="bell-icon" aria-hidden="true">🔔</span>
-        <span id="noticeDot" class="notice-dot hidden" aria-hidden="true"></span>
-      </button>
-      <button id="exitAppBtn" class="top-action exit-action" type="button" aria-label="Sair do TomoCron">Sair</button>
-    </div>
+    <div class="command-topbar"><button id="adminNoticeBtn" class="top-action bell-action" type="button" aria-label="Avisos" title="Avisos"><span class="bell-icon" aria-hidden="true">🔔</span><span id="noticeDot" class="notice-dot hidden" aria-hidden="true"></span></button><button id="exitAppBtn" class="top-action exit-action" type="button" aria-label="Sair do TomoCron">Sair</button></div>
     <div id="adminNoticePanel" class="admin-notice-panel hidden" role="status" aria-live="polite"></div>
     <div class="command-head"><h2>Tela de comando</h2><p>Selecione o módulo que deseja utilizar.</p></div>
     <div class="command-grid">
@@ -121,37 +49,10 @@
 <main class="app-main">
   <button class="back app-back" data-go="command">← Tela de comando</button>
   <section id="renal" class="view">
-    <div class="bar"></div>
-    <div class="notice"><b>Avaliação renal pré-contraste.</b> Informe idade, sexo ao nascimento e creatinina para calcular imediatamente a TFGe pelo CKD-EPI 2021.</div>
-    <div class="card renal-quick">
-      <div class="section-heading"><div><h2>Cálculo rápido da função renal</h2><p>Somente 3 dados são obrigatórios para a TFGe.</p></div><span class="essential">ESSENCIAL</span></div>
-      <label>Idade (anos)</label><input id="age" inputmode="numeric" placeholder="Ex.: 57">
-      <label>Sexo ao nascimento</label><div class="choices" id="sex"><button type="button" data-sex="male">Masculino</button><button type="button" data-sex="female">Feminino</button></div>
-      <label>Creatinina atual (mg/dL)</label><input id="scr" inputmode="numeric" placeholder="Ex.: 1,37"><div class="hint">A vírgula e as duas casas decimais são inseridas automaticamente.</div>
-      <button id="calcRenal" class="btn primary renal-calc" type="button">CALCULAR TFGe RÁPIDO</button><div id="renalError"></div><div id="renalResult"></div>
-    </div>
-    <details class="card optional-card">
-      <summary><span><b>Complementar avaliação</b><small>Dados opcionais para ampliar a análise de risco</small></span><span class="pill">OPCIONAL</span></summary>
-      <div class="details"><div class="explain-grid"><div><b>Ureia</b><span>Dado complementar; não decide isoladamente sobre contraste.</span></div><div><b>Peso</b><span>Habilita estimativa do clearance por Cockcroft-Gault.</span></div><div><b>Creatinina anterior</b><span>Ajuda a avaliar tendência e possível alteração renal aguda.</span></div><div><b>Contexto clínico</b><span>Refina a análise quando existe LRA/AKI ou diálise.</span></div></div>
-      <label>Ureia (mg/dL) <span class="pill">OPCIONAL</span></label><input id="urea" inputmode="decimal" placeholder="Ex.: 44">
-      <label>Peso (kg) <span class="pill">OPCIONAL</span></label><input id="weight" inputmode="decimal" placeholder="Ex.: 70">
-      <label>Creatinina anterior <span class="pill">OPCIONAL</span></label><input id="prevScr" inputmode="numeric" placeholder="Ex.: 1,10">
-      <label>Data do exame anterior <span class="pill">OPCIONAL</span></label>
-      <div class="date-field">
-        <input id="prevDate" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/AAAA" aria-label="Data do exame anterior">
-        <button id="prevDateClearBtn" class="date-icon-btn clear-btn" type="button" aria-label="Limpar data" title="Limpar data">×</button>
-        <label class="calendar-trigger" for="prevDatePicker" aria-label="Abrir calendário" title="Abrir calendário">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v3M17 2v3M3.5 9h17M5.5 4h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        </label>
-        <input id="prevDatePicker" class="date-picker-hidden" type="date" aria-label="Selecionar data do exame anterior">
-      </div>
-      <label>LRA/AKI conhecida ou suspeita?</label><select id="aki"><option value="no">Não</option><option value="yes">Sim</option><option value="unknown">Não sei</option></select>
-      <label>Paciente em diálise?</label><select id="dialysis"><option value="no">Não</option><option value="yes">Sim</option></select>
-      <button id="calcRenalBottom" class="btn primary renal-calc renal-calc-bottom" type="button">CALCULAR AVALIAÇÃO COMPLETA</button><div id="renalErrorBottom"></div><div id="renalResultBottom"></div>
-      </div>
-    </details>
-    <div class="notice small-note">A TFGe CKD-EPI 2021 é uma estimativa em adultos. Em creatinina rapidamente variável, extremos de massa muscular e outras situações, a interpretação deve ser clínica.</div>
-    <footer class="module-footer">By Tiago Pereira de Albuquerque</footer>
+    <div class="bar"></div><div class="notice"><b>Avaliação renal pré-contraste.</b> Informe idade, sexo ao nascimento e creatinina para calcular imediatamente a TFGe pelo CKD-EPI 2021.</div>
+    <div class="card renal-quick"><div class="section-heading"><div><h2>Cálculo rápido da função renal</h2><p>Somente 3 dados são obrigatórios para a TFGe.</p></div><span class="essential">ESSENCIAL</span></div><label>Idade (anos)</label><input id="age" inputmode="numeric" placeholder="Ex.: 57"><label>Sexo ao nascimento</label><div class="choices" id="sex"><button type="button" data-sex="male">Masculino</button><button type="button" data-sex="female">Feminino</button></div><label>Creatinina atual (mg/dL)</label><input id="scr" inputmode="numeric" placeholder="Ex.: 1,37"><div class="hint">A vírgula e as duas casas decimais são inseridas automaticamente.</div><button id="calcRenal" class="btn primary renal-calc" type="button">CALCULAR TFGe RÁPIDO</button><div id="renalError"></div><div id="renalResult"></div></div>
+    <details class="card optional-card"><summary><span><b>Complementar avaliação</b><small>Dados opcionais para ampliar a análise de risco</small></span><span class="pill">OPCIONAL</span></summary><div class="details"><div class="explain-grid"><div><b>Ureia</b><span>Dado complementar; não decide isoladamente sobre contraste.</span></div><div><b>Peso</b><span>Habilita estimativa do clearance por Cockcroft-Gault.</span></div><div><b>Creatinina anterior</b><span>Ajuda a avaliar tendência e possível alteração renal aguda.</span></div><div><b>Contexto clínico</b><span>Refina a análise quando existe LRA/AKI ou diálise.</span></div></div><label>Ureia (mg/dL) <span class="pill">OPCIONAL</span></label><input id="urea" inputmode="decimal" placeholder="Ex.: 44"><label>Peso (kg) <span class="pill">OPCIONAL</span></label><input id="weight" inputmode="decimal" placeholder="Ex.: 70"><label>Creatinina anterior <span class="pill">OPCIONAL</span></label><input id="prevScr" inputmode="numeric" placeholder="Ex.: 1,10"><label>Data do exame anterior <span class="pill">OPCIONAL</span></label><div class="date-field"><input id="prevDate" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="DD/MM/AAAA" aria-label="Data do exame anterior"><button id="prevDateClearBtn" class="date-icon-btn clear-btn" type="button" aria-label="Limpar data" title="Limpar data">×</button><label class="calendar-trigger" for="prevDatePicker" aria-label="Abrir calendário" title="Abrir calendário"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2v3M17 2v3M3.5 9h17M5.5 4h13a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></label><input id="prevDatePicker" class="date-picker-hidden" type="date" aria-label="Selecionar data do exame anterior"></div><label>LRA/AKI conhecida ou suspeita?</label><select id="aki"><option value="no">Não</option><option value="yes">Sim</option><option value="unknown">Não sei</option></select><label>Paciente em diálise?</label><select id="dialysis"><option value="no">Não</option><option value="yes">Sim</option></select><button id="calcRenalBottom" class="btn primary renal-calc renal-calc-bottom" type="button">CALCULAR AVALIAÇÃO COMPLETA</button><div id="renalErrorBottom"></div><div id="renalResultBottom"></div></div></details>
+    <div class="notice small-note">A TFGe CKD-EPI 2021 é uma estimativa em adultos. Em creatinina rapidamente variável, extremos de massa muscular e outras situações, a interpretação deve ser clínica.</div><footer class="module-footer">By Tiago Pereira de Albuquerque</footer>
   </section>
   <section id="dose" class="view hidden"><div class="bar"></div><div class="notice"><b>Dose de contraste.</b> O TomoCron executa o cálculo a partir do parâmetro definido pelo protocolo institucional.</div><div class="card"><h2>Dose de contraste</h2><label>Peso (kg)</label><input id="doseWeight" inputmode="decimal" placeholder="Ex.: 70"><label>Concentração (mg I/mL)</label><select id="conc"><option>300</option><option>320</option><option>350</option><option>370</option></select><label>Volume por peso (mL/kg)</label><select id="mlkg"><option value="" selected disabled>Selecione</option><option value="1.2">1,2 mL/kg</option><option value="1.5">1,5 mL/kg</option></select><label>Fluxo (mL/s) <span class="pill">OPCIONAL</span></label><input id="flow" inputmode="decimal"><button class="btn primary" id="calcDose" type="button">CALCULAR</button><div id="doseResult"></div></div></section>
   <section id="protocol" class="view hidden"><div class="bar"></div><div class="notice"><b>Protocolos de TC.</b> Organize os dados técnicos do exame conforme o protocolo institucional.</div><div class="card"><h2>Protocolos de TC</h2><label>Exame</label><select id="exam"><option>Crânio</option><option>Pescoço</option><option>Tórax</option><option>Abdome/Pelve</option><option>Angio-TC pulmonar</option><option>Angio-TC de aorta</option><option>Uro-TC</option></select><label>Indicação clínica</label><input id="indication"><label>Fases</label><input id="phases" placeholder="Ex.: sem contraste + portal"><label>Observações</label><textarea id="protocolNotes" rows="4"></textarea><button id="protocolSummary" class="btn primary" type="button">GERAR RESUMO</button><div id="protocolResult"></div></div></section>
@@ -160,6 +61,6 @@
 </main>
 <nav class="bottom-nav" aria-label="Navegação principal"><button data-view="renal">Aval.</button><button data-view="dose">Dose</button><button data-view="protocol">TC</button><button data-view="contrast">Contr.</button><button data-view="safety">Seg.</button></nav>
 </section>
-<script src="./app.js?v=11" defer></script>
+<script src="./app.js?v=18" defer></script>
 </body>
 </html>
