@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-20-256';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-20-258';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -21,6 +21,7 @@
   var DMG_POSTPARTUM_SAFETY_SRC = 'gestational-diabetes-postpartum-safety-v254.js?v=20260820-254';
   var DMG_INTEGRATED_AUDIT_SRC = 'gestational-diabetes-integrated-audit-v255.js?v=20260820-255';
   var DMG_NAVIGATION_SRC = 'gestational-diabetes-navigation-v256.js?v=20260820-256';
+  var HYPERTENSIVE_DISORDERS_SRC = 'hypertensive-disorders-home-v257.js?v=20260820-257';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -80,6 +81,7 @@
   loadOnce('gm-dmg-postpartum-safety-loader',DMG_POSTPARTUM_SAFETY_SRC,'gestational-diabetes-postpartum-safety-v254');
   loadOnce('gm-dmg-integrated-audit-loader',DMG_INTEGRATED_AUDIT_SRC,'gestational-diabetes-integrated-audit-v255');
   loadOnce('gm-dmg-navigation-loader',DMG_NAVIGATION_SRC,'gestational-diabetes-navigation-v256');
+  loadOnce('gm-hypertensive-disorders-loader',HYPERTENSIVE_DISORDERS_SRC,'hypertensive-disorders-v257');
 
   var attempts = 0;
   function start() {
