@@ -35,6 +35,17 @@
   var HYPERTENSIVE_FINAL_AUDIT_FIX_SRC = 'hypertensive-disorders-final-audit-fix-v268.js?v=20260821-268';
   var HYPERTENSIVE_TOOLS_CLICK_FIX_SRC = 'hypertensive-disorders-tools-click-fix-v270.js?v=20260821-270';
   var HYPERTENSIVE_HELLP_THEORY_SRC = 'hypertensive-disorders-hellp-theory-v271.js?v=20260821-271';
+  var HYPERTENSIVE_DIAGNOSIS_THEORY_SRC = 'hypertensive-disorders-diagnosis-theory-v272.js?v=20260821-272';
+  var HYPERTENSIVE_EVALUATION_THEORY_SRC = 'hypertensive-disorders-evaluation-theory-v273.js?v=20260821-273';
+  var HYPERTENSIVE_PREECLAMPSIA_THEORY_SRC = 'hypertensive-disorders-preeclampsia-theory-v274.js?v=20260821-274';
+  var HYPERTENSIVE_GESTATIONAL_THEORY_SRC = 'hypertensive-disorders-gestational-theory-v275.js?v=20260821-275';
+  var HYPERTENSIVE_CHRONIC_THEORY_SRC = 'hypertensive-disorders-chronic-theory-v276.js?v=20260821-276';
+  var HYPERTENSIVE_SUPERIMPOSED_THEORY_SRC = 'hypertensive-disorders-superimposed-theory-v277.js?v=20260821-277';
+  var HYPERTENSIVE_CRISIS_THEORY_SRC = 'hypertensive-disorders-crisis-theory-v278.js?v=20260821-278';
+  var HYPERTENSIVE_ECLAMPSIA_THEORY_SRC = 'hypertensive-disorders-eclampsia-theory-v279.js?v=20260821-279';
+  var HYPERTENSIVE_SURVEILLANCE_THEORY_SRC = 'hypertensive-disorders-surveillance-theory-v280.js?v=20260821-280';
+  var HYPERTENSIVE_DELIVERY_THEORY_SRC = 'hypertensive-disorders-delivery-theory-v281.js?v=20260821-281';
+  var HYPERTENSIVE_POSTPARTUM_THEORY_SRC = 'hypertensive-disorders-postpartum-theory-v282.js?v=20260821-282';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -105,6 +116,17 @@
   loadOnce('gm-hypertensive-final-audit-fix-loader',HYPERTENSIVE_FINAL_AUDIT_FIX_SRC,'hypertensive-disorders-final-audit-fix-v268');
   loadOnce('gm-hypertensive-tools-click-fix-loader',HYPERTENSIVE_TOOLS_CLICK_FIX_SRC,'hypertensive-disorders-tools-click-fix-v270');
   loadOnce('gm-hypertensive-hellp-theory-loader',HYPERTENSIVE_HELLP_THEORY_SRC,'hypertensive-disorders-hellp-theory-v271');
+  loadOnce('gm-hypertensive-diagnosis-theory-loader',HYPERTENSIVE_DIAGNOSIS_THEORY_SRC,'hypertensive-disorders-diagnosis-theory-v272');
+  loadOnce('gm-hypertensive-evaluation-theory-loader',HYPERTENSIVE_EVALUATION_THEORY_SRC,'hypertensive-disorders-evaluation-theory-v273');
+  loadOnce('gm-hypertensive-preeclampsia-theory-loader',HYPERTENSIVE_PREECLAMPSIA_THEORY_SRC,'hypertensive-disorders-preeclampsia-theory-v274');
+  loadOnce('gm-hypertensive-gestational-theory-loader',HYPERTENSIVE_GESTATIONAL_THEORY_SRC,'hypertensive-disorders-gestational-theory-v275');
+  loadOnce('gm-hypertensive-chronic-theory-loader',HYPERTENSIVE_CHRONIC_THEORY_SRC,'hypertensive-disorders-chronic-theory-v276');
+  loadOnce('gm-hypertensive-superimposed-theory-loader',HYPERTENSIVE_SUPERIMPOSED_THEORY_SRC,'hypertensive-disorders-superimposed-theory-v277');
+  loadOnce('gm-hypertensive-crisis-theory-loader',HYPERTENSIVE_CRISIS_THEORY_SRC,'hypertensive-disorders-crisis-theory-v278');
+  loadOnce('gm-hypertensive-eclampsia-theory-loader',HYPERTENSIVE_ECLAMPSIA_THEORY_SRC,'hypertensive-disorders-eclampsia-theory-v279');
+  loadOnce('gm-hypertensive-surveillance-theory-loader',HYPERTENSIVE_SURVEILLANCE_THEORY_SRC,'hypertensive-disorders-surveillance-theory-v280');
+  loadOnce('gm-hypertensive-delivery-theory-loader',HYPERTENSIVE_DELIVERY_THEORY_SRC,'hypertensive-disorders-delivery-theory-v281');
+  loadOnce('gm-hypertensive-postpartum-theory-loader',HYPERTENSIVE_POSTPARTUM_THEORY_SRC,'hypertensive-disorders-postpartum-theory-v282');
 
   var attempts = 0;
   function start() {
