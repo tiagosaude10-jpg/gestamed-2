@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-20-259';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-20-260';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -23,6 +23,7 @@
   var DMG_NAVIGATION_SRC = 'gestational-diabetes-navigation-v256.js?v=20260820-256';
   var HYPERTENSIVE_DISORDERS_SRC = 'hypertensive-disorders-home-v257.js?v=20260820-257';
   var HYPERTENSIVE_STATE_SRC = 'hypertensive-disorders-state-v258.js?v=20260820-258';
+  var HYPERTENSIVE_CLINICAL_SRC = 'hypertensive-disorders-clinical-v259.js?v=20260820-259';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -84,6 +85,7 @@
   loadOnce('gm-dmg-navigation-loader',DMG_NAVIGATION_SRC,'gestational-diabetes-navigation-v256');
   loadOnce('gm-hypertensive-disorders-loader',HYPERTENSIVE_DISORDERS_SRC,'hypertensive-disorders-v257');
   loadOnce('gm-hypertensive-state-loader',HYPERTENSIVE_STATE_SRC,'hypertensive-disorders-state-v258');
+  loadOnce('gm-hypertensive-clinical-loader',HYPERTENSIVE_CLINICAL_SRC,'hypertensive-disorders-clinical-v259');
 
   var attempts = 0;
   function start() {
