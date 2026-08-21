@@ -1,0 +1,51 @@
+name: TomoCron Etapa 1 Pesquisa
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tomocron-stage1-search.yml'
+      - 'tomocron/command-main-v32.css'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-search-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Atualizar versão da pesquisa
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          index = Path('tomocron/index.html')
+          s = index.read_text()
+          s = s.replace('./command-main-v32.css?v=32', './command-main-v32.css?v=33')
+          index.write_text(s)
+
+          sw = Path('tomocron/sw.js')
+          s = sw.read_text()
+          s = re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v33-stage1-search-2026-08-21';", s)
+          s = s.replace('./command-main-v32.css?v=32', './command-main-v32.css?v=33')
+          sw.write_text(s)
+          PY
+
+      - name: Commitar atualização
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- tomocron/index.html tomocron/sw.js
+          if git diff --cached --quiet; then
+            echo "Nada para atualizar"
+            exit 0
+          fi
+          git commit -m "Aplicar etapa 1 da pesquisa do TomoCron"
+          git push
