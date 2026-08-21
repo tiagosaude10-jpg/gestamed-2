@@ -16,6 +16,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Integrar Tela de Comando v28
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('tomocron/index.html')
+          s=p.read_text()
+          css='<link rel="stylesheet" href="./command-v28.css?v=28">'
+          js='<script src="./command-v28.js?v=28" defer></script>'
+          if css not in s:
+              s=s.replace('<link rel="stylesheet" href="./app.css?v=27">', '<link rel="stylesheet" href="./app.css?v=27">\n'+css)
+          if js not in s:
+              s=s.replace('<script src="./app.js?v=27" defer></script>', '<script src="./app.js?v=27" defer></script>\n'+js)
+          p.write_text(s)
+          PY
+
       - name: Decodificar ícone aprovado
         shell: bash
         run: |
@@ -50,20 +67,20 @@ jobs:
           p=Path('tomocron/sw.js')
           s=p.read_text()
           import re
-          s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v12-red-icon-2026-08-20';", s)
+          s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v28-command-search-2026-08-21';", s)
           s=s.replace("'./icon-512.svg','./icon-maskable-512.svg'", "'./icon-512.png','./icon-maskable-512.png'")
           p.write_text(s)
           PY
 
-      - name: Commitar ícone aplicado
+      - name: Commitar atualização TomoCron
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tomocron/icon-180.png tomocron/icon-192.png tomocron/icon-512.png tomocron/icon-maskable-512.png tomocron/manifest.webmanifest tomocron/sw.js
+          git add tomocron/index.html tomocron/icon-180.png tomocron/icon-192.png tomocron/icon-512.png tomocron/icon-maskable-512.png tomocron/manifest.webmanifest tomocron/sw.js
           if git diff --cached --quiet; then
             echo "Nada para atualizar"
             exit 0
           fi
-          git commit -m "Aplicar novo ícone vermelho aprovado do TomoCron"
+          git commit -m "Aplicar Tela de Comando v28 e atualizar cache do TomoCron"
           git push
