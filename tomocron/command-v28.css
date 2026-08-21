@@ -42,4 +42,37 @@
 .tc-search-count{font-weight:900;color:#d45d1c}
 .tc-search-hit{animation:tcSearchPulse 1.8s ease}
 @keyframes tcSearchPulse{0%,100%{background:transparent}25%,70%{background:#fff1a8}}
+
+/* Correção mobile: os módulos 4–8 são movidos para fora de #command pelo JS.
+   Por isso recebem aqui o mesmo sistema visual, sem depender dos seletores #command. */
+.tc-extra-list .tc-module{--accent:#f97316;--soft:#fff3e8;position:relative!important;width:100%!important;min-height:64px!important;height:auto!important;display:grid!important;grid-template-columns:38px 28px minmax(0,1fr) auto 14px!important;align-items:center!important;gap:7px!important;padding:7px 9px!important;border:1px solid color-mix(in srgb,var(--accent) 24%,#eaded8)!important;border-radius:14px!important;background:linear-gradient(90deg,var(--soft),#fff 58%,var(--soft))!important;color:#4b2a20!important;text-align:left!important;box-shadow:none!important;overflow:hidden!important;-webkit-appearance:none!important;appearance:none!important}
+.tc-extra-list .tc-module:active{transform:scale(.995)}
+.tc-extra-list .tc-module-icon{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;border-radius:50%!important;background:rgba(255,255,255,.86)!important;display:flex!important;align-items:center!important;justify-content:center!important;color:var(--accent)!important;border:1px solid color-mix(in srgb,var(--accent) 18%,#fff)!important;overflow:hidden!important}
+.tc-extra-list .tc-module-icon svg{display:block!important;width:23px!important;height:23px!important;max-width:23px!important;max-height:23px!important;min-width:0!important;min-height:0!important;fill:none!important;stroke:currentColor!important;stroke-width:2.1!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.tc-extra-list .tc-module-num{width:28px!important;height:28px!important;min-width:28px!important;border-radius:8px!important;background:color-mix(in srgb,var(--accent) 15%,#fff)!important;color:var(--accent)!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:12px!important;line-height:1!important;font-weight:950!important}
+.tc-extra-list .tc-module-copy{min-width:0!important;overflow:hidden!important}
+.tc-extra-list .tc-module-copy b{display:block!important;margin:0 0 3px!important;color:var(--accent)!important;font-size:13px!important;line-height:1.08!important;font-weight:950!important;white-space:normal!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.tc-extra-list .tc-module-copy span{display:-webkit-box!important;color:#6f5a52!important;font-size:9.7px!important;line-height:1.15!important;white-space:normal!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.tc-extra-list .tc-status{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:4px 6px!important;border-radius:999px!important;background:color-mix(in srgb,var(--accent) 12%,#fff)!important;color:var(--accent)!important;font-size:7.8px!important;line-height:1!important;font-weight:950!important;white-space:nowrap!important}
+.tc-extra-list .tc-chevron{font-size:24px!important;line-height:1!important;color:#6b3324!important;margin-top:-2px!important}
+.tc-extra-list .m4{--accent:#7a2aa8;--soft:#faf1ff}.tc-extra-list .m5{--accent:#138a92;--soft:#edfafa}.tc-extra-list .m6{--accent:#d93472;--soft:#fff1f6}.tc-extra-list .m7{--accent:#285eb4;--soft:#f0f5ff}.tc-extra-list .m8{--accent:#dd4b22;--soft:#fff3ee}
+
+@media(max-width:480px){
+  .tc-extra-backdrop{padding:10px 10px calc(10px + env(safe-area-inset-bottom));align-items:flex-end}
+  .tc-extra-panel{width:100%;max-height:calc(100svh - 22px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border-radius:22px}
+  .tc-extra-head{grid-template-columns:minmax(0,1fr) 44px;padding:14px 14px 12px}
+  .tc-extra-head h3{font-size:18px;line-height:1.04}
+  .tc-extra-head p{font-size:10.5px;line-height:1.2}
+  .tc-extra-close{width:42px;height:42px;border-radius:13px;font-size:24px}
+  .tc-extra-list{padding:10px;gap:7px;grid-auto-rows:auto;-webkit-overflow-scrolling:touch}
+  .tc-extra-list .tc-module{grid-template-columns:34px 25px minmax(0,1fr) 12px!important;min-height:66px!important;padding:7px 8px!important;gap:6px!important}
+  .tc-extra-list .tc-module-icon{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
+  .tc-extra-list .tc-module-icon svg{width:21px!important;height:21px!important;max-width:21px!important;max-height:21px!important}
+  .tc-extra-list .tc-module-num{width:25px!important;height:25px!important;min-width:25px!important;font-size:10px!important}
+  .tc-extra-list .tc-module-copy b{font-size:12px!important}
+  .tc-extra-list .tc-module-copy span{font-size:9px!important;line-height:1.14!important}
+  .tc-extra-list .tc-status{display:none!important}
+  .tc-extra-list .tc-chevron{font-size:21px!important}
+}
+
 @media(max-height:760px){#command .tc-command-shell{grid-template-rows:46px 78px minmax(0,1fr)!important}#command .tc-command-titlebox{height:78px!important;padding:6px 8px!important}#command #tcGlobalSearch{min-height:39px;font-size:12px}#command .tc-search-label{font-size:9.5px}#command .tc-search-label small{font-size:7.5px}#command .tc-command-modules{gap:4px!important}#command .tc-module{padding:5px 8px!important}.tc-extra-panel,.tc-search-panel{max-height:88svh}}
