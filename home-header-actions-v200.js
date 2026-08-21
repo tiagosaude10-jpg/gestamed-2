@@ -34,6 +34,7 @@
   var HYPERTENSIVE_GLOBAL_SAFETY_SRC = 'hypertensive-disorders-global-safety-audit-v267.js?v=20260821-267';
   var HYPERTENSIVE_FINAL_AUDIT_FIX_SRC = 'hypertensive-disorders-final-audit-fix-v268.js?v=20260821-268';
   var HYPERTENSIVE_TOOLS_CLICK_FIX_SRC = 'hypertensive-disorders-tools-click-fix-v270.js?v=20260821-270';
+  var HYPERTENSIVE_HELLP_THEORY_SRC = 'hypertensive-disorders-hellp-theory-v271.js?v=20260821-271';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -103,6 +104,7 @@
   loadOnce('gm-hypertensive-global-safety-loader',HYPERTENSIVE_GLOBAL_SAFETY_SRC,'hypertensive-disorders-global-safety-audit-v267');
   loadOnce('gm-hypertensive-final-audit-fix-loader',HYPERTENSIVE_FINAL_AUDIT_FIX_SRC,'hypertensive-disorders-final-audit-fix-v268');
   loadOnce('gm-hypertensive-tools-click-fix-loader',HYPERTENSIVE_TOOLS_CLICK_FIX_SRC,'hypertensive-disorders-tools-click-fix-v270');
+  loadOnce('gm-hypertensive-hellp-theory-loader',HYPERTENSIVE_HELLP_THEORY_SRC,'hypertensive-disorders-hellp-theory-v271');
 
   var attempts = 0;
   function start() {
