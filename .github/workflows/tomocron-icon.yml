@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Integrar Tela de Comando v32
+      - name: Integrar etapa 1 auditada da pesquisa
         shell: bash
         run: |
           set -euo pipefail
@@ -24,19 +24,32 @@ jobs:
           from pathlib import Path
           p=Path('tomocron/index.html')
           s=p.read_text()
-          css='<link rel="stylesheet" href="./command-v28.css?v=28">'
-          css30='<link rel="stylesheet" href="./command-main-v30.css?v=30">'
-          css31='<link rel="stylesheet" href="./command-main-v31.css?v=31">'
-          css32='<link rel="stylesheet" href="./command-main-v32.css?v=32">'
+          css28='<link rel="stylesheet" href="./command-v28.css?v=28">'
+          css32_old='<link rel="stylesheet" href="./command-main-v32.css?v=32">'
+          css32_new='<link rel="stylesheet" href="./command-main-v32.css?v=33">'
+          css34='<link rel="stylesheet" href="./command-search-v34.css?v=34">'
           js='<script src="./command-v28.js?v=28" defer></script>'
-          s=s.replace('\n'+css30,'').replace(css30+'\n','').replace(css30,'')
-          s=s.replace('\n'+css31,'').replace(css31+'\n','').replace(css31,'')
-          if css not in s:
-              s=s.replace('<link rel="stylesheet" href="./app.css?v=27">', '<link rel="stylesheet" href="./app.css?v=27">\n'+css)
-          if css32 not in s:
-              s=s.replace(css, css+'\n'+css32)
+          s=s.replace(css32_old,css32_new)
+          if css28 not in s:
+              s=s.replace('<link rel="stylesheet" href="./app.css?v=27">', '<link rel="stylesheet" href="./app.css?v=27">\n'+css28)
+          if css32_new not in s:
+              s=s.replace(css28, css28+'\n'+css32_new)
+          if css34 not in s:
+              s=s.replace(css32_new, css32_new+'\n'+css34)
           if js not in s:
               s=s.replace('<script src="./app.js?v=27" defer></script>', '<script src="./app.js?v=27" defer></script>\n'+js)
+          p.write_text(s)
+          PY
+
+      - name: Atualizar controlador real de cache do projeto
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('service-worker.js')
+          s=p.read_text()
+          s=s.replace("const GESTAMED_BUILD = '2026.08.14.202';", "const GESTAMED_BUILD = '2026.08.21.341';")
           p.write_text(s)
           PY
 
@@ -55,7 +68,7 @@ jobs:
           cp tomocron/icon-180.png tomocron/icon-512.png
           cp tomocron/icon-180.png tomocron/icon-maskable-512.png
 
-      - name: Atualizar manifest e cache
+      - name: Atualizar manifest e cache secundário do TomoCron
         shell: bash
         run: |
           cat > tomocron/manifest.webmanifest <<'EOF'
@@ -80,25 +93,30 @@ jobs:
           import re
           p=Path('tomocron/sw.js')
           s=p.read_text()
-          s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v32-main-layout-clean-2026-08-21';", s)
-          s=s.replace("'./icon-512.svg','./icon-maskable-512.svg'", "'./icon-512.png','./icon-maskable-512.png'")
-          s=s.replace(",'./command-main-v30.css?v=30'",'').replace(",'./command-main-v31.css?v=31'",'')
-          if "'./command-v28.css?v=28'" not in s:
-              s=s.replace("'./app.css?v=27','./app.js?v=27'", "'./app.css?v=27','./app.js?v=27','./command-v28.css?v=28','./command-v28.js?v=28'")
-          if "'./command-main-v32.css?v=32'" not in s:
-              s=s.replace("'./command-v28.js?v=28'", "'./command-v28.js?v=28','./command-main-v32.css?v=32'")
+          s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v34-stage1-search-audited-2026-08-21';", s)
+          if "'./command-search-v34.css?v=34'" not in s:
+              s=s.replace("'./command-main-v32.css?v=33'", "'./command-main-v32.css?v=33','./command-search-v34.css?v=34'")
           p.write_text(s)
           PY
+
+      - name: Conferir integração antes do commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F './command-main-v32.css?v=33' tomocron/index.html
+          grep -F './command-search-v34.css?v=34' tomocron/index.html
+          grep -F "const GESTAMED_BUILD = '2026.08.21.341';" service-worker.js
+          test -s tomocron/command-search-v34.css
 
       - name: Commitar atualização TomoCron
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tomocron/index.html tomocron/icon-180.png tomocron/icon-192.png tomocron/icon-512.png tomocron/icon-maskable-512.png tomocron/manifest.webmanifest tomocron/sw.js
+          git add tomocron/index.html tomocron/command-search-v34.css tomocron/icon-180.png tomocron/icon-192.png tomocron/icon-512.png tomocron/icon-maskable-512.png tomocron/manifest.webmanifest tomocron/sw.js service-worker.js
           if git diff --cached --quiet; then
             echo "Nada para atualizar"
             exit 0
           fi
-          git commit -m "Aplicar layout limpo v32 da tela principal do TomoCron"
+          git commit -m "Aplicar etapa 1 auditada da pesquisa do TomoCron"
           git push
