@@ -36,7 +36,7 @@ function markup(){return '<section class="gm-delivery-theory" '+FLAG+'="1">'+
 '</section>';}
 function appendTheory(){addStyle();var r=root();if(!r)return false;var d=r.querySelector('.gm-dmg-new-detail[data-topic="delivery"]');if(!d||d.hidden)return false;if(d.querySelector('['+FLAG+']'))return true;var ref=d.querySelector('.gm-master-ref');var w=document.createElement('div');w.innerHTML=markup();var sec=w.firstElementChild;if(ref)ref.parentNode.insertBefore(sec,ref);else d.appendChild(sec);return true;}
 function schedule(){setTimeout(appendTheory,0);setTimeout(appendTheory,120);setTimeout(appendTheory,400);}
-function bind(){addStyle();var r=root();if(!r)return false;r.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-master-topic="delivery"]');if(b)schedule();});var obs=new MutationObserver(function(){var d=r.querySelector('.gm-dmg-new-detail[data-topic="delivery"]');if(d&&!d.hidden)appendTheory();});obs.observe(r,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','data-topic']});schedule();return true;}
+function bind(){addStyle();var r=root();if(!r)return false;r.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-master-topic="delivery"]');if(b)schedule();});var obs=new MutationObserver(function(){var d=r.querySelector('.gm-dmg-new-detail[data-topic="delivery"]');if(d&&!d.hidden)appendTheory();});obs.observe(r,{subtree:true,attributes:true,attributeFilter:['hidden','data-topic']});schedule();return true;}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 window.addEventListener('load',schedule,{once:true});
 })();
