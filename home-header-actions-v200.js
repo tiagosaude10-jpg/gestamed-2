@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-21-264';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-21-265';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -28,6 +28,7 @@
   var HYPERTENSIVE_CLINICAL_SAFETY_SRC = 'hypertensive-disorders-clinical-safety-v260.js?v=20260820-260';
   var HYPERTENSIVE_EMERGENCY_SRC = 'hypertensive-disorders-emergency-v262.js?v=20260821-262';
   var HYPERTENSIVE_EMERGENCY_RESET_SRC = 'hypertensive-disorders-emergency-reset-v263.js?v=20260821-263';
+  var HYPERTENSIVE_HELLP_SURVEILLANCE_SRC = 'hypertensive-disorders-hellp-surveillance-v264.js?v=20260821-264';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -91,6 +92,7 @@
   loadOnce('gm-hypertensive-clinical-safety-loader',HYPERTENSIVE_CLINICAL_SAFETY_SRC,'hypertensive-disorders-clinical-safety-v260');
   loadOnce('gm-hypertensive-emergency-loader',HYPERTENSIVE_EMERGENCY_SRC,'hypertensive-disorders-emergency-v262');
   loadOnce('gm-hypertensive-emergency-reset-loader',HYPERTENSIVE_EMERGENCY_RESET_SRC,'hypertensive-disorders-emergency-reset-v263');
+  loadOnce('gm-hypertensive-hellp-surveillance-loader',HYPERTENSIVE_HELLP_SURVEILLANCE_SRC,'hypertensive-disorders-hellp-surveillance-v264');
 
   var attempts = 0;
   function start() {
