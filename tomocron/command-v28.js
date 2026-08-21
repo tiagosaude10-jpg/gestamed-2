@@ -7,130 +7,26 @@ const command=$('#command');
 if(!command)return;
 const modules=$('.tc-command-modules',command), titlebox=$('.tc-command-titlebox',command);
 if(!modules||!titlebox)return;
-
-/* Pesquisa no lugar da antiga caixa de título */
 const titleContent=titlebox.lastElementChild||titlebox;
 titleContent.innerHTML=`<div class="tc-search-box"><div class="tc-search-label"><span>Pesquisa completa no TomoCron</span><small>Busca em módulos e conteúdos</small></div><div class="tc-search-input-wrap"><span class="tc-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span><input id="tcGlobalSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Pesquise exame, contraste, creatinina, reação..."><button id="tcSearchClear" class="tc-search-clear" type="button" aria-label="Limpar pesquisa">×</button></div></div>`;
-
-/* Agrupa 4–8 sem destruir listeners já configurados pelo app.js */
 const extras=['m4','m5','m6','m7','m8'].map(c=>$('.tc-module.'+c,modules)).filter(Boolean);
 const m9=$('.tc-module.m9',modules);
-const group=document.createElement('button');
-group.type='button';
-group.className='tc-module tc-group-module';
-group.innerHTML=`<span class="tc-module-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16M7 3v4M12 10v4M17 17v4"/></svg></span><span class="tc-module-num">4–8</span><span class="tc-module-copy"><b>Informações complementares</b><span>Exames, acesso venoso, posicionamento, protocolos e contrastes.</span></span><span class="tc-status">5 MÓDULOS</span><span class="tc-chevron">›</span>`;
-if(m9)modules.insertBefore(group,m9); else modules.appendChild(group);
-extras.forEach(x=>x.remove());
-
-const extraBackdrop=document.createElement('div');
-extraBackdrop.className='tc-extra-backdrop hidden';
-extraBackdrop.setAttribute('role','dialog');
-extraBackdrop.setAttribute('aria-modal','true');
-extraBackdrop.setAttribute('aria-label','Informações complementares');
-extraBackdrop.innerHTML=`<section class="tc-extra-panel"><header class="tc-extra-head"><div><h3>Informações complementares</h3><p>Acesse os módulos 4 a 8 sem sobrecarregar a tela principal.</p></div><button class="tc-extra-close" type="button" aria-label="Fechar">×</button></header><div class="tc-extra-list"></div></section>`;
-document.body.appendChild(extraBackdrop);
-const extraList=$('.tc-extra-list',extraBackdrop); extras.forEach(x=>extraList.appendChild(x));
-const openExtras=()=>{extraBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'};
-const closeExtras=()=>{extraBackdrop.classList.add('hidden');document.body.style.overflow=''};
-group.addEventListener('click',openExtras);
-$('.tc-extra-close',extraBackdrop).addEventListener('click',closeExtras);
-extraBackdrop.addEventListener('click',e=>{if(e.target===extraBackdrop)closeExtras()});
-extraList.addEventListener('click',e=>{if(e.target.closest('.tc-module'))setTimeout(closeExtras,80)});
-
-/* Índice pesquisável */
-const moduleMeta=[
-  {sel:'.m1',module:'1 · Avaliação renal',type:'Módulo',view:'renal'},
-  {sel:'.m2',module:'2 · Dose de contraste',type:'Módulo',view:'dose'},
-  {sel:'.m3',module:'3 · Requisitos para o exame',type:'Página',url:'./requirements.html'},
-  {sel:'.m4',module:'4 · Ureia e creatinina',type:'Página',url:'./renal-labs.html'},
-  {sel:'.m5',module:'5 · Acesso venoso para TC',type:'Página',url:'./venous-access.html'},
-  {sel:'.m6',module:'6 · Posicionamento do paciente',type:'Módulo'},
-  {sel:'.m7',module:'7 · Protocolos da TC',type:'Módulo',view:'protocol'},
-  {sel:'.m8',module:'8 · Contrastes iodados',type:'Módulo',view:'contrast'},
-  {sel:'.m9',module:'9 · Segurança em TC',type:'Módulo',view:'safety'}
-];
-let searchIndex=[];
-function addIndex(entry){const text=String(entry.text||'').replace(/\s+/g,' ').trim();if(!text)return;searchIndex.push({...entry,text,norm:normalize(text+' '+(entry.title||'')+' '+(entry.module||''))})}
-function buildLocalIndex(){
-  searchIndex=[];
-  moduleMeta.forEach(meta=>{
-    const btn=$(meta.sel,document);if(btn)addIndex({...meta,title:$('.tc-module-copy b',btn)?.textContent||meta.module,text:$('.tc-module-copy span',btn)?.textContent||btn.textContent});
-  });
-  $$('.view',document).forEach(view=>{
-    const id=view.id;const meta=moduleMeta.find(m=>m.view===id);if(!meta)return;
-    const blocks=$$('h1,h2,h3,h4,.notice,.card label,.card p,.card li,.hint,.small-note',view);
-    blocks.forEach(el=>addIndex({...meta,title:el.matches('h1,h2,h3,h4')?el.textContent:meta.module,text:el.textContent,targetEl:el}));
-  });
-}
-buildLocalIndex();
-
-const remotePages=[
-  {url:'./requirements.html',module:'3 · Requisitos para o exame',type:'Página'},
-  {url:'./renal-labs.html',module:'4 · Ureia e creatinina',type:'Página'},
-  {url:'./venous-access.html',module:'5 · Acesso venoso para TC',type:'Página'},
-  {url:'./oral-contrast.html',module:'8 · Contrastes iodados',type:'Página'}
-];
-async function indexRemotePages(){
-  for(const page of remotePages){
-    try{
-      const res=await fetch(page.url,{cache:'no-store'});if(!res.ok)continue;
-      const html=await res.text();const doc=new DOMParser().parseFromString(html,'text/html');
-      $$('script,style,noscript,svg',doc).forEach(x=>x.remove());
-      const candidates=$$('h1,h2,h3,h4,p,li,label,.notice,.card,.section,.content',doc).filter(el=>String(el.textContent||'').trim().length>12);
-      const seen=new Set();
-      candidates.forEach(el=>{const text=String(el.textContent||'').replace(/\s+/g,' ').trim();const key=normalize(text);if(seen.has(key)||text.length>900)return;seen.add(key);const heading=el.matches('h1,h2,h3,h4')?text:(el.closest('section')?.querySelector('h1,h2,h3,h4')?.textContent||page.module);addIndex({...page,title:String(heading).trim(),text})});
-    }catch(_e){}
-  }
-}
-indexRemotePages();
-
-const searchBackdrop=document.createElement('div');
-searchBackdrop.className='tc-search-backdrop hidden';
-searchBackdrop.setAttribute('role','dialog');
-searchBackdrop.setAttribute('aria-modal','true');
-searchBackdrop.setAttribute('aria-label','Resultados da pesquisa');
-searchBackdrop.innerHTML=`<section class="tc-search-panel"><header class="tc-search-head"><div><h3>Resultados da pesquisa</h3><p id="tcSearchSummary">Digite para pesquisar em todo o TomoCron.</p></div><button class="tc-search-close" type="button" aria-label="Fechar">×</button></header><div id="tcSearchResults" class="tc-search-results"></div></section>`;
-document.body.appendChild(searchBackdrop);
-const input=$('#tcGlobalSearch'), clearBtn=$('#tcSearchClear'), resultBox=$('#tcSearchResults'), summary=$('#tcSearchSummary');
-const closeSearch=()=>{searchBackdrop.classList.add('hidden');document.body.style.overflow=''};
-$('.tc-search-close',searchBackdrop).addEventListener('click',closeSearch);
-searchBackdrop.addEventListener('click',e=>{if(e.target===searchBackdrop)closeSearch()});
-
-function snippet(text,q){
-  const plain=String(text||'').replace(/\s+/g,' ').trim(), nplain=normalize(plain), nq=normalize(q), pos=nplain.indexOf(nq);let out=plain;
-  if(pos>=0){const start=Math.max(0,pos-70),end=Math.min(plain.length,pos+q.length+130);out=(start?'…':'')+plain.slice(start,end)+(end<plain.length?'…':'')}
-  const safe=esc(out);if(!q)return safe;
-  try{return safe.replace(new RegExp('('+String(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>')}catch(_e){return safe}
-}
+const group=document.createElement('button');group.type='button';group.className='tc-module tc-group-module';group.innerHTML=`<span class="tc-module-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16M7 3v4M12 10v4M17 17v4"/></svg></span><span class="tc-module-num">4–8</span><span class="tc-module-copy"><b>Informações complementares</b><span>Exames, acesso venoso, posicionamento, protocolos e contrastes.</span></span><span class="tc-status">5 MÓDULOS</span><span class="tc-chevron">›</span>`;
+if(m9)modules.insertBefore(group,m9);else modules.appendChild(group);extras.forEach(x=>x.remove());
+const extraBackdrop=document.createElement('div');extraBackdrop.className='tc-extra-backdrop hidden';extraBackdrop.setAttribute('role','dialog');extraBackdrop.setAttribute('aria-modal','true');extraBackdrop.setAttribute('aria-label','Informações complementares');extraBackdrop.innerHTML=`<section class="tc-extra-panel"><header class="tc-extra-head"><div><h3>Informações complementares</h3><p>Acesse os módulos 4 a 8 sem sobrecarregar a tela principal.</p></div><button class="tc-extra-close" type="button" aria-label="Fechar">×</button></header><div class="tc-extra-list"></div></section>`;document.body.appendChild(extraBackdrop);
+const extraList=$('.tc-extra-list',extraBackdrop);extras.forEach(x=>extraList.appendChild(x));
+const module6=$('.m6',extraList);if(module6){module6.onclick=null;module6.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();location.href='./positioning.html'})}
+const openExtras=()=>{extraBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'};const closeExtras=()=>{extraBackdrop.classList.add('hidden');document.body.style.overflow=''};group.addEventListener('click',openExtras);$('.tc-extra-close',extraBackdrop).addEventListener('click',closeExtras);extraBackdrop.addEventListener('click',e=>{if(e.target===extraBackdrop)closeExtras()});extraList.addEventListener('click',e=>{if(e.target.closest('.tc-module'))setTimeout(closeExtras,80)});
+const moduleMeta=[{sel:'.m1',module:'1 · Avaliação renal',type:'Módulo',view:'renal'},{sel:'.m2',module:'2 · Dose de contraste',type:'Módulo',view:'dose'},{sel:'.m3',module:'3 · Requisitos para o exame',type:'Página',url:'./requirements.html'},{sel:'.m4',module:'4 · Ureia e creatinina',type:'Página',url:'./renal-labs.html'},{sel:'.m5',module:'5 · Acesso venoso para TC',type:'Página',url:'./venous-access.html'},{sel:'.m6',module:'6 · Posicionamento do paciente',type:'Página',url:'./positioning.html'},{sel:'.m7',module:'7 · Protocolos da TC',type:'Módulo',view:'protocol'},{sel:'.m8',module:'8 · Contrastes iodados',type:'Módulo',view:'contrast'},{sel:'.m9',module:'9 · Segurança em TC',type:'Módulo',view:'safety'}];
+let searchIndex=[];function addIndex(entry){const text=String(entry.text||'').replace(/\s+/g,' ').trim();if(!text)return;searchIndex.push({...entry,text,norm:normalize(text+' '+(entry.title||'')+' '+(entry.module||''))})}
+function buildLocalIndex(){searchIndex=[];moduleMeta.forEach(meta=>{const btn=$(meta.sel,document);if(btn)addIndex({...meta,title:$('.tc-module-copy b',btn)?.textContent||meta.module,text:$('.tc-module-copy span',btn)?.textContent||btn.textContent})});$$('.view',document).forEach(view=>{const id=view.id;const meta=moduleMeta.find(m=>m.view===id);if(!meta)return;const blocks=$$('h1,h2,h3,h4,.notice,.card label,.card p,.card li,.hint,.small-note',view);blocks.forEach(el=>addIndex({...meta,title:el.matches('h1,h2,h3,h4')?el.textContent:meta.module,text:el.textContent,targetEl:el}))})}buildLocalIndex();
+const remotePages=[{url:'./requirements.html',module:'3 · Requisitos para o exame',type:'Página'},{url:'./renal-labs.html',module:'4 · Ureia e creatinina',type:'Página'},{url:'./venous-access.html',module:'5 · Acesso venoso para TC',type:'Página'},{url:'./positioning.html',module:'6 · Posicionamento do paciente',type:'Página'},{url:'./cranio-positioning.html',module:'6 · TC de crânio',type:'Página'},{url:'./oral-contrast.html',module:'8 · Contrastes iodados',type:'Página'}];
+async function indexRemotePages(){for(const page of remotePages){try{const res=await fetch(page.url,{cache:'no-store'});if(!res.ok)continue;const html=await res.text();const doc=new DOMParser().parseFromString(html,'text/html');$$('script,style,noscript,svg',doc).forEach(x=>x.remove());const candidates=$$('h1,h2,h3,h4,p,li,label,.notice,.card,.section,.content',doc).filter(el=>String(el.textContent||'').trim().length>12);const seen=new Set();candidates.forEach(el=>{const text=String(el.textContent||'').replace(/\s+/g,' ').trim();const key=normalize(text);if(seen.has(key)||text.length>900)return;seen.add(key);const heading=el.matches('h1,h2,h3,h4')?text:(el.closest('section')?.querySelector('h1,h2,h3,h4')?.textContent||page.module);addIndex({...page,title:String(heading).trim(),text})})}catch(_e){}}}indexRemotePages();
+const searchBackdrop=document.createElement('div');searchBackdrop.className='tc-search-backdrop hidden';searchBackdrop.setAttribute('role','dialog');searchBackdrop.setAttribute('aria-modal','true');searchBackdrop.setAttribute('aria-label','Resultados da pesquisa');searchBackdrop.innerHTML=`<section class="tc-search-panel"><header class="tc-search-head"><div><h3>Resultados da pesquisa</h3><p id="tcSearchSummary">Digite para pesquisar em todo o TomoCron.</p></div><button class="tc-search-close" type="button" aria-label="Fechar">×</button></header><div id="tcSearchResults" class="tc-search-results"></div></section>`;document.body.appendChild(searchBackdrop);
+const input=$('#tcGlobalSearch'),clearBtn=$('#tcSearchClear'),resultBox=$('#tcSearchResults'),summary=$('#tcSearchSummary');const closeSearch=()=>{searchBackdrop.classList.add('hidden');document.body.style.overflow=''};$('.tc-search-close',searchBackdrop).addEventListener('click',closeSearch);searchBackdrop.addEventListener('click',e=>{if(e.target===searchBackdrop)closeSearch()});
+function snippet(text,q){const plain=String(text||'').replace(/\s+/g,' ').trim(),nplain=normalize(plain),nq=normalize(q),pos=nplain.indexOf(nq);let out=plain;if(pos>=0){const start=Math.max(0,pos-70),end=Math.min(plain.length,pos+q.length+130);out=(start?'…':'')+plain.slice(start,end)+(end<plain.length?'…':'')}const safe=esc(out);if(!q)return safe;try{return safe.replace(new RegExp('('+String(q).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>')}catch(_e){return safe}}
 function rank(item,nq){let score=0;const title=normalize(item.title),mod=normalize(item.module);if(title===nq)score+=100;if(title.includes(nq))score+=45;if(mod.includes(nq))score+=35;const p=item.norm.indexOf(nq);if(p>=0)score+=20-Math.min(15,Math.floor(p/80));return score}
-function runSearch(){
-  const q=input.value.trim(), nq=normalize(q);clearBtn.classList.toggle('visible',!!q);
-  if(nq.length<2){resultBox.innerHTML='<div class="tc-search-empty">Digite pelo menos 2 caracteres para iniciar a pesquisa.</div>';summary.textContent='Pesquisa completa em módulos e conteúdos.';return}
-  const matches=searchIndex.filter(x=>x.norm.includes(nq)).sort((a,b)=>rank(b,nq)-rank(a,nq)).slice(0,60);
-  summary.innerHTML=matches.length?`<span class="tc-search-count">${matches.length}</span> resultado${matches.length===1?'':'s'} encontrado${matches.length===1?'':'s'} para “${esc(q)}”.`:`Nenhum resultado encontrado para “${esc(q)}”.`;
-  if(!matches.length){resultBox.innerHTML='<div class="tc-search-empty">Não encontrei esse termo. Tente outra palavra, uma forma sem acento ou um termo mais curto.</div>';return}
-  resultBox.innerHTML=matches.map((x,i)=>`<button class="tc-search-result" type="button" data-result="${i}"><span class="tc-search-result-top"><span class="tc-search-result-module">${esc(x.module)}</span><span class="tc-search-result-tag">${esc(x.type||'Conteúdo')}</span></span><span class="tc-search-result-title">${esc(x.title||x.module)}</span><span class="tc-search-result-snippet">${snippet(x.text,q)}</span></button>`).join('');
-  resultBox._matches=matches;
-}
-let timer=null;
-input.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{runSearch();if(input.value.trim().length>=2){searchBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'}},120)});
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&input.value.trim().length>=2){e.preventDefault();runSearch();searchBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'}});
-clearBtn.addEventListener('click',()=>{input.value='';clearBtn.classList.remove('visible');closeSearch();input.focus()});
-resultBox.addEventListener('click',e=>{
-  const btn=e.target.closest('.tc-search-result');if(!btn)return;const hit=(resultBox._matches||[])[Number(btn.dataset.result)];if(!hit)return;
-  const q=input.value.trim();
-  if(hit.url){location.href=hit.url+(hit.url.includes('?')?'&':'?')+'search='+encodeURIComponent(q);return}
-  if(hit.view){
-    closeSearch();const nav=document.querySelector(`[data-view="${hit.view}"]`);if(nav)nav.click();
-    setTimeout(()=>{const target=hit.targetEl&&document.body.contains(hit.targetEl)?hit.targetEl:document.getElementById(hit.view);if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('tc-search-hit');setTimeout(()=>target.classList.remove('tc-search-hit'),1900)}},120);return;
-  }
-  if(hit.module.startsWith('6')){closeSearch();openExtras();setTimeout(()=>$('.m6',extraList)?.scrollIntoView({behavior:'smooth',block:'center'}),100)}
-});
-
-/* Busca em páginas complementares: destaca o termo recebido pela URL */
-try{
-  const query=new URLSearchParams(location.search).get('search');
-  if(query&&normalize(query).length>=2&&location.pathname.endsWith('/index.html')){input.value=query;clearBtn.classList.add('visible')}
-}catch(_e){}
-
+function runSearch(){const q=input.value.trim(),nq=normalize(q);clearBtn.classList.toggle('visible',!!q);if(nq.length<2){resultBox.innerHTML='<div class="tc-search-empty">Digite pelo menos 2 caracteres para iniciar a pesquisa.</div>';summary.textContent='Pesquisa completa em módulos e conteúdos.';return}const matches=searchIndex.filter(x=>x.norm.includes(nq)).sort((a,b)=>rank(b,nq)-rank(a,nq)).slice(0,60);summary.innerHTML=matches.length?`<span class="tc-search-count">${matches.length}</span> resultado${matches.length===1?'':'s'} encontrado${matches.length===1?'':'s'} para “${esc(q)}”.`:`Nenhum resultado encontrado para “${esc(q)}”.`;if(!matches.length){resultBox.innerHTML='<div class="tc-search-empty">Não encontrei esse termo. Tente outra palavra, uma forma sem acento ou um termo mais curto.</div>';return}resultBox.innerHTML=matches.map((x,i)=>`<button class="tc-search-result" type="button" data-result="${i}"><span class="tc-search-result-top"><span class="tc-search-result-module">${esc(x.module)}</span><span class="tc-search-result-tag">${esc(x.type||'Conteúdo')}</span></span><span class="tc-search-result-title">${esc(x.title||x.module)}</span><span class="tc-search-result-snippet">${snippet(x.text,q)}</span></button>`).join('');resultBox._matches=matches}
+let timer=null;input.addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(()=>{runSearch();if(input.value.trim().length>=2){searchBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'}},120)});input.addEventListener('keydown',e=>{if(e.key==='Enter'&&input.value.trim().length>=2){e.preventDefault();runSearch();searchBackdrop.classList.remove('hidden');document.body.style.overflow='hidden'}});clearBtn.addEventListener('click',()=>{input.value='';clearBtn.classList.remove('visible');closeSearch();input.focus()});
+resultBox.addEventListener('click',e=>{const btn=e.target.closest('.tc-search-result');if(!btn)return;const hit=(resultBox._matches||[])[Number(btn.dataset.result)];if(!hit)return;const q=input.value.trim();if(hit.url){location.href=hit.url+(hit.url.includes('?')?'&':'?')+'search='+encodeURIComponent(q);return}if(hit.view){closeSearch();const nav=document.querySelector(`[data-view="${hit.view}"]`);if(nav)nav.click();setTimeout(()=>{const target=hit.targetEl&&document.body.contains(hit.targetEl)?hit.targetEl:document.getElementById(hit.view);if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('tc-search-hit');setTimeout(()=>target.classList.remove('tc-search-hit'),1900)}},120);return}});
 })();
