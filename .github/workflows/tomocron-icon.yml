@@ -33,6 +33,12 @@ jobs:
           p.write_text(s)
           PY
 
+      - name: Validar JavaScript da Tela de Comando
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check tomocron/command-v28.js
+
       - name: Decodificar ícone aprovado
         shell: bash
         run: |
@@ -69,6 +75,8 @@ jobs:
           import re
           s=re.sub(r"const CACHE='[^']+';", "const CACHE='tomocron-v28-command-search-2026-08-21';", s)
           s=s.replace("'./icon-512.svg','./icon-maskable-512.svg'", "'./icon-512.png','./icon-maskable-512.png'")
+          if "'./command-v28.css?v=28'" not in s:
+              s=s.replace("'./app.css?v=27','./app.js?v=27'", "'./app.css?v=27','./app.js?v=27','./command-v28.css?v=28','./command-v28.js?v=28'")
           p.write_text(s)
           PY
 
