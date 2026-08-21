@@ -2,12 +2,26 @@
 'use strict';
 var PATCH_ID='2026.08.21.268';
 var api=null;
+var syncingAssessment=false;
 function v(path){try{var x=api.getValue(path);return x===undefined||x===null?'':x;}catch(e){return '';}}
 function n(path){var x=parseFloat(String(v(path)).replace(',','.'));return isNaN(x)?null:x;}
 function b(path){return !!v(path);}
 function norm(x){return String(x||'').toLowerCase();}
 function isTrueEclampsiaDiagnosis(){var d=norm(v('assessment.diagnosis'));return d.indexOf('eclâmpsia')===0||d.indexOf('eclampsia')===0;}
 function isPreeclampsiaDiagnosis(){var d=norm(v('assessment.diagnosis'));return d.indexOf('pré-eclâmpsia')>=0||d.indexOf('pre-eclampsia')>=0||d.indexOf('pe sobreposta')>=0;}
+function syncClinicalAssessment(){
+  if(syncingAssessment)return;
+  var root=document.getElementById('gm-hdp-screen');if(!root)return;
+  var box=root.querySelector('.gm-hdp-c-result');if(!box)return;
+  var h=box.querySelector('h2'),sev=box.querySelector('b');if(!h)return;
+  var dx=(h.textContent||'').trim(),sv=sev?(sev.textContent||'').trim():'';
+  if(!dx)return;
+  syncingAssessment=true;
+  try{
+    if(v('assessment.diagnosis')!==dx)api.set('assessment.diagnosis',dx,'final-audit-sync-v268');
+    if(v('assessment.severity')!==sv)api.set('assessment.severity',sv,'final-audit-sync-v268');
+  }finally{syncingAssessment=false;}
+}
 function fixFalseEclampsiaUI(){
   var root=document.getElementById('gm-hdp-screen');if(!root)return;
   var trueEcl=b('symptoms.seizure')||isTrueEclampsiaDiagnosis();
@@ -52,6 +66,7 @@ function patchAudit(){
   window.GestaMedHDPAudit.run=function(){return cases.map(function(c){var got=pureEvaluate(c.in),ok=Object.keys(c.want).every(function(k){return got[k]===c.want[k];});return {name:c.name,ok:ok,want:c.want,got:got};});};
   window.GestaMedHDPAudit.__v268=true;
 }
-function start(){api=window.GestaMedHDPState;if(!api){setTimeout(start,80);return;}fixFalseEclampsiaUI();patchAudit();try{api.subscribe(function(){setTimeout(function(){fixFalseEclampsiaUI();patchAudit();},0);});}catch(e){}new MutationObserver(function(){setTimeout(function(){fixFalseEclampsiaUI();patchAudit();},0);}).observe(document.body,{subtree:true,childList:true});document.documentElement.setAttribute('data-gm-hdp-final-audit-fix',PATCH_ID);}
+function sync(){syncClinicalAssessment();fixFalseEclampsiaUI();patchAudit();}
+function start(){api=window.GestaMedHDPState;if(!api){setTimeout(start,80);return;}sync();try{api.subscribe(function(state,path){if(path&&path.indexOf('assessment.')===0){setTimeout(function(){fixFalseEclampsiaUI();patchAudit();},0);return;}setTimeout(sync,0);});}catch(e){}new MutationObserver(function(){setTimeout(sync,0);}).observe(document.body,{subtree:true,childList:true});document.documentElement.setAttribute('data-gm-hdp-final-audit-fix',PATCH_ID);}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
