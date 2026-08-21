@@ -1,0 +1,45 @@
+/* TomoCron — Tela de comando v28 */
+#command .tc-command-shell{grid-template-rows:56px 92px minmax(0,1fr)!important}
+#command .tc-command-titlebox{height:92px!important;display:block!important;padding:8px 10px!important;overflow:visible!important}
+#command .tc-command-titlebox>.tc-grid-icon{display:none!important}
+#command .tc-command-titlebox>div:last-child{height:100%!important}
+#command .tc-command-titlebox h2,#command .tc-command-titlebox p{display:none!important}
+#command .tc-command-modules{grid-template-rows:repeat(5,minmax(0,1fr))!important;gap:7px!important}
+#command .tc-module{padding:7px 10px!important}
+#command .tc-search-box{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);gap:5px}
+#command .tc-search-label{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#4a281f;font-size:11px;font-weight:900;line-height:1}
+#command .tc-search-label small{color:#977d73;font-size:8.5px;font-weight:750}
+#command .tc-search-input-wrap{position:relative;display:flex;align-items:center;min-height:0}
+#command .tc-search-icon{position:absolute;left:12px;width:20px;height:20px;color:#d95f18;pointer-events:none}
+#command .tc-search-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#command #tcGlobalSearch{width:100%;height:100%;min-height:46px;border:1.5px solid #edc9b7;border-radius:14px;background:#fff9f5;padding:8px 42px 8px 40px;color:#3f2119;font-size:14px;font-weight:750;outline:none;box-shadow:none}
+#command #tcGlobalSearch:focus{border-color:#ee7a34;background:#fff}
+#command #tcGlobalSearch::placeholder{color:#a58c82;font-weight:650}
+#command .tc-search-clear{position:absolute;right:8px;width:31px;height:31px;border:0;border-radius:10px;background:#f7e9e1;color:#7b4938;font-size:21px;line-height:1;display:none;align-items:center;justify-content:center;padding:0}
+#command .tc-search-clear.visible{display:flex}
+#command .tc-group-module{--accent:#7443a7;--soft:#f7f0ff}
+#command .tc-group-module .tc-module-num{font-size:9px;letter-spacing:-.3px}
+#command .tc-group-module .tc-status{background:#efe5fa;color:#7443a7}
+.tc-extra-backdrop,.tc-search-backdrop{position:fixed;inset:0;z-index:80;background:rgba(49,27,20,.34);display:flex;align-items:flex-end;justify-content:center;padding:18px 10px calc(18px + env(safe-area-inset-bottom))}
+.tc-extra-backdrop.hidden,.tc-search-backdrop.hidden{display:none!important}
+.tc-extra-panel,.tc-search-panel{width:min(100%,760px);max-height:min(82svh,760px);display:grid;grid-template-rows:auto minmax(0,1fr);background:#fff;border:1px solid #ead5cb;border-radius:24px;box-shadow:0 18px 55px rgba(67,30,18,.2);overflow:hidden}
+.tc-extra-head,.tc-search-head{display:grid;grid-template-columns:minmax(0,1fr) 38px;gap:8px;align-items:center;padding:14px 15px 11px;border-bottom:1px solid #f0e2dc;background:linear-gradient(180deg,#fffaf7,#fff)}
+.tc-extra-head h3,.tc-search-head h3{margin:0;color:#3d2119;font-size:18px;line-height:1.05;font-weight:950}
+.tc-extra-head p,.tc-search-head p{margin:4px 0 0;color:#897168;font-size:10.5px;line-height:1.2}
+.tc-extra-close,.tc-search-close{width:36px;height:36px;border:1px solid #ead2c6;border-radius:12px;background:#fff8f4;color:#683728;font-size:24px;line-height:1;padding:0}
+.tc-extra-list{min-height:0;overflow:auto;padding:10px;display:grid;grid-auto-rows:minmax(62px,auto);gap:7px;background:#fffdfa}
+.tc-extra-list .tc-module{height:auto!important;min-height:62px!important}
+.tc-search-results{min-height:0;overflow:auto;padding:8px 10px 14px;background:#fffdfa}
+.tc-search-empty{padding:22px 12px;text-align:center;color:#856e65;font-size:12px;line-height:1.4}
+.tc-search-result{width:100%;display:block;text-align:left;border:1px solid #ead9d1;border-radius:14px;background:#fff;margin:0 0 7px;padding:10px 11px;color:#43261e}
+.tc-search-result:active{transform:scale(.995)}
+.tc-search-result-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.tc-search-result-module{font-size:11px;font-weight:950;color:#d45d1c}
+.tc-search-result-tag{font-size:7.5px;font-weight:900;color:#7e665e;background:#f7eee9;border-radius:999px;padding:4px 6px;white-space:nowrap}
+.tc-search-result-title{display:block;font-size:13px;line-height:1.15;font-weight:900;color:#45271e;margin-bottom:3px}
+.tc-search-result-snippet{display:block;font-size:10px;line-height:1.3;color:#725d55}
+.tc-search-result-snippet mark{background:#ffe2a8;color:#512c1f;border-radius:3px;padding:0 1px}
+.tc-search-count{font-weight:900;color:#d45d1c}
+.tc-search-hit{animation:tcSearchPulse 1.8s ease}
+@keyframes tcSearchPulse{0%,100%{background:transparent}25%,70%{background:#fff1a8}}
+@media(max-height:760px){#command .tc-command-shell{grid-template-rows:46px 78px minmax(0,1fr)!important}#command .tc-command-titlebox{height:78px!important;padding:6px 8px!important}#command #tcGlobalSearch{min-height:39px;font-size:12px}#command .tc-search-label{font-size:9.5px}#command .tc-search-label small{font-size:7.5px}#command .tc-command-modules{gap:4px!important}#command .tc-module{padding:5px 8px!important}.tc-extra-panel,.tc-search-panel{max-height:88svh}}
