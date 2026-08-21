@@ -64,10 +64,7 @@
   ensureStyle();
   loadOnce('gm-iic-cerclage-module-loader',IIC_MODULE_SRC,'iic-cerclage-progesterone-v211');
   loadOnce('gm-home-greeting-text-loader',HOME_GREETING_TEXT_SRC,'home-greeting-text-v215');
-
-  /* RESTAURAÇÃO: usa somente a busca que estava funcional antes da reconstrução v300. */
   loadOnce('gm-home-med-search-fix-loader',HOME_MED_SEARCH_FIX_SRC,'home-medication-search-v228-restored');
-
   loadOnce('gm-legal-registration-loader',LEGAL_REGISTRATION_SRC,'legal-registration-v215');
   loadOnce('gm-mobile-input-selection-loader',MOBILE_INPUT_SELECTION_FIX_SRC,'mobile-input-selection-v216');
   loadOnce('gm-register-mobile-scroll-loader',REGISTER_MOBILE_SCROLL_FIX_SRC,'register-mobile-scroll-v217');
