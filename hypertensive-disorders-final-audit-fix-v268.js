@@ -36,12 +36,16 @@ function fixFalseEclampsiaUI(){
       var w=n('patient.gestationalWeeks');
       var sev=norm(v('assessment.severity'));
       var severe=sev.indexOf('gravidade')>=0||sev.indexOf('emergência')>=0||sev.indexOf('emergencia')>=0;
-      var strong=first.querySelector('strong'),p=first.querySelector('p');
-      first.classList.remove('is-red','is-orange','is-green');
-      if(severe&&w!==null&&w>=34){first.classList.add('is-red');if(strong)strong.textContent='Estabilizar e resolver';if(p)p.textContent='Pré-eclâmpsia com sinais de gravidade em idade gestacional ≥34 semanas: estabilizar e programar resolução, sem cesárea automática.';}
-      else if(severe&&w!==null&&w<34){first.classList.add('is-orange');if(strong)strong.textContent='Expectante hospitalar pode ser considerada';if(p)p.textContent='Somente se mãe e feto estiverem rigorosamente estáveis, sem HELLP/eclâmpsia/deterioração, em unidade adequada.';}
-      else if(w!==null&&w>=37){first.classList.add('is-orange');if(strong)strong.textContent='Programar resolução';if(p)p.textContent='Pré-eclâmpsia sem sinais de gravidade a partir de 37 semanas: programar resolução, sem cesárea automática.';}
-      else {first.classList.add('is-green');if(strong)strong.textContent='Vigilância/conduta expectante';if(p)p.textContent='Se mãe e feto estáveis, manter vigilância estreita até o momento adequado ou surgimento de indicação de resolução.';}
+      var sig=w+'|'+sev;
+      if(first.getAttribute('data-hdp-audit-sig')!==sig){
+        first.setAttribute('data-hdp-audit-sig',sig);
+        var strong=first.querySelector('strong'),p=first.querySelector('p');
+        first.classList.remove('is-red','is-orange','is-green');
+        if(severe&&w!==null&&w>=34){first.classList.add('is-red');if(strong)strong.textContent='Estabilizar e resolver';if(p)p.textContent='Pré-eclâmpsia com sinais de gravidade em idade gestacional ≥34 semanas: estabilizar e programar resolução, sem cesárea automática.';}
+        else if(severe&&w!==null&&w<34){first.classList.add('is-orange');if(strong)strong.textContent='Expectante hospitalar pode ser considerada';if(p)p.textContent='Somente se mãe e feto estiverem rigorosamente estáveis, sem HELLP/eclâmpsia/deterioração, em unidade adequada.';}
+        else if(w!==null&&w>=37){first.classList.add('is-orange');if(strong)strong.textContent='Programar resolução';if(p)p.textContent='Pré-eclâmpsia sem sinais de gravidade a partir de 37 semanas: programar resolução, sem cesárea automática.';}
+        else {first.classList.add('is-green');if(strong)strong.textContent='Vigilância/conduta expectante';if(p)p.textContent='Se mãe e feto estáveis, manter vigilância estreita até o momento adequado ou surgimento de indicação de resolução.';}
+      }
     }
   }
 }

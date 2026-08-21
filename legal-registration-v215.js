@@ -56,7 +56,7 @@
     function close() { modal.remove(); }
     modal.querySelector('.gm-legal-modal-close').addEventListener('click', close);
     modal.addEventListener('click', function (event) { if (event.target === modal) close(); });
-    document.body.appendChild(modal);
+    (document.getElementById('gm-app-flow') || document.body).appendChild(modal);
   }
 
   function showAccountStatus(email) {

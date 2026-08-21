@@ -47,7 +47,11 @@ function fixLabels(root){
 }
 function fixResult(root){
   var box=root.querySelector('.gm-hdp-c-result');if(!box)return;
-  var r=classify(),h=box.querySelector('h2'),b=box.querySelector('b'),ul=box.querySelector('ul');
+  var r=classify();
+  var sig=r.diagnosis+'|'+r.severity+'|'+r.level+'|'+r.reason.join('|');
+  if(box.getAttribute('data-hdp-safety-sig')===sig)return;
+  box.setAttribute('data-hdp-safety-sig',sig);
+  var h=box.querySelector('h2'),b=box.querySelector('b'),ul=box.querySelector('ul');
   box.classList.remove('is-green','is-orange','is-red');box.classList.add('is-'+r.level);
   if(h)h.textContent=r.diagnosis;
   if(b)b.textContent=r.severity;
@@ -59,6 +63,8 @@ function fixSuperimposed(root){
   if(title!=='PE Sobreposta à HAC')return;
   var alert=root.querySelector('.gm-hdp-c-alert');if(!alert)return;
   if(chronic()&&ga20()&&!superHard()&&softWarning()){
+    if(alert.getAttribute('data-hdp-safety-superimposed')==='1')return;
+    alert.setAttribute('data-hdp-safety-superimposed','1');
     var strong=alert.querySelector('strong'),p=alert.querySelector('p');
     alert.classList.remove('is-red');alert.classList.add('is-orange');
     if(strong)strong.textContent='Suspeita de PE sobreposta — investigar';

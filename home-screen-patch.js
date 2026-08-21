@@ -447,7 +447,7 @@
     overlay.innerHTML = '<div class="gm-home-dev-card"><div class="gm-home-dev-icon">🛠️</div><strong>' + label + '</strong><p>Módulo em desenvolvimento.</p><button type="button">Entendi</button></div>';
     function close() { overlay.remove(); }
     overlay.addEventListener('click', function (event) { if (event.target === overlay || event.target.tagName === 'BUTTON') close(); });
-    document.body.appendChild(overlay);
+    (document.getElementById('gm-app-flow') || document.body).appendChild(overlay);
   }
 
   function showNotices() {
@@ -756,7 +756,7 @@
     var toast = document.createElement('div');
     toast.id = 'gm-toast';
     toast.textContent = message;
-    document.body.appendChild(toast);
+    (document.getElementById('gm-app-flow') || document.body).appendChild(toast);
     window.setTimeout(function () { toast.classList.add('gm-toast-visible'); }, 10);
     window.setTimeout(function () { toast.remove(); }, 3200);
   }
