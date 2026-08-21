@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var PATCH_ID = 'gestamed-header-actions-2026-08-21-268';
+  var PATCH_ID = 'gestamed-header-actions-2026-08-21-269';
   var IIC_MODULE_SRC = 'iic-cerclage-progesterone-module-v211.js?v=20260817-211';
   var HOME_GREETING_TEXT_SRC = 'home-greeting-text-v215.js?v=20260817-215';
   var HOME_MED_SEARCH_FIX_SRC = 'home-medication-search-mobile-fix-v215.js?v=20260817-301';
@@ -32,6 +32,7 @@
   var HYPERTENSIVE_DELIVERY_POSTPARTUM_SRC = 'hypertensive-disorders-delivery-postpartum-v265.js?v=20260821-265';
   var HYPERTENSIVE_TOOLS_SRC = 'hypertensive-disorders-calculators-prescriptions-v266.js?v=20260821-266';
   var HYPERTENSIVE_GLOBAL_SAFETY_SRC = 'hypertensive-disorders-global-safety-audit-v267.js?v=20260821-267';
+  var HYPERTENSIVE_FINAL_AUDIT_FIX_SRC = 'hypertensive-disorders-final-audit-fix-v268.js?v=20260821-268';
 
   function applyHeaderActions() {
     var header = document.querySelector('#gm-app-flow .gm-command-header');
@@ -99,6 +100,7 @@
   loadOnce('gm-hypertensive-delivery-postpartum-loader',HYPERTENSIVE_DELIVERY_POSTPARTUM_SRC,'hypertensive-disorders-delivery-postpartum-v265');
   loadOnce('gm-hypertensive-tools-loader',HYPERTENSIVE_TOOLS_SRC,'hypertensive-disorders-calculators-prescriptions-v266');
   loadOnce('gm-hypertensive-global-safety-loader',HYPERTENSIVE_GLOBAL_SAFETY_SRC,'hypertensive-disorders-global-safety-audit-v267');
+  loadOnce('gm-hypertensive-final-audit-fix-loader',HYPERTENSIVE_FINAL_AUDIT_FIX_SRC,'hypertensive-disorders-final-audit-fix-v268');
 
   var attempts = 0;
   function start() {
