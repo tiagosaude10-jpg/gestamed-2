@@ -6,6 +6,7 @@ function view(id){$$('.view').forEach(x=>x.classList.add('hidden'));$('#'+id)?.c
 $$('[data-go]').forEach(b=>b.onclick=()=>screen(b.dataset.go));
 $$('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
 const module3=$('.tc-module.m3');if(module3){module3.onclick=null;module3.addEventListener('click',e=>{e.preventDefault();location.href='./requirements.html'})}
+const module4=$('.tc-module.m4');if(module4){module4.onclick=null;module4.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();location.href='./renal-labs.html'})}
 let sex=null;
 $$('[data-sex]').forEach(b=>b.onclick=()=>{$$('[data-sex]').forEach(x=>x.classList.remove('active'));b.classList.add('active');sex=b.dataset.sex});
 function formatDateInput(value){const d=String(value||'').replace(/\D/g,'').slice(0,8);if(d.length<=2)return d;if(d.length<=4)return d.slice(0,2)+'/'+d.slice(2);return d.slice(0,2)+'/'+d.slice(2,4)+'/'+d.slice(4)}
