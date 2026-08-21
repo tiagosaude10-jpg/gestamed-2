@@ -94,7 +94,7 @@ function init(){
   if(!r){setTimeout(init,150);return;}
   schedule();
   var obs=new MutationObserver(function(){schedule();});
-  obs.observe(r,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','data-topic']});
+  obs.observe(r,{subtree:true,attributes:true,attributeFilter:['hidden','data-topic']});
   r.addEventListener('click',function(e){
     if(e.target.closest&&e.target.closest('[data-master-topic]'))schedule();
   });

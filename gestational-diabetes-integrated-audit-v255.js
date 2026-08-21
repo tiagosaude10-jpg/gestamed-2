@@ -24,6 +24,6 @@ function patchInsulin(d){
 }
 function patch(){var r=root();if(!r)return false;var d=r.querySelector('.gm-dmg-new-detail[data-topic="insulin"]');if(!d||d.hidden)return false;patchInsulin(d);return true;}
 function schedule(){setTimeout(patch,0);setTimeout(patch,120);setTimeout(patch,350);}
-function init(){var r=root();if(!r){setTimeout(init,150);return;}r.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-master-topic="insulin"]'))schedule();});var obs=new MutationObserver(function(){var d=r.querySelector('.gm-dmg-new-detail[data-topic="insulin"]');if(d&&!d.hidden)schedule();});obs.observe(r,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','data-topic']});schedule();}
+function init(){var r=root();if(!r){setTimeout(init,150);return;}r.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-master-topic="insulin"]'))schedule();});var obs=new MutationObserver(function(){var d=r.querySelector('.gm-dmg-new-detail[data-topic="insulin"]');if(d&&!d.hidden)schedule();});obs.observe(r,{subtree:true,attributes:true,attributeFilter:['hidden','data-topic']});schedule();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();window.addEventListener('load',schedule,{once:true});
 })();

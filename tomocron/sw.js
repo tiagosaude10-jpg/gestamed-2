@@ -1,4 +1,4 @@
-const CACHE='tomocron-v38-jejum-via-aerea-2026-08-20';
+const CACHE='tomocron-v12-red-icon-2026-08-20';
 const CORE=['./','./index.html','./requirements.html','./app.css?v=27','./app.js?v=27','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png','./logo-tomocron-final.jpg?v=24'];
 const HISTORICO_BUTTON='<button type="button" onclick="alert(\'Histórico será desenvolvido em etapa futura.\')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6h4"/></svg><span>Histórico</span></button>';
 const REQUISITOS_BUTTON='<button type="button" onclick="location.href=\'./requirements.html\'"><svg viewBox="0 0 24 24"><path d="M8 4h8M9 2h6v4H9zM6 4H4v18h16V4h-2M8 10h8M8 14h8M8 18h5"/></svg><span>Requisitos</span></button>';
