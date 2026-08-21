@@ -45,7 +45,10 @@ function refreshBanners(){
   var host=content.querySelector('.gm-hdp-global-alerts');
   var list=alerts().slice(0,3);
   if(!list.length){if(host)host.remove();return;}
+  var sig=list.map(function(a){return a.code;}).join(',');
+  if(host&&host.getAttribute('data-hdp-alerts-sig')===sig)return;
   if(!host){host=document.createElement('section');host.className='gm-hdp-global-alerts';content.insertBefore(host,content.firstChild);}
+  host.setAttribute('data-hdp-alerts-sig',sig);
   host.innerHTML=list.map(bannerMarkup).join('');
   host.querySelectorAll('[data-global-go]').forEach(function(btn){btn.addEventListener('click',function(){go(btn.getAttribute('data-global-go'));});});
 }
@@ -70,7 +73,7 @@ function runAudit(){
   return auditCases().map(function(c){var got=pureEvaluate(c.in),ok=Object.keys(c.want).every(function(k){return got[k]===c.want[k];});return {name:c.name,ok:ok,want:c.want,got:got};});
 }
 function auditMarkup(){var r=runAudit(),pass=r.filter(function(x){return x.ok;}).length;return '<div class="gm-hdp-audit-modal" id="gm-hdp-audit-modal"><section class="gm-hdp-audit-panel" role="dialog" aria-modal="true"><header><div><small>Bloco H</small><h2>Auditoria de Segurança</h2><p>Testes lógicos do módulo hipertensivo.</p></div><button data-audit-close>×</button></header><div class="gm-hdp-audit-score"><strong>'+pass+'/'+r.length+'</strong><span>cenários aprovados</span></div><main>'+r.map(function(x){return '<article class="gm-hdp-audit-case '+(x.ok?'is-pass':'is-fail')+'"><b>'+(x.ok?'✓':'✕')+'</b><div><strong>'+esc(x.name)+'</strong><span>'+(x.ok?'Resultado coerente com as travas configuradas.':'Falha de coerência — revisar antes de uso clínico.')+'</span></div></article>';}).join('')+'</main><footer><button type="button" data-audit-rerun>Executar novamente</button><small>Auditoria lógica local; não substitui validação clínica institucional e testes de interface em dispositivo real.</small></footer></section></div>';}
-function openAudit(){var old=document.getElementById('gm-hdp-audit-modal');if(old)old.remove();var w=document.createElement('div');w.innerHTML=auditMarkup();var m=w.firstChild;document.body.appendChild(m);m.querySelector('[data-audit-close]').addEventListener('click',function(){m.remove();});m.addEventListener('click',function(e){if(e.target===m)m.remove();});m.querySelector('[data-audit-rerun]').addEventListener('click',function(){m.remove();openAudit();});}
+function openAudit(){var old=document.getElementById('gm-hdp-audit-modal');if(old)old.remove();var w=document.createElement('div');w.innerHTML=auditMarkup();var m=w.firstChild;(document.getElementById('gm-app-flow')||document.body).appendChild(m);m.querySelector('[data-audit-close]').addEventListener('click',function(){m.remove();});m.addEventListener('click',function(e){if(e.target===m)m.remove();});m.querySelector('[data-audit-rerun]').addEventListener('click',function(){m.remove();openAudit();});}
 function injectAuditButton(){
   var root=document.getElementById('gm-hdp-screen');if(!root)return;
   var content=root.querySelector('.gm-hdp-content');if(!content||content.querySelector('[data-hdp-audit-open]'))return;

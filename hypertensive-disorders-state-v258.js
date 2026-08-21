@@ -82,9 +82,12 @@ function summaryMarkup(compact){
 }
 
 function refreshVisible(){
+  var stamp=state.updatedAt||'';
   var main=document.querySelector('#gm-hdp-screen .gm-hdp-patient-card');
-  if(main){main.innerHTML=summaryMarkup(true);bindEdit(main);}
-  document.querySelectorAll('#gm-hdp-screen .gm-hdp-state-slot').forEach(function(slot){slot.innerHTML=summaryMarkup(false);bindEdit(slot);});
+  if(main&&main.getAttribute('data-hdp-state-rendered')!==stamp){main.innerHTML=summaryMarkup(true);main.setAttribute('data-hdp-state-rendered',stamp);bindEdit(main);}
+  document.querySelectorAll('#gm-hdp-screen .gm-hdp-state-slot').forEach(function(slot){
+    if(slot.getAttribute('data-hdp-state-rendered')!==stamp){slot.innerHTML=summaryMarkup(false);slot.setAttribute('data-hdp-state-rendered',stamp);bindEdit(slot);}
+  });
 }
 function bindEdit(root){var b=root.querySelector('[data-hdp-state-edit]');if(b)b.addEventListener('click',openEditor);}
 
@@ -93,7 +96,8 @@ function injectIntoModule(){
   if(!content)return;
   var slot=content.querySelector('.gm-hdp-state-slot');
   if(!slot){slot=document.createElement('section');slot.className='gm-hdp-state-slot';content.insertBefore(slot,content.firstChild);}
-  slot.innerHTML=summaryMarkup(false);bindEdit(slot);
+  var stamp=state.updatedAt||'';
+  if(slot.getAttribute('data-hdp-state-rendered')!==stamp){slot.innerHTML=summaryMarkup(false);slot.setAttribute('data-hdp-state-rendered',stamp);bindEdit(slot);}
 }
 
 function field(label,path,type,options){
@@ -120,7 +124,7 @@ function editorMarkup(){
 
 function openEditor(){
   var old=document.getElementById('gm-hdp-state-modal');if(old)old.remove();
-  var wrap=document.createElement('div');wrap.innerHTML=editorMarkup();var modal=wrap.firstChild;document.body.appendChild(modal);
+  var wrap=document.createElement('div');wrap.innerHTML=editorMarkup();var modal=wrap.firstChild;(document.getElementById('gm-app-flow')||document.body).appendChild(modal);
   modal.querySelectorAll('[data-state-path]').forEach(function(input){
     input.addEventListener('change',function(){var value=input.type==='checkbox'?input.checked:input.value;setPath(input.getAttribute('data-state-path'),value,'editor');});
   });
