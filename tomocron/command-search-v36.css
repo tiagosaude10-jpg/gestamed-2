@@ -1,0 +1,28 @@
+/* TomoCron — Pesquisa refinada v36 */
+#command .tc-search-backdrop{display:none!important}
+#command .tc-live-search-panel{
+  position:fixed!important;
+  z-index:120!important;
+  display:none!important;
+  background:#fffdfa!important;
+  border:1px solid #ead7cd!important;
+  border-radius:16px!important;
+  box-shadow:0 12px 34px rgba(65,31,20,.16)!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+}
+#command .tc-live-search-panel.open{display:block!important}
+#command .tc-live-search-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:8px 10px!important;border-bottom:1px solid #f0e3dc!important;background:#fffaf7!important}
+#command .tc-live-search-head strong{font-size:10.5px!important;line-height:1.2!important;color:#4a281f!important;font-weight:900!important}
+#command .tc-live-search-head span{font-size:9px!important;line-height:1.2!important;color:#8a7269!important;white-space:nowrap!important}
+#command .tc-live-search-list{max-height:260px!important;overflow:auto!important;-webkit-overflow-scrolling:touch!important;padding:5px!important;background:#fffdfa!important}
+#command .tc-live-search-item{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:'where badge' 'title badge' 'snippet badge'!important;gap:2px 8px!important;align-items:center!important;margin:0 0 4px!important;padding:8px 9px!important;border:1px solid #eee0d9!important;border-radius:11px!important;background:#fff!important;text-align:left!important;color:#43261e!important;box-shadow:none!important}
+#command .tc-live-search-item:last-child{margin-bottom:0!important}
+#command .tc-live-search-item:active{background:#fff7f2!important;transform:scale(.997)!important}
+#command .tc-live-search-where{grid-area:where!important;font-size:8.5px!important;line-height:1.15!important;font-weight:900!important;color:#d45d1c!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#command .tc-live-search-title{grid-area:title!important;font-size:11.5px!important;line-height:1.15!important;font-weight:900!important;color:#46271e!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#command .tc-live-search-snippet{grid-area:snippet!important;font-size:9.5px!important;line-height:1.28!important;color:#725d55!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+#command .tc-live-search-snippet mark{background:#ffe4a6!important;color:#512c1f!important;border-radius:3px!important;padding:0 1px!important}
+#command .tc-live-search-badge{grid-area:badge!important;align-self:center!important;padding:4px 6px!important;border-radius:999px!important;background:#f6ece7!important;color:#755d54!important;font-size:7.5px!important;line-height:1!important;font-weight:900!important;white-space:nowrap!important}
+#command .tc-live-search-empty{padding:14px 12px!important;text-align:center!important;color:#806b63!important;font-size:10px!important;line-height:1.35!important}
+@media(max-width:480px){#command .tc-live-search-panel{border-radius:14px!important}#command .tc-live-search-list{max-height:220px!important}#command .tc-live-search-head{padding:7px 9px!important}#command .tc-live-search-item{padding:7px 8px!important}#command .tc-live-search-title{font-size:11px!important}#command .tc-live-search-snippet{font-size:9.2px!important}}
