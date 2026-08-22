@@ -2,7 +2,7 @@
 'use strict';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
-const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
 const command=$('#command'); if(!command)return;
 const input=$('#tcGlobalSearch',command); if(!input)return;
@@ -23,6 +23,17 @@ const remotePages=[
  {url:'./cranio-positioning.html',where:'6 · TC de crânio',badge:'Página'},
  {url:'./oral-contrast.html',where:'8 · Contrastes iodados',badge:'Página'}
 ];
+const moduleRoutes={
+ m1:routes.renal,
+ m2:routes.dose,
+ m3:remotePages[0],
+ m4:remotePages[1],
+ m5:remotePages[2],
+ m6:remotePages[3],
+ m7:routes.protocol,
+ m8:routes.contrast,
+ m9:routes.safety
+};
 
 const panel=document.createElement('div');
 panel.className='tc-live-search-panel';
@@ -47,14 +58,15 @@ function nearestHeading(el,root){
   return '';
 }
 function indexRoot(root,base){
-  const selectors='h1,h2,h3,h4,p,li,label,summary,th,td,option,small,.notice,.hint,.small-note,.source-note,.note,.info,.guidance-box,.metric,.pill,.essential';
+  const selectors='h1,h2,h3,h4,p,li,label,summary,th,td,option,small,.notice,.hint,.small-note,.source-note,.note,.info,.guidance-box,.metric,.pill,.essential,.result,.output,.error';
   $$(selectors,root).forEach(el=>{
     if(el.closest('script,style,noscript,svg'))return;
     const text=clean(el.textContent); if(text.length<2)return;
     const title=/^H[1-4]$/.test(el.tagName)?text:(nearestHeading(el,root)||base.where);
     add({...base,title,text,target:base.view?el:null});
   });
-  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
+  const owner=root.ownerDocument||document;
+  const walker=owner.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
     const p=node.parentElement;if(!p||p.closest('script,style,noscript,svg'))return NodeFilter.FILTER_REJECT;
     const t=clean(node.nodeValue);return t.length>=2?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
   }});
@@ -66,10 +78,12 @@ function indexRoot(root,base){
 function buildLocal(){
   Object.entries(routes).forEach(([id,base])=>{const root=document.getElementById(id);if(root)indexRoot(root,base)});
   $$('.tc-module',document).forEach(btn=>{
+    const cls=Object.keys(moduleRoutes).find(c=>btn.classList.contains(c));
+    const base=cls?moduleRoutes[cls]:{badge:'Módulo'};
     const title=clean($('.tc-module-copy b',btn)?.textContent||'');
     const text=clean($('.tc-module-copy span',btn)?.textContent||btn.textContent);
     const n=clean($('.tc-module-num',btn)?.textContent||'');
-    add({where:(n?n+' · ':'')+title,title,text,badge:'Módulo'});
+    add({...base,where:base.where||((n?n+' · ':'')+title),title,text,badge:base.badge||'Módulo'});
   });
 }
 async function buildRemote(){
@@ -135,7 +149,7 @@ function intercept(e){
 }
 input.addEventListener('input',intercept,true);
 input.addEventListener('keydown',intercept,true);
-input.addEventListener('focus',()=>{if(clean(input.value).length>=2)render()});
+input.addEventListener('focus',()=>{buildLocal();if(clean(input.value).length>=2)render()});
 document.addEventListener('pointerdown',e=>{if(!panel.contains(e.target)&&e.target!==input)close()},true);
 window.addEventListener('resize',()=>{if(panel.classList.contains('open'))positionPanel()});
 window.visualViewport?.addEventListener('resize',()=>{if(panel.classList.contains('open'))positionPanel()});
