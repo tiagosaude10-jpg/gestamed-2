@@ -1,0 +1,37 @@
+/* TomoCron — pesquisa mobile estática v37 */
+#command #tcGlobalSearch{
+  font-size:16px!important;
+  -webkit-text-size-adjust:100%!important;
+  text-size-adjust:100%!important;
+}
+#command #tcGlobalSearch::placeholder{font-size:16px!important}
+#command .tc-search-clear{
+  position:absolute!important;
+  right:8px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:#f4e5de!important;
+  color:#6b3a2c!important;
+  font-size:21px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  z-index:6!important;
+}
+#command .tc-search-clear.visible{display:flex!important}
+#command .tc-search-input-wrap{position:relative!important}
+#command .tc-live-search-panel{transform:none!important;zoom:1!important}
+@media(max-width:480px){
+  #command #tcGlobalSearch{font-size:16px!important;padding-right:46px!important}
+  #command #tcGlobalSearch::placeholder{font-size:16px!important}
+  #command .tc-live-search-panel{max-width:none!important}
+}
